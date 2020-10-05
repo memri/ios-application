@@ -129,15 +129,7 @@ struct SetupWizard: View {
                                 error.map { debugHistory.error("\($0)") } // TODO: show this to the user
                             }
                         }) {
-                            Text("Use memri without a pod")
-                        }
-                        Button(action: {
-                            self.context.installer.installDemoDatabase(self.context) { _  in
-                                self.context.settings.set("user/pod/host", "")
-                                self.context.installer.ready(self.context)
-                            }
-                        }) {
-                            Text("Play around with the DEMO database")
+                            Text("Use a local demo database (no pod)")
                         }
 //                        Button(action: {
 //                            fatalError()

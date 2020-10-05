@@ -1,59 +1,34 @@
 //
-// MemriTextEditor.swift
-// Copyright © 2020 memri. All rights reserved.
+//  TextEditorView.swift
+//  RichTextEditor
+//
+//  Created by Toby Brennan on 22/6/20.
+//  Copyright © 2020 ApptekStudios. All rights reserved.
+//
 
 import Foundation
 import SwiftUI
 
-public struct MemriTextEditor: UIViewRepresentable {
-    init(
-        contentHTMLBinding: Binding<String>,
-        titleBinding: Binding<String?>? = nil,
-        titlePlaceholder: String? = nil,
-        fontSize: CGFloat = 18,
-        headingFontSize: CGFloat = 26,
-        backgroundColor: CVUColor? = nil,
-        isEditing: Binding<Bool>? = nil,
-        onContentChanged: ((String) -> Void)? = nil
-    ) {
-        self.contentHTMLBinding = contentHTMLBinding
-        self.titleBinding = titleBinding
-        self.titlePlaceholder = titlePlaceholder
-        self.fontSize = fontSize
-        self.headingFontSize = headingFontSize
-        self.backgroundColor = backgroundColor
-        self.isEditing = isEditing
-        self.onContentChanged = onContentChanged
-    }
-
-    var contentHTMLBinding: Binding<String>
-    var titleBinding: Binding<String?>?
-    var titlePlaceholder: String?
-    var fontSize: CGFloat
-    var headingFontSize: CGFloat
+struct MemriTextEditor: UIViewRepresentable {
+    var model: MemriTextEditorModel = MemriTextEditorModel(title: "Demo note",
+                                                 body: "<p><strong>Hi there,</strong></p><p>Let’s explore the <u>new</u> text editor.</p><p></p><ul> <li><p>This is a list</p></li> <li><p>You can press return to make a new item</p>  <ul>   <li><p>Indented item</p></li>   <li><p><s>Something else</s></p></li>  </ul></li></ul><p></p><p>Or an ordered list:</p><ol> <li><p>Milk</p></li> <li><p>Eggs</p></li> <li><p>Flour</p>  <ol>   <li><p>Self-raising</p></li>   <li><p>Plain</p></li>  </ol></li></ol><p></p><p>It also supports code blocks:</p><pre><code>def some_function(argument):    return \"Automatic code highlighting!\"</code></pre><p></p><p><strong>Memri:</strong> truly yours</p><p></p><p></p>")
+    var onModelUpdate: (MemriTextEditorModel) -> Void
+    var searchTerm: String?
     var isEditing: Binding<Bool>?
-    var onContentChanged: ((String) -> Void)?
-    var backgroundColor: CVUColor?
-
-    public func makeUIView(context _: Context) -> MemriTextEditorWrapper_UIKit {
-        MemriTextEditorWrapper_UIKit(
-            MemriTextEditor_UIKit(initialContentHTML: contentHTMLBinding.wrappedValue,
-                                  titleBinding: titleBinding,
-                                  titlePlaceholder: titlePlaceholder,
-                                  fontSize: fontSize,
-                                  headingFontSize: headingFontSize,
-                                  backgroundColor: backgroundColor)
-        )
+    
+    var fontSize: CGFloat = 18
+    
+    func makeUIView(context: Context) -> TextEditorWrapperUIView {
+        let view = MemriTextEditor_UIKit(initialModel: model)
+        view.onModelUpdate = onModelUpdate
+        view.searchTerm = searchTerm?.nilIfBlankOrSingleLine
+        return TextEditorWrapperUIView(view)
     }
-
-    public func updateUIView(_ wrapper: MemriTextEditorWrapper_UIKit, context _: Context) {
-        wrapper.textEditor.titleBinding = titleBinding
-        wrapper.textEditor.onTextChanged = { attribString in
-            let htmlString = attribString.toHTML()
-            self.contentHTMLBinding.wrappedValue = htmlString ?? ""
-            self.onContentChanged?(htmlString ?? "")
-        }
-        wrapper.textEditor.fontSize = fontSize
+    
+    func updateUIView(_ wrapper: TextEditorWrapperUIView, context: Context) {
+        wrapper.textEditor.onModelUpdate = onModelUpdate
+        wrapper.textEditor.searchTerm = searchTerm?.nilIfBlankOrSingleLine
         wrapper.textEditor.isEditingBinding = isEditing
+        #warning("Font size not applied")
     }
 }

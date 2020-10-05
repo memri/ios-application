@@ -84,6 +84,6 @@ public struct MemriButton: View {
 
 struct memriButton_Previews: PreviewProvider {
     static var previews: some View {
-        MemriButton(item: Note(value: ["title": "Untitled Note"]))
+        MemriButton(item: Note(value: ["title": "Untitled"]))
     }
 }

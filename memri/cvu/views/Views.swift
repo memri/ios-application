@@ -499,7 +499,7 @@ public class Views {
                 for item in list {
                     args.set(".", item)
                     if let hasFound = try interpret.execSingle(expr, args),
-                        ExprInterpreter.evaluateBoolean(hasFound) {
+                        ExprInterpreter.evaluateBoolean(hasFound, defaultValue: false) {
                         value = item
                         break
                     }

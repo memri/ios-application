@@ -18,7 +18,7 @@ public class ResultSet: ObservableObject {
     /// Unused, Experimental
     private var pages: [Int] = []
     private let cache: Cache
-    private var _filterText: String = ""
+    private var _filterText: String?
     private var _unfilteredItems: [Item]?
 
     /// Computes the type of the data items being requested via the query
@@ -71,13 +71,13 @@ public class ResultSet: ObservableObject {
     }
 
     /// Text used to filter queries
-    var filterText: String {
+    var filterText: String? {
         get {
             _filterText
         }
-        set(newFilter) {
-            if _filterText != newFilter {
-                _filterText = newFilter
+        set {
+            if _filterText != newValue {
+                _filterText = newValue?.nilIfBlankOrSingleLine
                 filter()
             }
         }
@@ -143,36 +143,33 @@ public class ResultSet: ObservableObject {
     /// Apply client side filter using the FilterText , with a fallback to the server
     public func filter() {
         // Cancel filtering
-        if _filterText == "" {
+        if let filter = _filterText {
+            // Filter using _filterText
+            var filterResult: [Item] = []
+            
+            // Filter through items
+            let searchSet = _unfilteredItems ?? items
+            if searchSet.count > 0 {
+                for i in 0 ... searchSet.count - 1 {
+                    if searchSet[i].hasProperty(filter) {
+                        filterResult.append(searchSet[i])
+                    }
+                }
+            }
+            
+            // Store the items of this resultset
+            if _unfilteredItems == nil { _unfilteredItems = items }
+            
+            // Set the filtered result
+            items = filterResult
+            count = filterResult.count
+        } else {
             // If we filtered before...
             if let _unfilteredItems = _unfilteredItems {
                 // Put back the items of this resultset
                 items = _unfilteredItems
                 count = _unfilteredItems.count
             }
-        }
-
-        // Filter using _filterText
-        else {
-            // Array to store filter results
-            var filterResult: [Item] = []
-
-            // Filter through items
-            let searchSet = _unfilteredItems ?? items
-            if searchSet.count > 0 {
-                for i in 0 ... searchSet.count - 1 {
-                    if searchSet[i].hasProperty(_filterText) {
-                        filterResult.append(searchSet[i])
-                    }
-                }
-            }
-
-            // Store the items of this resultset
-            if _unfilteredItems == nil { _unfilteredItems = items }
-
-            // Set the filtered result
-            items = filterResult
-            count = filterResult.count
         }
 
         objectWillChange.send() // TODO: create our own publishers

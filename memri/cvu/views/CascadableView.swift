@@ -261,19 +261,15 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         set(value) { setState("subtitle", value) }
     }
 
-    var filterText: String {
+    var filterText: String? {
         get {
-            userState.get("filterText") ?? ""
+            userState.get("filterText")
         }
         set(newFilter) {
-            // Don't update the filter when it's already set
-            if newFilter.count > 0, _titleTemp != nil,
-                userState.get("filterText") == newFilter {
-                return
-            }
+            let newText = newFilter?.nilIfBlankOrSingleLine
 
             // Store the new value
-            if (userState.get("filterText") ?? "") != newFilter {
+            if newText != userState.get("filterText") {
                 userState.set("filterText", newFilter)
             }
 
@@ -284,28 +280,31 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                 // found results instead of filtering the other data points out
 
                 // Filter the result set
-                resultSet.filterText = newFilter
+                resultSet.filterText = newText ?? ""
             }
             else {
-                print("Warn: Filtering for single items not Implemented Yet!")
+                // MARK: Single item
+                // Let the renderer handle it if it can
+                context?.scheduleUIUpdate()
             }
 
-            if userState.get("filterText") == "" {
-                _titleTemp = nil
-                _subtitleTemp = nil
-                _emptyResultTextTemp = nil
-            }
-            else {
+            if let filterText = userState.get("filterText", type: String.self)?.nilIfBlankOrSingleLine {
+                
                 // Set the title to an appropriate message
                 if resultSet.count == 0 { _titleTemp = "No results" }
                 else if resultSet.count == 1 { _titleTemp = "1 item found" }
                 else { _titleTemp = "\(resultSet.count) items found" }
-
+                
                 // Temporarily hide the subtitle
                 // _subtitleTemp = " " // TODO how to clear the subtitle ??
-
+                
                 _emptyResultTextTemp =
                     "No results found using '\(userState.get("filterText") ?? "")'"
+            }
+            else {
+                _titleTemp = nil
+                _subtitleTemp = nil
+                _emptyResultTextTemp = nil
             }
         }
     }

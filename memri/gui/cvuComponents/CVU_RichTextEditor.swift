@@ -11,11 +11,11 @@ import SwiftUI
 struct CVU_RichTextEditor: View {
     var nodeResolver: UINodeResolver
     var editModeBinding: Binding<Bool>
+    var searchTerm: String?
     
     
     var fontSize: CGFloat { nodeResolver.cgFloat(for:"fontSize") ?? 18 }
-    var titleHint: String? { nodeResolver.string(for: "titleHint")?.nilIfBlank }
-    var titleFontSize: CGFloat { nodeResolver.cgFloat(for:"titleFontSize") ?? 24 }
+//    var titleHint: String? { nodeResolver.string(for: "titleHint")?.nilIfBlank }
     
     var titleBinding: Binding<String?>? {
         nodeResolver.binding(for: "title")
@@ -26,13 +26,14 @@ struct CVU_RichTextEditor: View {
     }
     
     var body: some View {
-        MemriTextEditor(contentHTMLBinding: contentBinding,
-                        titleBinding: titleBinding,
-                        titlePlaceholder: titleHint,
-                        fontSize: fontSize,
-                        headingFontSize: titleFontSize,
-                        backgroundColor: nil,
-                        isEditing: editModeBinding)
+        MemriTextEditor(model: MemriTextEditorModel(title: titleBinding?.wrappedValue, body: contentBinding.wrappedValue),
+                        onModelUpdate: { (model) in
+                            titleBinding?.wrappedValue = model.title
+                            contentBinding.wrappedValue = model.body
+                        },
+                        searchTerm: searchTerm,
+                        isEditing: editModeBinding,
+                        fontSize: fontSize)
     }
     
 }

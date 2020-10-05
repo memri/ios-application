@@ -253,10 +253,7 @@
 		B85A510024C9379E00AB1A41 /* MemriSmartTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85A50FF24C9379E00AB1A41 /* MemriSmartTextView.swift */; };
 		B85DE32724F6363400D613B6 /* LabelAnnotationRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85DE32624F6363400D613B6 /* LabelAnnotationRenderer.swift */; };
 		B85DE32924F636B000D613B6 /* RoundedCornerRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85DE32824F636B000D613B6 /* RoundedCornerRectangle.swift */; };
-		B8627E3924A9EAAA005A1A8F /* MemriTextEditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2C24A9EAAA005A1A8F /* MemriTextEditorToolbar.swift */; };
-		B8627E3A24A9EAAA005A1A8F /* MemriTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2D24A9EAAA005A1A8F /* MemriTextEditor.swift */; };
 		B8627E3B24A9EAAA005A1A8F /* MemriFittedTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2E24A9EAAA005A1A8F /* MemriFittedTextEditor.swift */; };
-		B8627E3C24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2F24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift */; };
 		B8627E3D24A9EAAA005A1A8F /* UIFont+.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3224A9EAAA005A1A8F /* UIFont+.swift */; };
 		B8627E3E24A9EAAA005A1A8F /* UIView+NextResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3324A9EAAA005A1A8F /* UIView+NextResponder.swift */; };
 		B8627E3F24A9EAAA005A1A8F /* String+NSExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3424A9EAAA005A1A8F /* String+NSExpression.swift */; };
@@ -272,6 +269,11 @@
 		B881BED124BD4AA00016DBF5 /* TimelineItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BECE24BD4AA00016DBF5 /* TimelineItemView.swift */; };
 		B881BED324BD4F5E0016DBF5 /* calendar.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B881BED224BD4F4D0016DBF5 /* calendar.cvu */; };
 		B882364825281BBF00A6A953 /* CVU_Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = B882364725281BBF00A6A953 /* CVU_Button.swift */; };
+		B88273EE252AAF140060E56E /* MemriTextEditor_UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88273EA252AAF140060E56E /* MemriTextEditor_UIKit.swift */; };
+		B88273EF252AAF140060E56E /* MemriTextEditorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88273EB252AAF140060E56E /* MemriTextEditorModel.swift */; };
+		B88273F0252AAF140060E56E /* MemriTextEditor_Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88273EC252AAF140060E56E /* MemriTextEditor_Toolbar.swift */; };
+		B88273F1252AAF140060E56E /* MemriTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88273ED252AAF140060E56E /* MemriTextEditor.swift */; };
+		B88273F6252AAF230060E56E /* textEditorDist in Resources */ = {isa = PBXBuildFile; fileRef = B88273F5252AAF230060E56E /* textEditorDist */; };
 		B88AAB2524A1AD2F0007C9EB /* ChartRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2424A1AD2F0007C9EB /* ChartRenderer.swift */; };
 		B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */; };
 		B88AAB2E24A1AEBB0007C9EB /* BarChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */; };
@@ -311,7 +313,6 @@
 		B8E0FBE524A4AE36009C3C30 /* map.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B8E0FBE324A4ADE3009C3C30 /* map.cvu */; };
 		B8E8E8BA24C99FC400F1291F /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E8E8B924C99FC400F1291F /* UIImage+.swift */; };
 		B8EA5C7424FCB2D70031854D /* Renderers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8EA5C7324FCB2D70031854D /* Renderers.swift */; };
-		B8EA5C7624FCC4900031854D /* MessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8EA5C7524FCC4900031854D /* MessageBubbleView.swift */; };
 		B8FB4996249F21A6007A05C4 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = B8FB4995249F21A6007A05C4 /* ASCollectionView */; };
 		B8FB499A249F3187007A05C4 /* UIKit+FirstResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB4999249F3187007A05C4 /* UIKit+FirstResponder.swift */; };
 		B8FD53B324D506E100CA0709 /* FileRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FD53B224D506E100CA0709 /* FileRenderer.swift */; };
@@ -557,10 +558,7 @@
 		B85A50FF24C9379E00AB1A41 /* MemriSmartTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriSmartTextView.swift; sourceTree = "<group>"; };
 		B85DE32624F6363400D613B6 /* LabelAnnotationRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelAnnotationRenderer.swift; sourceTree = "<group>"; };
 		B85DE32824F636B000D613B6 /* RoundedCornerRectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCornerRectangle.swift; sourceTree = "<group>"; };
-		B8627E2C24A9EAAA005A1A8F /* MemriTextEditorToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextEditorToolbar.swift; sourceTree = "<group>"; };
-		B8627E2D24A9EAAA005A1A8F /* MemriTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextEditor.swift; sourceTree = "<group>"; };
 		B8627E2E24A9EAAA005A1A8F /* MemriFittedTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriFittedTextEditor.swift; sourceTree = "<group>"; };
-		B8627E2F24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextEditor_UIKit.swift; sourceTree = "<group>"; };
 		B8627E3224A9EAAA005A1A8F /* UIFont+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+.swift"; sourceTree = "<group>"; };
 		B8627E3324A9EAAA005A1A8F /* UIView+NextResponder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+NextResponder.swift"; sourceTree = "<group>"; };
 		B8627E3424A9EAAA005A1A8F /* String+NSExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+NSExpression.swift"; sourceTree = "<group>"; };
@@ -577,6 +575,11 @@
 		B881BECE24BD4AA00016DBF5 /* TimelineItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineItemView.swift; sourceTree = "<group>"; };
 		B881BED224BD4F4D0016DBF5 /* calendar.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = calendar.cvu; sourceTree = "<group>"; };
 		B882364725281BBF00A6A953 /* CVU_Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_Button.swift; sourceTree = "<group>"; };
+		B88273EA252AAF140060E56E /* MemriTextEditor_UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextEditor_UIKit.swift; sourceTree = "<group>"; };
+		B88273EB252AAF140060E56E /* MemriTextEditorModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextEditorModel.swift; sourceTree = "<group>"; };
+		B88273EC252AAF140060E56E /* MemriTextEditor_Toolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextEditor_Toolbar.swift; sourceTree = "<group>"; };
+		B88273ED252AAF140060E56E /* MemriTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextEditor.swift; sourceTree = "<group>"; };
+		B88273F5252AAF230060E56E /* textEditorDist */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textEditorDist; path = textEditor/textEditorDist; sourceTree = "<group>"; };
 		B88AAB2424A1AD2F0007C9EB /* ChartRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartRenderer.swift; sourceTree = "<group>"; };
 		B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartModel.swift; sourceTree = "<group>"; };
 		B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarChartModel.swift; sourceTree = "<group>"; };
@@ -618,7 +621,6 @@
 		B8E0FBE324A4ADE3009C3C30 /* map.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = map.cvu; sourceTree = "<group>"; };
 		B8E8E8B924C99FC400F1291F /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		B8EA5C7324FCB2D70031854D /* Renderers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderers.swift; sourceTree = "<group>"; };
-		B8EA5C7524FCC4900031854D /* MessageBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubbleView.swift; sourceTree = "<group>"; };
 		B8FB4999249F3187007A05C4 /* UIKit+FirstResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIKit+FirstResponder.swift"; sourceTree = "<group>"; };
 		B8FD53B224D506E100CA0709 /* FileRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileRenderer.swift; sourceTree = "<group>"; };
 		B8FD53B524D5079F00CA0709 /* FileViewerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileViewerController.swift; sourceTree = "<group>"; };
@@ -1264,7 +1266,6 @@
 				B80E01A624C839250005D756 /* ProgressBarView.swift */,
 				B8FD53AE24D5066600CA0709 /* Text */,
 				B8FD53AF24D5066E00CA0709 /* Email */,
-				B8EA5C7524FCC4900031854D /* MessageBubbleView.swift */,
 				86865D37244996AA0010271A /* FlowStack.swift */,
 				B8AAB43D250E2B65007CF0E3 /* MemriImageView.swift */,
 			);
@@ -1397,9 +1398,11 @@
 		B8627E2B24A9EAAA005A1A8F /* MemriTextEditor */ = {
 			isa = PBXGroup;
 			children = (
-				B8627E2C24A9EAAA005A1A8F /* MemriTextEditorToolbar.swift */,
-				B8627E2D24A9EAAA005A1A8F /* MemriTextEditor.swift */,
-				B8627E2F24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift */,
+				B88273EC252AAF140060E56E /* MemriTextEditor_Toolbar.swift */,
+				B88273EA252AAF140060E56E /* MemriTextEditor_UIKit.swift */,
+				B88273ED252AAF140060E56E /* MemriTextEditor.swift */,
+				B88273EB252AAF140060E56E /* MemriTextEditorModel.swift */,
+				B88273F5252AAF230060E56E /* textEditorDist */,
 			);
 			path = MemriTextEditor;
 			sourceTree = "<group>";
@@ -1805,6 +1808,7 @@
 				8699AA2E247BCF1E00EC85C0 /* Session.cvu in Resources */,
 				5D44D52A24585E0B004796BA /* testfile.txt in Resources */,
 				5D3EE57D2447701F00562AAC /* note.0x05.json in Resources */,
+				B88273F6252AAF230060E56E /* textEditorDist in Resources */,
 				86AECB1E24D400050024D7B9 /* MessageChannel.cvu in Resources */,
 				5DAFB6112479521D00719160 /* Any.cvu in Resources */,
 				866F87D82456AD76000E5FAB /* person.0x013.json in Resources */,
@@ -1913,6 +1917,7 @@
 				B8348BE124FCFB4E00BF12F8 /* GeneralEditorRows.swift in Sources */,
 				8665ADD7241A8120005B3FA5 /* MemriContext.swift in Sources */,
 				B826586324D2F4FA0051CCFE /* EmailHeaderView.swift in Sources */,
+				B88273EF252AAF140060E56E /* MemriTextEditorModel.swift in Sources */,
 				B8FD53B624D5079F00CA0709 /* FileViewerController.swift in Sources */,
 				5D599BBB23F2B77500F218A0 /* AppDelegate.swift in Sources */,
 				B88AAB3124A1AEBB0007C9EB /* ChartHelper.swift in Sources */,
@@ -1960,10 +1965,10 @@
 				B88AAB3B24A1B13F0007C9EB /* Indexed.swift in Sources */,
 				5D487F22244073DF00B50202 /* UIElementView.swift in Sources */,
 				B821D67C24C70DCF006D6CFF /* PhotoViewerRenderer.swift in Sources */,
+				B88273F1252AAF140060E56E /* MemriTextEditor.swift in Sources */,
 				5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */,
 				B8A5E30924F77BA800A1F488 /* schema-manual.swift in Sources */,
 				5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
-				B8627E3924A9EAAA005A1A8F /* MemriTextEditorToolbar.swift in Sources */,
 				B8627E3D24A9EAAA005A1A8F /* UIFont+.swift in Sources */,
 				B826586D24D2F86F0051CCFE /* EmailThreadRenderer.swift in Sources */,
 				86A5D83C243B3FFF00F8FAD8 /* Loading.swift in Sources */,
@@ -1974,7 +1979,6 @@
 				86865D3324487B390010271A /* SettingsPane.swift in Sources */,
 				8690AF082472D91F00FC49F4 /* collection.swift in Sources */,
 				B866A0282519C0330028EF49 /* CVU_RichTextEditor.swift in Sources */,
-				B8627E3A24A9EAAA005A1A8F /* MemriTextEditor.swift in Sources */,
 				5DD17B68241294CC0018A8F1 /* AnyCodable.swift in Sources */,
 				8690AF0A2472F60600FC49F4 /* InMemoryObjectCache.swift in Sources */,
 				86911E8424C543CD009AC8B1 /* CascadableContextPane.swift in Sources */,
@@ -2004,7 +2008,6 @@
 				B88B8D6D2524C04A001295D7 /* CVU_TimelineItem.swift in Sources */,
 				B8AAB43B250DD2AE007CF0E3 /* CVU_Text.swift in Sources */,
 				5D4231AB247C2D7100CD1933 /* Datasource.swift in Sources */,
-				B8EA5C7624FCC4900031854D /* MessageBubbleView.swift in Sources */,
 				B8AAB43E250E2B65007CF0E3 /* MemriImageView.swift in Sources */,
 				B8FD53B324D506E100CA0709 /* FileRenderer.swift in Sources */,
 				B80E01A724C839250005D756 /* ProgressBarView.swift in Sources */,
@@ -2024,7 +2027,6 @@
 				B8BF6F5124BEA9260058067C /* ContextualBottomBar.swift in Sources */,
 				86865D38244996AA0010271A /* FlowStack.swift in Sources */,
 				8690AF062472D90D00FC49F4 /* date.swift in Sources */,
-				B8627E3C24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift in Sources */,
 				C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */,
 				5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */,
 				5D179AB724756C7800AA275C /* Action.swift in Sources */,
@@ -2045,6 +2047,7 @@
 				5D90464F243616B000632492 /* color.swift in Sources */,
 				5D3D961F24164B240004040E /* CodeExtended.swift in Sources */,
 				B88AAB3224A1AEBB0007C9EB /* LineChartView.swift in Sources */,
+				B88273EE252AAF140060E56E /* MemriTextEditor_UIKit.swift in Sources */,
 				8693206724CDD4910030863D /* SetupWizard.swift in Sources */,
 				B88B8D6125248CDA001295D7 /* SizeReader.swift in Sources */,
 				5DD28B772417BAF900CE9F6A /* GridRenderer.swift in Sources */,
@@ -2053,6 +2056,7 @@
 				5D3D9621241675100004040E /* JSONHandling.swift in Sources */,
 				B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */,
 				B89A268324A70358009119E4 /* MapView.swift in Sources */,
+				B88273F0252AAF140060E56E /* MemriTextEditor_Toolbar.swift in Sources */,
 				B882364825281BBF00A6A953 /* CVU_Button.swift in Sources */,
 				869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */,
 				868EF62E24766A8800C0375F /* CVULexer.swift in Sources */,

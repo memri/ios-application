@@ -1,62 +1,111 @@
 //
-// MemriTextEditor_UIKit.swift
-// Copyright © 2020 memri. All rights reserved.
+//  TextEditorUIView.swift
+//  RichTextEditor
+//
+//  Created by Toby Brennan on 22/6/20.
+//  Copyright © 2020 ApptekStudios. All rights reserved.
+//
 
 import Foundation
-import SwiftUI
 import UIKit
+import SwiftUI
+import WebKit
 
-public class MemriTextEditorWrapper_UIKit: UIView {
-    // This UIView allows us to add overlays to the UITextView if needed
+public class TextEditorWrapperUIView: UIView {
+    //This UIView allows us to add overlays to the UITextView if needed
     var textEditor: MemriTextEditor_UIKit
-
+    var toolbar: UIView? {
+        didSet {
+            toolbar.map(addSubview)
+        }
+    }
+    var activityIndicator = UIActivityIndicatorView(style: .large)
+    
+    var showActivityIndicator: Bool = true {
+        didSet {
+            UIView.animate(withDuration: 0.2) {
+                self.activityIndicator.isHidden = !self.showActivityIndicator
+            }
+        }
+    }
+    
     init(_ textEditor: MemriTextEditor_UIKit) {
         self.textEditor = textEditor
         super.init(frame: .zero)
         addSubview(textEditor)
-        textEditor.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            textEditor.leadingAnchor.constraint(equalTo: leadingAnchor),
-            textEditor.trailingAnchor.constraint(equalTo: trailingAnchor),
-            textEditor.topAnchor.constraint(equalTo: topAnchor),
-            textEditor.bottomAnchor.constraint(equalTo: bottomAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor),
         ])
+        
+        setupConstraints()
     }
 
-    required init?(coder _: NSCoder) {
+    
+    func setupConstraints() {
+        textEditor.removeConstraints(textEditor.constraints)
+        textEditor.translatesAutoresizingMaskIntoConstraints = false
+        
+        var constraints = [
+            (textEditor).leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            (textEditor).trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            (textEditor).bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+        ]
+        
+        if let toolbar = toolbar {
+            toolbar.removeConstraints(toolbar.constraints)
+            toolbar.translatesAutoresizingMaskIntoConstraints = false
+            constraints.append(contentsOf: [
+                (toolbar).topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+                (toolbar).leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+                (toolbar).trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+                (toolbar).heightAnchor.constraint(equalToConstant: 50),
+                (textEditor).topAnchor.constraint(equalTo: toolbar.bottomAnchor)
+            ])
+        } else {
+            constraints.append(contentsOf:[
+                (textEditor).topAnchor.constraint(equalTo: topAnchor)
+            ])
+        }
+        
+        NSLayoutConstraint.activate(constraints)
+        
+    }
+    
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override public var intrinsicContentSize: CGSize {
-        textEditor.intrinsicContentSize
-    }
-
-    override public func contentHuggingPriority(
-        for axis: NSLayoutConstraint
-            .Axis
-    ) -> UILayoutPriority {
-        textEditor.contentHuggingPriority(for: axis)
-    }
-
-    override public func contentCompressionResistancePriority(
-        for axis: NSLayoutConstraint
-            .Axis
-    ) -> UILayoutPriority {
-        textEditor.contentCompressionResistancePriority(for: axis)
     }
 }
 
-public class MemriTextEditor_UIKit: UITextView {
-    var titleBinding: Binding<String?>?
-    var titlePlaceholder: String?
-    var fontSize: CGFloat
-    var headingFontSize: CGFloat
-    var onTextChanged: ((NSAttributedString) -> Void)?
-
+class MemriTextEditor_UIKit: WKWebView {
+    
+    private var toolbarHost: UIHostingControllerNoSafeArea<MemriTextEditor_Toolbar>?
+    private var toolbarWrapperView: ToolbarWrapperView?
+    
+    private var cancellableBag: Set<AnyCancellable> = []
+    
+    private var currentFormatting: [String: Any] = [:]
+    
+    private var userController: WKUserContentController
+    
+    var initialModel: MemriTextEditorModel
+    var onModelUpdate: ((MemriTextEditorModel) -> Void)?
+    
+    var searchTerm: String? {
+        didSet {
+            if searchTerm != oldValue {
+                self.updateSearchState().sink {}.store(in: &cancellableBag)
+            }
+        }
+    }
     var isEditingBinding: Binding<Bool>? {
         didSet {
             if let bindingIsEditing = isEditingBinding?.wrappedValue,
-                bindingIsEditing != isEditing {
+               bindingIsEditing != isEditing {
                 if bindingIsEditing {
                     becomeFirstResponder()
                 }
@@ -66,213 +115,93 @@ public class MemriTextEditor_UIKit: UITextView {
             }
         }
     }
-
+    
     private var isEditing: Bool = false
-
-    public init(
-        initialContentHTML: String?,
-        titleBinding: Binding<String?>?,
-        titlePlaceholder: String?,
-        fontSize: CGFloat = 18,
-        headingFontSize: CGFloat = 26,
-        backgroundColor: CVUColor?
-    ) {
-        self.titleBinding = titleBinding
-        self.titlePlaceholder = titlePlaceholder
-        self.fontSize = fontSize
-        self.headingFontSize = headingFontSize
-
-        super.init(frame: .zero, textContainer: nil)
-        DispatchQueue.main.async {
-            if let html = initialContentHTML,
-                let attributedStringFromHTML = NSAttributedString.fromHTML(html) {
-                self.attributedText = attributedStringFromHTML.withFontSize(self.fontSize)
-            }
-        }
-
-        // Allow editing attributes
-        allowsEditingTextAttributes = true
-
-        // Scroll to dismiss keyboard
-        keyboardDismissMode = .interactive
-        alwaysBounceVertical = true
+    
+    init(initialModel: MemriTextEditorModel) {
+        let config = WKWebViewConfiguration()
+        let userController = WKUserContentController()
+        config.userContentController = userController
+        self.userController = userController
         
-        //Set background color
-        backgroundColor.map { self.backgroundColor = $0.uiColor }
-
-        // Set up toolbar
+        self.initialModel = initialModel
+        
+        super.init(frame: .zero, configuration: config)
+        
+        isOpaque = false //Prevent white flash in dark mode
+        
+        self.navigationDelegate = self
+        self.scrollView.delegate = self
+        self.scrollView.isScrollEnabled = false
+        
+        
+        config.userContentController = userController
+        userController.add(self, name: "formatChange")
+        userController.add(self, name: "textChange")
+        
         updateToolbar()
-
-        // Set up default sizing
-        let defaultFont = UIFont.systemFont(ofSize: fontSize)
-        font = defaultFont
-        typingAttributes = [
-            .font: defaultFont,
-        ]
-
-        delegate = self
-
-        updateHeader()
+        
+        if
+            let url = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: "textEditorDist"),
+            let data = try? Data(contentsOf: url),
+            let baseString = String(data: data, encoding: .utf8)
+        {
+            loadHTMLString(baseString, baseURL: url)
+        }
     }
-
-    required init?(coder _: NSCoder) {
+    
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    var header: MemriTextField_UIKit?
-    func updateHeader() {
-        if let titleBinding = titleBinding {
-            if header == nil {
-                let header = MemriTextField_UIKit()
-                header.delegate = self
-                header.addTarget(
-                    self,
-                    action: #selector(headerTextChanged(_:)),
-                    for: .editingChanged
-                )
-                header.showBottomBorder = true
-                self.header = header
-
-                addSubview(header)
-                setNeedsLayout()
-            }
-            header?.font = UIFont.systemFont(ofSize: headingFontSize)
-            header?.placeholder = titlePlaceholder
-            header?.text = titleBinding.wrappedValue
-        }
-        else {
-            header.map {
-                $0.removeFromSuperview()
-                setNeedsLayout()
-            }
-            header = nil
-        }
-    }
-
-    @objc
-    func headerTextChanged(_ textField: MemriTextField_UIKit) {
-        titleBinding?.wrappedValue = textField.text?.nilIfBlank
-    }
-
-    var headerSize: CGFloat { ceil(headingFontSize + 8) }
-    var toolbarInset: CGFloat {
-        #if targetEnvironment(macCatalyst)
-            return 50
-        #else
-            return 0
-        #endif
-    }
-
-    var preferredContentInset: UIEdgeInsets {
-        UIEdgeInsets(top: 10 + toolbarInset + ((header != nil) ? headerSize : 0),
-                     left: 10,
-                     bottom: 10,
-                     right: 10)
-    }
-
-    override public func layoutSubviews() {
-        if let header = header {
-            header.frame = CGRect(
-                x: preferredContentInset.left + 5,
-                y: 5 + toolbarInset,
-                width: bounds.width - preferredContentInset.left - preferredContentInset.right - 10,
-                height: headerSize
-            )
-        }
-        textContainerInset = preferredContentInset
-        super.layoutSubviews()
-    }
-
-    let indentWidth: CGFloat = 20
-
-    #if targetEnvironment(macCatalyst)
-        @objc(_focusRingType)
-        var focusRingType: UInt {
-            1 // NSFocusRingTypeNone
-        }
-    #endif
-
-    override public func didMoveToSuperview() {
-        super.didMoveToSuperview()
-        #if targetEnvironment(macCatalyst)
-            updateToolbar()
-        #endif
-    }
-
-    var toolbarHost: UIHostingControllerNoSafeArea<MemriTextEditorToolbar>?
-
+    
     func updateToolbar() {
-        let view = MemriTextEditorToolbar(
+        let items: [MemriTextEditor_Toolbar.Item] = [
+            .button(label: "Bold", icon: "bold",
+                    isActive: currentFormatting["bold"] as? Bool ?? false,
+                    onPress: { [weak self] in self?.toggleFormat("bold") }),
+            .button(label: "Italic", icon: "italic",
+                    isActive: currentFormatting["italic"] as? Bool ?? false,
+                    onPress: { [weak self] in self?.toggleFormat("italic") }),
+            .button(label: "Underline", icon: "underline",
+                    isActive: currentFormatting["underline"] as? Bool ?? false,
+                    onPress: { [weak self] in self?.toggleFormat("underline") }),
+            .button(label: "Strike", icon: "strikethrough",
+                    isActive: currentFormatting["strike"] as? Bool ?? false,
+                    onPress: { [weak self] in self?.toggleFormat("strike") }),
+            .divider,
+//            .button(label: "Heading", icon: "textformat.alt",
+//                    isActive: (currentFormatting["heading"] as? Int).map { $0 != 0 } ?? false,
+//                    onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 1]) }),
+//            .button(label: "Quote", icon: "decrease.quotelevel",
+//                    isActive: currentFormatting["blockquote"] as? Bool ?? false,
+//                    onPress: { [weak self] in self?.toggleFormat("blockquote") }),
+            .button(label: "Code block", icon: "textbox",
+                    isActive: currentFormatting["code_block"] as? Bool ?? false,
+                    onPress: { [weak self] in self?.toggleFormat("code_block") }),
+            .divider,
+            .button(label: "Unordered List", icon: "list.bullet",
+                    isActive: currentFormatting["bullet_list"] as? Bool ?? false,
+                    onPress: { [weak self] in self?.toggleFormat("bullet_list") }),
+            .button(label: "Ordered List", icon: "list.number",
+                    isActive: currentFormatting["ordered_list"] as? Bool ?? false,
+                    onPress: { [weak self] in self?.toggleFormat("ordered_list") }),
+            .button(label: "Outdent List", icon: "decrease.indent",
+                    hideInactive: true,
+                    isActive: currentFormatting["lift_list"] as? Bool ?? false,
+                    onPress: { [weak self] in self?.toggleFormat("lift_list") }),
+            .button(label: "Indent List", icon: "increase.indent",
+                    hideInactive: true,
+                    isActive: currentFormatting["sink_list"] as? Bool ?? false,
+                    onPress: { [weak self] in self?.toggleFormat("sink_list") })
+        ]
+        let view = MemriTextEditor_Toolbar(
             textView: self,
-            state_bold: state_isBold,
-            state_italic: state_isItalic,
-            state_underline: state_isUnderlined,
-            state_strikethrough: state_isStrikethrough,
-            onPress_bold: action_toggleBold,
-            onPress_italic: action_toggleItalic,
-            onPress_underline: action_toggleUnderlined,
-            onPress_strikethrough: action_toggleStrikethrough,
-            onPress_indent: action_indent,
-            onPress_outdent: action_outdent,
-            onPress_orderedList: action_orderedList,
-            onPress_unorderedList: action_unorderedList
+            items: items
         )
-        if let hc = toolbarHost {
-            hc.rootView = view
-        }
-        else {
-            let toolbarHost = UIHostingControllerNoSafeArea(rootView: view)
-            #if targetEnvironment(macCatalyst)
-                if let superview = superview {
-                    superview.addSubview(toolbarHost.view)
-                    toolbarHost.view.translatesAutoresizingMaskIntoConstraints = false
-                    NSLayoutConstraint.activate([
-                        toolbarHost.view.leadingAnchor.constraint(
-                            equalTo: superview.leadingAnchor,
-                            constant: 0
-                        ),
-                        toolbarHost.view.trailingAnchor.constraint(
-                            equalTo: superview.trailingAnchor,
-                            constant: 0
-                        ),
-                        toolbarHost.view.heightAnchor.constraint(equalToConstant: toolbarInset),
-                        toolbarHost.view.topAnchor.constraint(equalTo: superview.topAnchor),
-                    ])
-                    self.toolbarHost = toolbarHost
-                }
-            #else
-                toolbarHost.view.sizeToFit()
-                inputAccessoryView = toolbarHost.view
-                self.toolbarHost = toolbarHost
-            #endif
-        }
+        self._setToolbar(view)
     }
-
-    func fireTextChange() {
-        onTextChanged?(attributedText)
-    }
-
-    func didChangeFormatting() {
-        updateToolbar()
-        fireTextChange()
-    }
-
-    func selectionDidChange() {
-        updateToolbar()
-    }
-
-    public func textViewDidChange(_: UITextView) {
-        fireTextChange()
-        updateToolbar()
-    }
-
-    override public var selectedTextRange: UITextRange? {
-        didSet {
-            selectionDidChange()
-        }
-    }
-
-    public func textViewDidBeginEditing(_: UITextView) {
+    
+    func didBeginEditing() {
         isEditing = true
         if let isEditingBinding = isEditingBinding, isEditingBinding.wrappedValue != true {
             DispatchQueue.main.async {
@@ -280,8 +209,8 @@ public class MemriTextEditor_UIKit: UITextView {
             }
         }
     }
-
-    public func textViewDidEndEditing(_: UITextView) {
+    
+    public func didEndEditing() {
         isEditing = false
         if let isEditingBinding = isEditingBinding, isEditingBinding.wrappedValue != false {
             DispatchQueue.main.async {
@@ -289,538 +218,181 @@ public class MemriTextEditor_UIKit: UITextView {
             }
         }
     }
-
-    override public func toggleBoldface(_ sender: Any?) {
-        super.toggleBoldface(sender)
-        fireTextChange() // TextView didChange not called otherwise
-    }
-
-    override public func toggleItalics(_ sender: Any?) {
-        super.toggleItalics(sender)
-        fireTextChange() // TextView didChange not called otherwise
-    }
-
-    override public func toggleUnderline(_ sender: Any?) {
-        super.toggleUnderline(sender)
-        fireTextChange() // TextView didChange not called otherwise
-    }
-}
-
-extension MemriTextEditor_UIKit {
-    public func getTextContentSize() -> CGSize {
-        let size = sizeThatFits(CGSize(width: self.bounds.width, height: CGFloat.infinity))
-        return .init(width: size.width, height: max(size.height, 30))
-    }
-}
-
-extension MemriTextEditor_UIKit: UITextFieldDelegate {
-    public func textFieldShouldReturn(_: UITextField) -> Bool {
-        becomeFirstResponder()
-        return true
-    }
-}
-
-extension MemriTextEditor_UIKit: UITextViewDelegate {
-    public func textView(
-        _: UITextView,
-        shouldChangeTextIn range: NSRange,
-        replacementText text: String
-    ) -> Bool {
-        if text.isEmpty, range.length <= 1 {
-            // User pressed backspace
-            return handleBackspace(changedRange: range, replacementText: text)
+    
+    public override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        (superview as? TextEditorWrapperUIView)?.showActivityIndicator = isLoading
+        #if targetEnvironment(macCatalyst)
+        if let superview = superview as? TextEditorWrapperUIView {
+            superview.toolbar = toolbarHost?.view
         }
-
-        if text.last?.isNewline ?? false {
-            // New line, hook here if we need (eg. change from header to body)
-            return handleNewLine(changedRange: range, replacementText: text)
-        }
-
-        if text == "\t", range.length == 0 {
-            // TAB
-            return handleTab(changedRange: range, replacementText: text)
-        }
-
-        if text.last == " " {
-            // Space - check if dash for list
-            return handleSpace(changedRange: range, replacementText: text)
-        }
-
-        return true
+        #endif
     }
-
-    func handleTab(changedRange range: NSRange, replacementText _: String) -> Bool {
-        let currentLineRange = (textStorage.string as NSString)
-            .lineRange(for: NSRange(location: range.location, length: 0))
-        let currentLineString = (textStorage.string as NSString)
-            .substring(with: currentLineRange) as NSString
-
-        let lineContentWithoutList = NSMutableString(string: currentLineString)
-        ListType.removeListText(in: lineContentWithoutList)
-
-        if (lineContentWithoutList as String).isOnlyWhitespace {
-            helper_shiftIndent(by: 1)
-            return false
-        }
-        return true
-    }
-
-    func handleSpace(changedRange range: NSRange, replacementText _: String) -> Bool {
-        let currentLineRange = (textStorage.string as NSString)
-            .lineRange(for: NSRange(location: range.location, length: 0))
-        let currentLineString = (textStorage.string as NSString)
-            .substring(with: currentLineRange) as NSString
-
-        if currentLineString.trimmingCharacters(in: .whitespacesAndNewlines) == "-" {
-            textStorage.beginEditing()
-            let newString = ListType.unorderedList.stringForLine(index: 0) as NSString
-            textStorage.replaceCharacters(in: currentLineRange, with: newString as String)
-            textStorage.endEditing()
-            selectedRange = NSRange(
-                location: currentLineRange.location + newString.length,
-                length: 0
-            )
-            return false
-        }
-        return true
-    }
-
-    func handleBackspace(changedRange range: NSRange, replacementText _: String) -> Bool {
-        let currentLineRange = (textStorage.string as NSString)
-            .lineRange(for: NSRange(location: range.location, length: 0))
-        let currentLineString = (textStorage.string as NSString)
-            .substring(with: currentLineRange) as NSString
-
-        let lineContentWithoutList = NSMutableString(string: currentLineString)
-        ListType.removeListText(in: lineContentWithoutList)
-
-        if (lineContentWithoutList as String).isOnlyWhitespace {
-            // Empty line in list, remove it
-            textStorage.beginEditing()
-            textStorage.replaceCharacters(in: currentLineRange, with: "")
-            textStorage.endEditing()
-            selectedRange = NSRange(location: max(0, currentLineRange.location - 1), length: 0)
-            fireTextChange()
-            return false
-        }
-        return true
-    }
-
-    func handleNewLine(changedRange range: NSRange, replacementText newText: String) -> Bool {
-        let oldLineRange = (textStorage.string as NSString)
-            .lineRange(for: NSRange(location: range.location, length: 0))
-        let oldLineString = (textStorage.string as NSString)
-            .substring(with: oldLineRange) as NSString
-        let oldLineListType = ListType.getListType(oldLineString)
-
-        let oldLineContentWithoutList = NSMutableString(string: oldLineString)
-        ListType.removeListText(in: oldLineContentWithoutList)
-
-        let oldLineIsEmpty = (oldLineContentWithoutList as String).isOnlyWhitespace
-
-        if oldLineIsEmpty {
-            switch oldLineListType {
-            case .some:
-                if oldLineListType == .unorderedList, helper_currentIndent() != 0 {
-                    // Empty line, reduce indent
-                    helper_shiftIndent(by: -1)
-                    return false
-                }
-                else {
-                    // Empty line, remove the list
-                    textStorage.beginEditing()
-                    textStorage.replaceCharacters(in: oldLineRange, with: "\n")
-                    textStorage.endEditing()
-                    selectedRange = NSRange(location: oldLineRange.location, length: 0)
-                    fireTextChange()
-                    return false
-                }
-            case .none:
-                return true
+    
+    func _setToolbar(_ view: MemriTextEditor_Toolbar) {
+        if let hc = toolbarHost {
+            hc.rootView = view
+            toolbarWrapperView?.sizeToFit()
+        } else {
+            let toolbarHost = UIHostingControllerNoSafeArea(rootView: view)
+            self.toolbarHost = toolbarHost
+            #if targetEnvironment(macCatalyst)
+            if let superview = superview as? TextEditorWrapperUIView {
+                superview.toolbar = toolbarHost.view
             }
+            #else
+            let wrapper = ToolbarWrapperView(toolbarView: toolbarHost.view)
+            wrapper.sizeToFit()
+            toolbarWrapperView = wrapper
+            #endif
         }
-
-        var textToInsert: String?
-        switch oldLineListType {
-        case .unorderedList:
-            textToInsert = ListType.unorderedList.stringForLine(index: 0)
-        case .orderedList:
-            let oldIndex = (oldLineString as String).split(separator: Character(".")).first
-                .flatMap { Int($0) } ?? 0
-            textToInsert = ListType.orderedList.stringForLine(index: oldIndex + 1)
-        default: break
-        }
-
-        if let textToInsert = textToInsert {
-            textStorage.beginEditing()
-            textStorage.replaceCharacters(in: range, with: newText + textToInsert)
-            textStorage.endEditing()
-            selectedRange = NSRange(
-                location: range.upperBound + 1 + (textToInsert as NSString).length,
-                length: 0
-            )
-            fireTextChange()
-            return false
-        }
-        else {
+    }
+    
+    func toggleFormat(_ format: String, info: [String: Any] = [:]) {
+        let oldValue = (currentFormatting[format] as? Bool) ?? false
+        currentFormatting[format] = !oldValue
+        updateToolbar()
+        setFormatting(format: format, info: info)
+        .receive(on: DispatchQueue.main)
+        .sink {}
+        .store(in: &cancellableBag)
+    }
+    
+    func grabFocus(moveToEnd: Bool = false) {
+        self.evaluateJavaScript(moveToEnd ? """
+window.editor.setSelection(editor.state.doc.content.size, editor.state.doc.content.size);
+""" : "window.editor.focus();")
+        becomeFirstResponder()
+    }
+    
+    override var inputAccessoryView: UIView? {
+        #if targetEnvironment(macCatalyst)
+        return super.inputAccessoryView
+        #else
+        return toolbarWrapperView
+        #endif
+    }
+    
+    @discardableResult
+    override func becomeFirstResponder() -> Bool {
+        if super.becomeFirstResponder() {
+            didBeginEditing()
             return true
         }
+        return false
     }
+    
+    @discardableResult
+    override func resignFirstResponder() -> Bool {
+        if super.resignFirstResponder() {
+            didEndEditing()
+            return true
+        }
+        return false
+    }
+    
 }
 
-extension MemriTextEditor_UIKit {
-    var helper_hasSelection: Bool {
-        selectedRange.length != 0
-    }
 
-    var state_isBold: Bool {
-        helper_currentContext_hasFontTrait(.traitBold)
-    }
-
-    func action_toggleBold() {
-        helper_currentContext_toggleFontTrait(.traitBold)
-        didChangeFormatting()
-    }
-
-    var state_isItalic: Bool {
-        helper_currentContext_hasFontTrait(.traitItalic)
-    }
-
-    func action_toggleItalic() {
-        helper_currentContext_toggleFontTrait(.traitItalic)
-        didChangeFormatting()
-    }
-
-    func action_indent() {
-        helper_shiftIndent(by: 1)
-        didChangeFormatting()
-    }
-
-    func action_outdent() {
-        helper_shiftIndent(by: -1)
-        didChangeFormatting()
-    }
-
-    func action_unorderedList() {
-        helper_makeSelectionList(type: .unorderedList)
-        didChangeFormatting()
-    }
-
-    func action_orderedList() {
-        helper_makeSelectionList(type: .orderedList)
-        didChangeFormatting()
-    }
-
-    var state_isUnderlined: Bool {
-        if let style: NSNumber = helper_currentContext_getTrait(.underlineStyle) {
-            return style != 0
-        }
-        else {
-            return false
-        }
-    }
-
-    func action_toggleUnderlined() {
-        helper_currentContext_setTrait(
-            .underlineStyle,
-            value: state_isUnderlined ? nil : NSUnderlineStyle.single.rawValue
-        )
-        didChangeFormatting()
-    }
-
-    var state_isStrikethrough: Bool {
-        if let style: NSNumber = helper_currentContext_getTrait(.strikethroughStyle) {
-            return style != 0
-        }
-        else {
-            return false
-        }
-    }
-
-    func action_toggleStrikethrough() {
-        helper_currentContext_setTrait(
-            .strikethroughStyle,
-            value: state_isStrikethrough ? nil : NSUnderlineStyle.single.rawValue
-        )
-        didChangeFormatting()
-    }
-}
-
-extension MemriTextEditor_UIKit {
-    func helper_currentContext_getTrait<T>(_ trait: NSAttributedString.Key) -> T? {
-        if helper_hasSelection {
-            return helper_selectedText_getTrait(trait)
-        }
-        else {
-            return helper_typingAttributes_getTrait(trait)
-        }
-    }
-
-    func helper_currentContext_setTrait<T>(_ trait: NSAttributedString.Key, value: T?) {
-        if helper_hasSelection {
-            helper_selectedText_setTrait(trait, value: value)
-        }
-        else {
-            helper_typingAttributes_setTrait(trait, value: value)
-        }
-    }
-
-    func helper_currentContext_hasFontTrait(_ trait: UIFontDescriptor.SymbolicTraits) -> Bool {
-        if helper_hasSelection {
-            return helper_selectedText_hasFontTrait(trait)
-        }
-        else {
-            return helper_typingAttributes_hasFontTrait(trait)
-        }
-    }
-
-    func helper_currentContext_toggleFontTrait(_ trait: UIFontDescriptor.SymbolicTraits) {
-        if helper_hasSelection {
-            helper_selectedText_toggleFontTrait(trait)
-        }
-        else {
-            helper_typingAttributes_toggleFontTrait(trait)
-        }
-    }
-
-    func helper_selectedText_getTrait<T>(_ trait: NSAttributedString.Key) -> T? {
-        textStorage.attribute(trait, at: selectedRange.location, effectiveRange: nil) as? T
-    }
-
-    func helper_selectedText_setTrait<T>(_ trait: NSAttributedString.Key, value: T?) {
-        textStorage.enumerateAttribute(
-            .font,
-            in: selectedRange,
-            options: .longestEffectiveRangeNotRequired
-        ) { _, range, _ in
-            textStorage.beginEditing()
-            if let value = value {
-                textStorage.addAttribute(trait, value: value, range: range)
+extension MemriTextEditor_UIKit: WKScriptMessageHandler {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if let content = message.body as? [String: Any] {
+            if let formatting = content["format"] as? [String: Any] {
+                self.currentFormatting = formatting
+                updateToolbar()
             }
-            else {
-                textStorage.removeAttribute(trait, range: range)
+            if let htmlString = content["html"] as? String {
+                let model = MemriTextEditorModel(html: htmlString)
+                onModelUpdate?(model)
             }
-            textStorage.endEditing()
-        }
-    }
-
-    func helper_selectedText_hasFontTrait(_ trait: UIFontDescriptor.SymbolicTraits) -> Bool {
-        (textStorage.attribute(.font, at: selectedRange.location, effectiveRange: nil) as? UIFont)?
-            .helper_hasTrait(trait) ?? false
-    }
-
-    func helper_selectedText_toggleFontTrait(_ trait: UIFontDescriptor.SymbolicTraits) {
-        guard helper_hasSelection else { return }
-        textStorage.enumerateAttribute(
-            .font,
-            in: selectedRange,
-            options: .longestEffectiveRangeNotRequired
-        ) { attribute, range, _ in
-            guard let currentFont = attribute as? UIFont else { return }
-            textStorage.beginEditing()
-            let newFont = currentFont.helper_toggleTrait(trait: trait)
-            textStorage.addAttribute(.font, value: newFont, range: range)
-            textStorage.endEditing()
-        }
-        textStorage.fixAttributes(in: selectedRange)
-    }
-
-    func helper_typingAttributes_getTrait<T>(_ trait: NSAttributedString.Key) -> T? {
-        typingAttributes[trait] as? T
-    }
-
-    func helper_typingAttributes_setTrait<T>(_ trait: NSAttributedString.Key, value: T?) {
-        typingAttributes[trait] = value
-    }
-
-    func helper_typingAttributes_hasFontTrait(_ trait: UIFontDescriptor.SymbolicTraits) -> Bool {
-        (typingAttributes[NSAttributedString.Key.font] as? UIFont)?.fontDescriptor.symbolicTraits
-            .contains(trait) ?? false
-    }
-
-    func helper_typingAttributes_toggleFontTrait(_ trait: UIFontDescriptor.SymbolicTraits) {
-        typingAttributes[NSAttributedString.Key.font] =
-            (typingAttributes[NSAttributedString.Key.font] as? UIFont)?
-                .helper_toggleTrait(trait: trait)
-    }
-}
-
-extension MemriTextEditor_UIKit {
-    func helper_currentIndent() -> CGFloat {
-        let stringStore = textStorage.string as NSString
-        let paragraphRange = stringStore.paragraphRange(for: selectedRange)
-
-        let currentAttributes = textStorage.attributes(
-            at: paragraphRange.location,
-            effectiveRange: nil
-        )
-
-        guard let paragraphStyle =
-            currentAttributes[NSAttributedString.Key.paragraphStyle] as? NSParagraphStyle
-        else { return 0 }
-        return paragraphStyle.headIndent
-    }
-
-    func helper_shiftIndent(by indentChangeAmount: Int) {
-        let stringStore = textStorage.string as NSString
-        let paragraphRange = stringStore.paragraphRange(for: selectedRange)
-        let isEmptyPara = stringStore.substring(with: paragraphRange).isEmpty
-
-        let currentStyle: NSParagraphStyle?
-        if isEmptyPara {
-            currentStyle =
-                typingAttributes[NSAttributedString.Key.paragraphStyle] as? NSParagraphStyle
-        }
-        else {
-            currentStyle = textStorage
-                .attributes(at: paragraphRange.location,
-                            effectiveRange: nil)[
-                                NSAttributedString.Key.paragraphStyle
-                            ] as? NSParagraphStyle
-        }
-
-        let newStyle = (currentStyle?.mutableCopy() as? NSMutableParagraphStyle) ??
-            NSMutableParagraphStyle()
-        newStyle.headIndent = max(
-            0,
-            ((newStyle.headIndent / indentWidth).rounded(.down) + CGFloat(indentChangeAmount)) *
-                CGFloat(indentWidth)
-        )
-        newStyle.firstLineHeadIndent = newStyle.headIndent
-
-        if isEmptyPara {
-            typingAttributes[NSAttributedString.Key.paragraphStyle] = newStyle
-        }
-        else {
-            textStorage.beginEditing()
-            textStorage.addAttribute(
-                NSAttributedString.Key.paragraphStyle,
-                value: newStyle,
-                range: paragraphRange
-            )
-            textStorage.endEditing()
-            fireTextChange()
         }
     }
 }
 
-extension MemriTextEditor_UIKit {
-    func helper_makeSelectionList(type: ListType) {
-        // Find the range of selected lines
-        // var startOfFirstLine: Int = 0, endOfLastLine: Int = 0
-        let paragraphRange = (textStorage.string as NSString).paragraphRange(for: selectedRange)
-
-        //    .getLineStart(&startOfFirstLine, end: &endOfLastLine, contentsEnd: nil, for: selectedRange)
-
-        // Create storage for modified lines
-        var modifiedParagraphs: [NSAttributedString] = []
-
-        // Iterate through the lines
-        var lineIndex = 1
-        var currentParaStart = paragraphRange.location
-        while currentParaStart <= paragraphRange.upperBound {
-            let currentLineRange = (textStorage.string as NSString)
-                .paragraphRange(for: NSRange(location: currentParaStart, length: 0))
-            guard let string = textStorage.attributedSubstring(from: currentLineRange)
-                .mutableCopy() as? NSMutableAttributedString else { continue }
-
-            var attributes: [NSAttributedString.Key: Any] =
-                [.font: UIFont.systemFont(ofSize: fontSize)]
-
-            if !string.string.isEmpty {
-                attributes[.paragraphStyle] = string
-                    .attributes(at: 0, effectiveRange: nil)[.paragraphStyle] as? NSParagraphStyle
-            }
-
-            // MODIFY HERE
-            ListType.removeListText(in: string.mutableString)
-            string.insert(
-                NSAttributedString(string: type.stringForLine(index: lineIndex),
-                                   attributes: attributes),
-                at: 0
-            )
-
-            // Append modified string
-            modifiedParagraphs.append(string)
-            currentParaStart = currentLineRange.upperBound + 1
-            lineIndex += 1
-        }
-
-        // Join lines back together
-        let modifiedSection = modifiedParagraphs
-            .reduce(into: NSMutableAttributedString()) { result, line in
-                result.append(line)
-            }
-
-        // Apply changes
-        textStorage.beginEditing()
-        textStorage.replaceCharacters(in: paragraphRange,
-                                      with: modifiedSection)
-        textStorage.endEditing()
-        selectedRange = NSRange(
-            location: paragraphRange.lowerBound + modifiedSection.length - 1,
-            length: 0
-        )
-        fireTextChange()
+extension MemriTextEditor_UIKit: WKNavigationDelegate {
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        setContent(content: initialModel.html).sink{ [weak self] in
+            guard let self = self else { return }
+            self.updateSearchState().sink{}.store(in: &self.cancellableBag)
+        }.store(in: &cancellableBag)
+        (superview as? TextEditorWrapperUIView)?.showActivityIndicator = false
+        updateToolbar()
+        grabFocus(moveToEnd: true)
     }
 }
 
+extension MemriTextEditor_UIKit: UIScrollViewDelegate {
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return nil
+    }
+}
+
+import Combine
 extension MemriTextEditor_UIKit {
-    enum ListType {
-        case unorderedList
-        case orderedList
-
-        var expression: NSRegularExpression? {
-            switch self {
-            case .unorderedList:
-                return try? NSRegularExpression(
-                    pattern: "^\\s*[-*••∙●][ \t]",
-                    options: .caseInsensitive
-                )
-            case .orderedList:
-                return try? NSRegularExpression(
-                    pattern: "^\\s*\\d*\\.[ \t]",
-                    options: .caseInsensitive
-                )
+    func setContent(content: String?) -> Future<Void, Never> {
+        let content = content?.escapeForJavascript()
+        let setContent = content.map { "window.editor.setContent(content = \"\($0)\", emitUpdate = false);" }
+        return Future { (promise) in
+            if let script = setContent {
+                self.evaluateJavaScript(script) { (some, error) in
+                    promise(.success(()))
+                }
+            } else {
+                promise(.success(()))
             }
         }
-
-        func stringForLine(index: Int) -> String {
-            switch self {
-            case .unorderedList:
-                return "• "
-            case .orderedList:
-                return "\(index). "
+    }
+    
+    func setFormatting(format: String, info: [String: Any] = [:]) -> Future<Void, Never> {
+        let infoString = (try? String(data: JSONSerialization.data(withJSONObject: info), encoding: .utf8)) ?? ""
+        let script = "window.editor.commands.\(format)(\(infoString));"
+        return Future { (promise) in
+            self.evaluateJavaScript(script) { (some, error) in
+                promise(.success(()))
             }
         }
-
-        func checkIfHasMatch(in string: NSString) -> Bool {
-            let range = NSMakeRange(0, string.length)
-            guard let expression = expression else {
-                return false
+    }
+    
+    func updateSearchState() -> Future<Void, Never> {
+        let script = searchTerm.map { searchString in
+            "window.editor.commands.find(\"\(searchString.escapeForJavascript())\");"
+        } ?? "window.editor.commands.clearSearch()"
+        return Future { (promise) in
+            self.evaluateJavaScript(script) { (some, error) in
+                promise(.success(()))
             }
-            return expression.firstMatch(in: String(string), options: [], range: range) != nil
         }
+    }
+}
 
-        func removeMatches(in mutableString: NSMutableString) {
-            guard let expression = expression else {
-                return
-            }
-            let range = NSMakeRange(0, mutableString.length)
-            expression.replaceMatches(
-                in: mutableString,
-                options: [],
-                range: range,
-                withTemplate: ""
-            )
-        }
 
-        static func getListType(_ string: NSString) -> ListType? {
-            [Self.unorderedList, .orderedList].first { $0.checkIfHasMatch(in: string) }
-        }
-
-        static func removeListText(in mutableString: NSMutableString) {
-            [Self.unorderedList, .orderedList].forEach { $0.removeMatches(in: mutableString) }
-        }
+class ToolbarWrapperView: UIView {
+    var toolbarView: UIView
+    
+    init(toolbarView: UIView) {
+        self.toolbarView = toolbarView
+        super.init(frame: .zero)
+        addSubview(toolbarView)
+        translatesAutoresizingMaskIntoConstraints = false
+        toolbarView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            toolbarView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            toolbarView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            toolbarView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            toolbarView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor)
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override var intrinsicContentSize: CGSize {
+        CGSize(width: toolbarView.intrinsicContentSize.width, height: toolbarView.intrinsicContentSize.height + safeAreaInsets.bottom)
+    }
+    
+    override func safeAreaInsetsDidChange() {
+        super.safeAreaInsetsDidChange()
+        invalidateIntrinsicContentSize()
     }
 }

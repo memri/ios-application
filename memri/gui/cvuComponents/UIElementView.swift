@@ -59,7 +59,7 @@ public struct UIElementView: SwiftUI.View {
         case .Textfield:
             CVU_TextField(nodeResolver: nodeResolver, editModeBinding: editModeBinding)
         case .RichTextfield:
-            CVU_RichTextEditor(nodeResolver: nodeResolver, editModeBinding: editModeBinding)
+            CVU_RichTextEditor(nodeResolver: nodeResolver, editModeBinding: editModeBinding, searchTerm: context.currentView?.filterText)
         case .EditorSection:
             CVU_EditorSection(nodeResolver: nodeResolver)
         case .EditorRow:

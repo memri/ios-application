@@ -15,13 +15,18 @@ struct SearchView: View {
             VStack(spacing: 0) {
                 Divider()
                 HStack {
-                    MemriTextField(value: Binding<String>(
-                        get: { self.context.currentView?.filterText ?? "" },
-                        set: { self.context.currentView?.filterText = $0 }
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(Color(.systemFill))
+                    MemriTextField(
+                        value: Binding<String>(
+                            get: { self.context.currentView?.filterText ?? "" },
+                            set: { self.context.currentView?.filterText = $0 }
                         ),
-                                   placeholder: context.currentView?.searchHint ?? "",
-                                   showPrevNextButtons: false,
-                                   isEditing: $isActive)
+                        placeholder: context.currentView?.searchHint ?? "",
+                        clearButtonMode: .always,
+                        showPrevNextButtons: false,
+                        isEditing: $isActive
+                    )
                     .onEditingEnded {
                         self.isActive = false
                     }

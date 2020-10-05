@@ -225,3 +225,4 @@ xcuserdata/
 ####
 # UNKNOWN: recommended by others, but I can't discover what these files are
 #
+memri/gui/components/Text/MemriTextEditor/textEditor/node_modules
