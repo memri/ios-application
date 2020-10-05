@@ -18,14 +18,14 @@ import CodeBlockHighlight from "./codeBlockHighlight";
 import TipTapCustomImage from "./TipTapImage";
 import OrderedList from "./OrderedList";
 import BulletList from "./BulletList";
+import TodoItem from "./TodoItem";
 
 import {
   Blockquote,
   Heading,
   ListItem,
   HardBreak,
-  // TodoItem,
-  // TodoList,
+  TodoList,
   Bold,
   Code,
   Italic,
@@ -64,8 +64,10 @@ window.editor = new Editor({
     new Heading({ levels: [1, 2, 3] }),
     new ListItem(),
     new OrderedList(),
-    // new TodoItem(),
-    // new TodoList(),
+    new TodoItem({
+      nested: true,
+    }),
+    new TodoList(),
     // new Link(),
     new Bold(),
     new Code(),
@@ -100,6 +102,7 @@ window.editor = new Editor({
         underline: isActive.underline(),
         strike: isActive.strike(),
         heading: isActive.heading(),
+        todo_list: isActive.todo_list(),
         ordered_list: isActive.ordered_list(),
         bullet_list: isActive.bullet_list(),
         sink_list: window.editor.commands.can_sink_list(),

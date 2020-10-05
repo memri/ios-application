@@ -226,7 +226,7 @@
     {
         "_type": "Note",
         "title": "A demo note",
-        "content": "<p><strong>Hi there,<\/strong><\/p><p>Let's explore the <u>new<\/u> text editor.<\/p><p><\/p><ul> <li><p>This is a list<\/p><\/li> <li><p>You can press return to make a new item<\/p>  <ul>   <li><p>Indented item<\/p><\/li>   <li><p><s>Something else<\/s><\/p><\/li>  <\/ul><\/li><\/ul><p><\/p><p>Or an ordered list:<\/p><ol> <li><p>Milk<\/p><\/li> <li><p>Eggs<\/p><\/li> <li><p>Flour<\/p>  <ol>   <li><p>Self-raising<\/p><\/li>   <li><p>Plain<\/p><\/li>  <\/ol><\/li><\/ol><p><\/p><p>It also supports both <code>inline code</code> and code blocks:<\/p><pre><code>def some_function(argument):\n    return \\\"Automatic code highlighting!\\\"<\/code><\/pre><p><\/p><p><strong>Memri:<\/strong> truly yours<\/p><p><\/p><p><\/p>"
+        "content": "<p><strong>Hi there,<\/strong><\/p><p>Let's explore the <u>new<\/u> text editor.<\/p><p><\/p><ul> <li><p>This is a list<\/p><\/li> <li><p>You can press return to make a new item<\/p>  <ul>   <li><p>Indented item<\/p><\/li>   <li><p><s>Something else<\/s><\/p><\/li>  <\/ul><\/li><\/ul><p><\/p><p>Or an ordered list:<\/p><ol> <li><p>Milk<\/p><\/li> <li><p>Eggs<\/p><\/li> <li><p>Flour<\/p>  <ol>   <li><p>Self-raising<\/p><\/li>   <li><p>Plain<\/p><\/li>  <\/ol><\/li><\/ol><p><\/p><p><strong>Todo list<\/strong><\/p><ul data-type=\"todo_list\"> <li data-type=\"todo_item\" data-done=\"true\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span>  <div class=\"todo-content\">   <p>Try out new editor<\/p>  <\/div><\/li> <li data-type=\"todo_item\" data-done=\"false\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span>  <div class=\"todo-content\">   <p>Finish writing blog post <\/p> <ul data-type=\"todo_list\"><li data-type=\"todo_item\" data-done=\"false\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span><div class=\"todo-content\"><p>Improve the second paragraph<\/p><\/div><\/li><\/ul><\/div><\/li> <li data-type=\"todo_item\" data-done=\"false\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span>  <div class=\"todo-content\">   <p>Prepare presentation<\/p>  <\/div><\/li><\/ul><p><\/p><p>It also supports both <code>inline code<\/code> and code blocks:<\/p><pre><code>def some_function(argument):    return \"Automatic code highlighting!\"<\/code><\/pre><p><\/p><p><\/p>"
     },
     {
         "_type": "Photo",
@@ -3582,13 +3582,6 @@
         "title": "Love letter",
         "content": "Roses are red, violets are blue",
         "dateModified": 1593147945298,
-        "version": 1
-    },
-    {
-        "_type": "Note",
-        "title": "Notes to self",
-        "content": "<ul>\r\n    <li>\r\n        <p>Buy groceries<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Call john<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Do the taxes<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Take out the trash<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Reply to carls mail<\/p>\r\n    <\/li>\r\n<\/ul>\r\n<p><br \/><\/p>\r\n<ul>\r\n    <li>\r\n        <p>Buy groceries<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Call john<\/p>\r\n        <ul>\r\n            <li>\r\n                <p>He really needs to pick up<\/p>\r\n            <\/li>\r\n            <li>\r\n                <p>Because I need to speak to him<\/p>\r\n            <\/li>\r\n        <\/ul>\r\n    <\/li>\r\n    <li>\r\n        <p>Do the taxes<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Take out the trash<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Reply to carls mail<\/p>\r\n    <\/li>\r\n<\/ul>\r\n<p>Buy: Toothpaste<\/p>\r\n<p><strong>Read<\/strong>: The age of surveillance capitalism<\/p>\r\n<p>Watch: Parasite<\/p>\r\n<p>Read:<\/p>\r\n<ul>\r\n    <li>\r\n        <p>Joe speedboat<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Een schitterend gebrek<\/p>\r\n    <\/li>\r\n<\/ul>\r\n<p><br><strong>Read<\/strong><br>Joe speedboat<br>Een schitterend gebrek<\/p>\r\n<p><br><\/p>\r\n<p><strong>Buy<\/strong><\/p>\r\n<p>Groceries<br>Shoes<br><br><strong>Read<\/strong><br>Joe speedboat<br>Een schitterend gebrek<\/p>",
-        "dateModified": 1593717745298,
         "version": 1
     },
     {

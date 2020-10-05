@@ -116,7 +116,12 @@ textarea:focus, input:focus{
 
 .ProseMirror ol,
 .ProseMirror ul {
-	padding-left: 1.0em
+	padding-left: 0.5em
+}
+
+.ProseMirror li>ol,
+.ProseMirror li>ul {
+	padding-left: 1em
 }
 
 .ProseMirror li>p {
@@ -161,27 +166,6 @@ textarea:focus, input:focus{
 	display: inline-block;
 	white-space: nowrap;
 	width: 1.2em
-}
-
-.ProseMirror li:not(.ql-direction-rtl)::before {
-	margin-left: -1.5em;
-	margin-right: .3em;
-	text-align: right
-}
-
-.ProseMirror li.ql-direction-rtl::before {
-	margin-left: .3em;
-	margin-right: -1.5em
-}
-
-.ProseMirror ol li:not(.ql-direction-rtl),
-.ProseMirror ul li:not(.ql-direction-rtl) {
-	padding-left: 1.5em
-}
-
-.ProseMirror ol li.ql-direction-rtl,
-.ProseMirror ul li.ql-direction-rtl {
-	padding-right: 1.5em
 }
 
 .ProseMirror ol li {
@@ -345,3 +329,47 @@ textarea:focus, input:focus{
 .ProseMirror div.tiptap-custom-image-container .resizableElement {
 	max-width: 100%;
 }
+
+.ProseMirror ul[data-type="todo_list"] {
+	 padding-left: 0;
+}
+ .ProseMirror li[data-type="todo_item"] {
+	 display: flex;
+	 flex-direction: row;
+}
+.ProseMirror li[data-type="todo_item"]:before {
+	 content: none
+}
+ .ProseMirror .todo-checkbox {
+	 border: 2px solid black;
+	 height: 0.9em;
+	 width: 0.9em;
+	 box-sizing: border-box;
+	 margin-right: 10px;
+	 margin-top: 0.3rem;
+	 user-select: none;
+	 -webkit-user-select: none;
+	 cursor: pointer;
+	 border-radius: 0.2em;
+	 background-color: transparent;
+	 transition: 0.4s background;
+}
+ .ProseMirror .todo-content {
+	 flex: 1;
+}
+ .ProseMirror .todo-content > p:last-of-type {
+	 margin-bottom: 0;
+}
+ .ProseMirror .todo-content > ul[data-type="todo_list"] {
+	 margin: 0.5rem 0;
+}
+ .ProseMirror li[data-done="true"] > .todo-content > p {
+	 text-decoration: line-through;
+}
+ .ProseMirror li[data-done="true"] > .todo-checkbox {
+	 background-color: gray;
+}
+ .ProseMirror li[data-done="false"] {
+	 text-decoration: none;
+}
+ 
