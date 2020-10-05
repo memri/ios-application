@@ -125,12 +125,12 @@ textarea:focus, input:focus{
 }
 
 .ProseMirror li>p {
-	display: inline-block;
+	display: block;
 }
 
 .ProseMirror ol>li,
 .ProseMirror ul>li {
-	list-style-type: none
+	list-style-type: none;
 }
 
 .ProseMirror ul>li::before {
@@ -163,9 +163,11 @@ textarea:focus, input:focus{
 }
 
 .ProseMirror li::before {
-	display: inline-block;
 	white-space: nowrap;
-	width: 1.2em
+	display: block;
+	float: left;
+	min-width: 0.6em;
+	padding-right: 0.4em;
 }
 
 .ProseMirror ol li {
