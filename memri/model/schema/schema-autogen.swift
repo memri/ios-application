@@ -1637,6 +1637,8 @@ public class ImporterRun : Item {
     @objc dynamic var runStatus:String? = nil
     /// Description of the error
     @objc dynamic var errorMessage:String? = nil
+    /// Message describing the progress of a process.
+    @objc dynamic var progressMessage:String? = nil
 
     /// An Importer is used to import data from an external source to the Pod database.
     var importer: Importer? {
@@ -1655,6 +1657,7 @@ public class ImporterRun : Item {
             password = try decoder.decodeIfPresent("password") ?? password
             runStatus = try decoder.decodeIfPresent("runStatus") ?? runStatus
             errorMessage = try decoder.decodeIfPresent("errorMessage") ?? errorMessage
+            progressMessage = try decoder.decodeIfPresent("progressMessage") ?? progressMessage
 
             try self.superDecode(from: decoder)
         }
@@ -1720,6 +1723,8 @@ public class IndexerRun : Item {
     @objc dynamic var runStatus:String? = nil
     /// Description of the error
     @objc dynamic var errorMessage:String? = nil
+    /// Message describing the progress of a process.
+    @objc dynamic var progressMessage:String? = nil
 
     /// An Indexer is used to enrich data in the Pod database.
     var indexer: Indexer? {
@@ -1737,6 +1742,7 @@ public class IndexerRun : Item {
             targetDataType = try decoder.decodeIfPresent("targetDataType") ?? targetDataType
             runStatus = try decoder.decodeIfPresent("runStatus") ?? runStatus
             errorMessage = try decoder.decodeIfPresent("errorMessage") ?? errorMessage
+            progressMessage = try decoder.decodeIfPresent("progressMessage") ?? progressMessage
 
             try self.superDecode(from: decoder)
         }
