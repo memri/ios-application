@@ -1661,8 +1661,7 @@ public class ImporterRun : Item {
     /// Repository associated with this item, e.g. used by Pod to start appropriate integrator
     /// container.
     @objc dynamic var repository:String? = nil
-    /// The progress an Item made. The number could be a (rounded) percentage or a count of a
-    /// (potentially unknown) total.
+    /// The progress an Item made. Encoded as a float number from 0.0 to 1.0.
     let progress = RealmOptional<Double>()
     /// The type of the data this Item acts on.
     @objc dynamic var dataType:String? = nil
@@ -1751,8 +1750,7 @@ public class IndexerRun : Item {
     @objc dynamic var repository:String? = nil
     /// A Memri query that retrieves a set of Items from the Pod database.
     @objc dynamic var query:String? = nil
-    /// The progress an Item made. The number could be a (rounded) percentage or a count of a
-    /// (potentially unknown) total.
+    /// The progress an Item made. Encoded as a float number from 0.0 to 1.0.
     let progress = RealmOptional<Double>()
     /// The type of data this Item targets.
     @objc dynamic var targetDataType:String? = nil
