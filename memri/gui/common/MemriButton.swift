@@ -64,7 +64,6 @@ public struct MemriButton: View {
                         .foregroundColor(Color(hex: "#fff"))
                         .font(.system(size: 14, weight: .semibold))
                         .cornerRadius(20)
-                        .compositingGroup()
 
                     Text(title)
                         .padding(.leading, 5)
@@ -74,10 +73,10 @@ public struct MemriButton: View {
                         .font(.system(size: 14, weight: .semibold))
                         .zIndex(10)
                 }
+                .lineLimit(1)
                 .background(bgColor)
                 .cornerRadius(20)
                 .compositingGroup()
-                //        .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
@@ -85,6 +84,6 @@ public struct MemriButton: View {
 
 struct memriButton_Previews: PreviewProvider {
     static var previews: some View {
-        MemriButton(item: Note(value: ["title": "Untitled Note"]))
+        MemriButton(item: Note(value: ["title": "Untitled"]))
     }
 }

@@ -16,7 +16,7 @@ struct DefaultGeneralEditorRow: View {
     var readOnly: Bool
     var isLast: Bool
     var renderConfig: CascadingRendererConfig
-    var arguments: ViewArguments?
+    var arguments: ViewArguments
     
     var body: some View {
         // Get the type from the schema, because when the value is nil the type cannot be determined
@@ -40,7 +40,7 @@ struct DefaultGeneralEditorRow: View {
                     }
                     else if readOnly {
                         if [.string, .bool, .date, .int, .double].contains(propType) {
-                            defaultRow(ExprInterpreter.evaluateString(propValue, ""))
+                            defaultRow(ExprInterpreter.evaluateString(propValue, defaultValue: ""))
                         }
                         else if propType == .object {
                             if propValue is Item {
@@ -54,18 +54,25 @@ struct DefaultGeneralEditorRow: View {
                         else { defaultRow() }
                     }
                     else {
-                        if propType == .string { stringRow() }
-                        else if propType == .bool { boolRow() }
-                        else if propType == .date { dateRow() }
-                        else if propType == .int { intRow() }
-                        else if propType == .double { doubleRow() }
-                        else if propType == .object { defaultRow() }
-                        else { defaultRow() }
+                        switch propType {
+                        case .string:
+                            stringRow()
+                        case .bool:
+                            boolRow()
+                        case .date:
+                            dateRow()
+                        case .int:
+                            intRow()
+                        case .double:
+                            doubleRow()
+                        default:
+                            defaultRow()
+                        }
                     }
                 }
                 .fullWidth()
                 .padding(.bottom, 10)
-                .padding(.horizontal, 36)
+                .padding(.horizontal)
                 .background(readOnly ? Color(hex: "#f9f9f9") : Color(hex: "#f7fcf5"))
                 
                 if !isLast {
@@ -77,16 +84,16 @@ struct DefaultGeneralEditorRow: View {
     
     func stringRow() -> some View {
         let binding = Binding<String>(
-            get: { self.item.getString(self.prop) },
+            get: { self.item.getString(self.prop) ?? "" },
             set: {
                 self.item.set(self.prop, $0)
         }
         )
         
-        return MemriTextField(value: binding)
-            .onEditingBegan {
-                self.context.currentSession?.editMode = true
-        }
+        return MemriTextField(value: binding,
+                              clearButtonMode: .whileEditing,
+                              isEditing: $context.editMode,
+                              isSharedEditingBinding: true)
         .generalEditorCaption()
     }
     
@@ -120,10 +127,10 @@ struct DefaultGeneralEditorRow: View {
         }
         )
         
-        return MemriTextField(value: binding)
-            .onEditingBegan {
-                self.context.currentSession?.editMode = true
-        }
+        return MemriTextField(value: binding,
+                              clearButtonMode: .whileEditing,
+                              isEditing: $context.editMode,
+                              isSharedEditingBinding: true)
         .generalEditorCaption()
     }
     
@@ -136,13 +143,14 @@ struct DefaultGeneralEditorRow: View {
         }
         )
         
-        return MemriTextField(value: binding)
-            .onEditingBegan {
-                self.context.currentSession?.editMode = true
-        }
+        return MemriTextField(value: binding,
+                              clearButtonMode: .whileEditing,
+                              isEditing: $context.editMode,
+                              isSharedEditingBinding: true)
         .generalEditorCaption()
     }
     
+    @ViewBuilder
     func dateRow() -> some View {
         let binding = Binding<Date>(
             get: { self.item[self.prop] as? Date ?? Date() },
@@ -152,10 +160,16 @@ struct DefaultGeneralEditorRow: View {
         }
         )
         
-        return DatePicker("", selection: binding, displayedComponents: .date)
-            .frame(width: 300, height: 80, alignment: .center)
-            .clipped()
-            .padding(8)
+        if #available(iOS 14.0, *) {
+            DatePicker("", selection: binding, displayedComponents: .date)
+                .labelsHidden()
+        } else {
+            DatePicker("", selection: binding, displayedComponents: .date)
+                .labelsHidden()
+                .frame(width: 300, height: 80, alignment: .center)
+                .clipped()
+                .padding(8)
+        }
     }
     
     func defaultRow(_ caption: String? = nil) -> some View {
@@ -177,7 +191,7 @@ private struct GeneralEditorInput: ViewModifier {
             .fullHeight()
             .font(.system(size: 16, weight: .regular))
             .padding(10)
-            .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
+//            .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
             .generalEditorCaption()
     }
 }
@@ -206,7 +220,7 @@ private struct GeneralEditorHeader: ViewModifier {
             .foregroundColor(Color(hex: "#434343"))
             .padding(.bottom, 5)
             .padding(.top, 24)
-            .padding(.horizontal, 36)
+            .padding(.horizontal)
             .foregroundColor(Color(hex: "#333"))
     }
 }

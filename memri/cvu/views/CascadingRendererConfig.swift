@@ -8,10 +8,10 @@ import SwiftUI
 
 public class RenderGroup {
     var options: [String: Any?] = [:]
-    var body: UIElement?
+    var body: UINode?
 
     init(_ dict: inout [String: Any?]) {
-        body = (dict["children"] as? [UIElement])?.first
+        body = (dict["children"] as? [UINode])?.first
         dict.removeValue(forKey: "children")
         options = dict
     }
@@ -50,7 +50,7 @@ public class CascadingRendererConfig: Cascadable {
             return renderGroup
         }
         else if group == "*", cascadeProperty("*") == nil {
-            if let list: [UIElement] = cascadeProperty("children") {
+            if let list: [UINode] = cascadeProperty("children") {
                 var dict = ["children": list] as [String: Any?]
                 let renderGroup = RenderGroup(&dict)
                 localCache[group] = renderGroup
@@ -69,20 +69,13 @@ public class CascadingRendererConfig: Cascadable {
     public func render(
         item: Item?,
         group: String = "*",
-        arguments: ViewArguments? = nil
-    ) -> UIElementView {
-        func doRender(_ renderGroup: RenderGroup, _ item: Item) -> UIElementView {
-            if let body = renderGroup.body {
-                return UIElementView(body, item, arguments ?? viewArguments)
-            }
-            return UIElementView(UIElement(.Empty), item)
-        }
-
-        if let item = item, let renderGroup = getRenderGroup(group) {
-            return doRender(renderGroup, item)
-        }
-        else {
-            return UIElementView(UIElement(.Empty), item ?? Item())
+        arguments: ViewArguments = ViewArguments()
+    ) -> AnyView {
+        if let item = item, let body = getRenderGroup(group)?.body {
+            let nodeResolver = UINodeResolver(node: body, viewArguments: arguments.copy(item))
+            return UIElementView(nodeResolver: nodeResolver).eraseToAnyView()
+        } else {
+            return EmptyView().eraseToAnyView()
         }
     }
 }

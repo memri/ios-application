@@ -35,10 +35,10 @@ class CVUSerializer {
                 let uid = p.uid.value {
                 return "{{ item('\(p.genericType)', \(uid)) }}"
             }
-            else if case let ColorDefinition.hex(hex) = p {
+            else if case let CVUColor.hex(hex) = p {
 				return "#\(hex.trimmingCharacters(in: CharacterSet(charactersIn: "#")))"
             }
-            else if case let ColorDefinition.system(uiColor) = p {
+            else if case let CVUColor.system(uiColor) = p {
                 return uiColor.hexString()
             }
             else if let p = p as? Double {
@@ -202,7 +202,7 @@ class CVUSerializer {
         var children: String = ""
         var definitions: [String] = []
         var hasPriorContent = str.count > 0
-        if let p = dict["children"] as? [UIElement], p.count > 0 {
+        if let p = dict["children"] as? [UINode], p.count > 0 {
             let body = arrayToString(p, depth, tab, withDef: false, extraNewLine: true)
             children = "\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)"
             hasPriorContent = true

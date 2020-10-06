@@ -154,17 +154,17 @@ struct Navigation: View {
                 .background(Color(hex: "#341e51"))
                 .cornerRadius(5)
 
-                Button(action: {}) {
-                    Image(systemName: "pencil")
-                        .font(Font.system(size: 22, weight: .semibold))
-                        .foregroundColor(Color(hex: "#d9d2e9"))
-                }
-
-                Button(action: {}) {
-                    Image(systemName: "plus")
-                        .font(Font.system(size: 22, weight: .semibold))
-                        .foregroundColor(Color(hex: "#d9d2e9"))
-                }
+//                Button(action: {}) {
+//                    Image(systemName: "pencil")
+//                        .font(Font.system(size: 22, weight: .semibold))
+//                        .foregroundColor(Color(hex: "#d9d2e9"))
+//                }
+//
+//                Button(action: {}) {
+//                    Image(systemName: "plus")
+//                        .font(Font.system(size: 22, weight: .semibold))
+//                        .foregroundColor(Color(hex: "#d9d2e9"))
+//                }
             }
             .padding(.top, 40)
             .padding(.horizontal, 20)

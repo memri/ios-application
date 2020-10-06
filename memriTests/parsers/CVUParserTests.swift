@@ -641,7 +641,7 @@ class CVUParserTests: XCTestCase {
                 Text {
                     textAlign: center
                     font: 12 light
-                    align: top
+                    alignment: top
                 }
 
                 Text {
@@ -1024,7 +1024,7 @@ class CVUParserTests: XCTestCase {
              edgeInset: 0 0 0 0
              Image, {
                  image: "{.file}" /* ALLOW BOTH STRINGS AND FILES*/
-                 resizable: fill
+                 sizingMode: fill
              }
          }
      }

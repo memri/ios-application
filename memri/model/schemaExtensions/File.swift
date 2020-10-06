@@ -44,32 +44,8 @@ class LocalFileSyncQueue : Object {
 }
 
 extension File {
-    public var url: URL? {
-        guard sha256 != nil else {
-            return filename.flatMap { uuid in
-                // Normally we just want the URL
-                FileStorageController.getURLForFile(withUUID: uuid)
-            }
-        }
-        
-        return sha256.flatMap { uuid in
-            // Normally we just want the URL
-            FileStorageController.getURLForFile(withUUID: uuid)
-        }
-    }
-
-    public var asUIImage: UIImage? {
-        do { if let x: UIImage = try read() { return x } }
-        catch {
-            // TODO: User error handling
-            // TODO: Refactor: error handling
-            if sha256 == nil, let fileName = filename {
-                // Note that this is a temporary solution. Using UIImage(named:) will only work for files in the app bundle
-                return UIImage(named: "DemoAssets/\(fileName)")
-            }
-            debugHistory.error("Could not read image")
-        }
-        return nil
+    public var url: URL {
+       FileStorageController.getURLForFile(withUUID: fileUID)
     }
 
     public var asString: String? {
@@ -91,8 +67,6 @@ extension File {
     }
     
     private func createSHA256() throws -> String {
-        guard let url = url else { throw "SHA256 Not set" }
-        
         let bufferSize = 1024 * 1024
         let file = try FileHandle(forReadingFrom: url)
         defer {
@@ -166,7 +140,7 @@ extension File {
         let cachedData: T? = InMemoryObjectCache.global.get(sha256) as? T
         if cachedData != nil { return cachedData }
 
-        guard let data = FileStorageController.getData(fromFileForUUID: sha256)
+        guard let data = FileStorageController.getData(fromFileForUUID: fileUID)
         else { throw "Couldn't read file" }
 
         let decoded = try JSONDecoder().decode(T.self, from: data)
@@ -199,17 +173,16 @@ extension File {
             
             let lastSHA256 = self["sha256"] as? String
             
+            // Update hash
             let sha256 = try createSHA256(data)
             self.set("sha256", sha256)
 
-            try FileStorageController.writeData(data, toFileForUUID: sha256)
-            try InMemoryObjectCache.global.set(sha256, value)
+            try FileStorageController.writeData(data, toFileForUUID: fileUID)
+            try InMemoryObjectCache.global.set(fileUID, value)
             LocalFileSyncQueue.add(sha256, task:"upload")
             
             // Cleanup
             if let lastSHA256 = lastSHA256, lastSHA256 != sha256 {
-                try FileStorageController.deleteFile(withUUID: lastSHA256)
-                InMemoryObjectCache.global.clear(lastSHA256)
                 LocalFileSyncQueue.remove(lastSHA256)
             }
         }
@@ -223,17 +196,16 @@ extension File {
             let jsonData = try JSONEncoder().encode(value)
             let lastSHA256 = self["sha256"] as? String
             
+            // Update hash
             let sha256 = try createSHA256(jsonData)
             self.set("sha256", sha256)
 
-            try FileStorageController.writeData(jsonData, toFileForUUID: sha256)
-            try InMemoryObjectCache.global.set(sha256, value)
+            try FileStorageController.writeData(jsonData, toFileForUUID: fileUID)
+            try InMemoryObjectCache.global.set(fileUID, value)
             LocalFileSyncQueue.add(sha256, task:"upload")
             
             // Cleanup
             if let lastSHA256 = lastSHA256, lastSHA256 != sha256 {
-                try FileStorageController.deleteFile(withUUID: lastSHA256)
-                InMemoryObjectCache.global.clear(lastSHA256)
                 LocalFileSyncQueue.remove(lastSHA256)
             }
         }

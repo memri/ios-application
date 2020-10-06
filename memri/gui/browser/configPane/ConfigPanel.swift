@@ -26,6 +26,7 @@ struct ConfigPanel: View {
                         self.getConfigView(configItem)
                     }
                 }
+                .listStyle(PlainListStyle())
                 .navigationBarTitle(Text("Config"), displayMode: .inline)
                 .navigationBarHidden(keyboard.keyboardVisible)
             }
@@ -194,6 +195,7 @@ struct ConfigPanelSelectionView: View {
 				}
 			}
 		}
+        .listStyle(PlainListStyle())
 		.navigationBarTitle(Text(configItem.displayName), displayMode: .inline)
 	}
 	

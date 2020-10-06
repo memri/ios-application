@@ -20,7 +20,7 @@ struct KeyboardModifier: ViewModifier {
             .offset(enabled ? (contentBounds.flatMap { contentBounds in
                 CGSize(width: 0,
                        height: min(0, (extraEnvironment.screenSize.height - contentBounds.maxY) - keyboard.currentHeight))
-            } ?? .zero) : .zero)
+                } ?? .zero) : .zero)
             .frame(height: keyboard.keyboardVisible ? overrideHeightWhenVisible : nil)
             .background(
                 GeometryReader { geom in
@@ -29,7 +29,7 @@ struct KeyboardModifier: ViewModifier {
                         value: geom.frame(in: .global)
                     )
                 }
-            )
+        )
             .onPreferenceChange(BoundsPreferenceKey.self, perform: { value in
                 DispatchQueue.main.async {
                     self.contentBounds = value
@@ -44,12 +44,12 @@ struct KeyboardPaddingModifier: ViewModifier {
     @ObservedObject var keyboard = KeyboardResponder.shared
     @EnvironmentObject var extraEnvironment: ExtraEnvironment
     @State var contentBounds: CGRect?
-    
+
     func body(content: Content) -> some View {
         content
             .padding(.bottom, enabled ? (contentBounds.flatMap { contentBounds in
                 max(0, keyboard.currentHeight - (extraEnvironment.screenSize.height - contentBounds.maxY))
-            } ?? 0) : 0)
+                } ?? 0) : 0)
             .background(
                 GeometryReader { geom in
                     Color.clear.preference(
@@ -57,7 +57,7 @@ struct KeyboardPaddingModifier: ViewModifier {
                         value: geom.frame(in: .global)
                     )
                 }
-            )
+        )
             .onPreferenceChange(BoundsPreferenceKey.self, perform: { value in
                 DispatchQueue.main.async {
                     self.contentBounds = value

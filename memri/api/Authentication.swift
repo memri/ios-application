@@ -11,7 +11,7 @@ import LocalAuthentication
 import CryptoKit
 
 class Authentication {
-    #if targetEnvironment(simulator)
+    #if targetEnvironment(simulator) || (targetEnvironment(macCatalyst) && DEBUG)
     private static let autologin = true
     #endif
     
@@ -130,16 +130,17 @@ class Authentication {
 //    }
     
     static func authenticateOwnerByPasscode(_ callback: @escaping (Error?) -> Void) {
-        #if targetEnvironment(simulator)
-        if DatabaseController.realmTesting || autologin {
+//        #if targetEnvironment(simulator) || (targetEnvironment(macCatalyst) && DEBUG)
+//        if DatabaseController.realmTesting || autologin {
+        #warning("AUTHENTICATION DISABLED!!")
             isOwnerAuthenticated = true
             callback(nil)
             return
-        }
+//        }
         
         authenticateOwner(callback)
         return
-        #endif
+//        #endif
         
         let query: NSDictionary = [
             kSecClass:  kSecClassGenericPassword,
@@ -151,16 +152,16 @@ class Authentication {
 
         let status: OSStatus = SecItemCopyMatching(query, &typeRef) //This will prompt the passcode.
 
-        if (status == errSecSuccess) {
+        switch status {
+        case errSecSuccess:
            callback(nil)
-        }
-        else {
+        default:
             callback("Authentication failed")
         }
     }
     
     static func authenticateOwner(_ callback: @escaping (Error?) -> Void) {
-        #if targetEnvironment(simulator)
+        #if targetEnvironment(simulator) || (targetEnvironment(macCatalyst) && DEBUG)
         if DatabaseController.realmTesting || autologin {
             isOwnerAuthenticated = true
             callback(nil)

@@ -78,8 +78,8 @@ public struct TopNavigation: View {
         let backButton = context.currentSession?.hasHistory ?? false ? ActionBack(context) : nil
         let context = self.context
 
-        return VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .top, spacing: 10) {
+        return VStack(spacing: 0) {
+            HStack(alignment: .center, spacing: 10) {
                 if !inSubView && !memri_shouldUseLargeScreenLayout {
                     ActionButton(action: ActionShowNavigation(context))
                         .font(Font.system(size: 20, weight: .semibold))
@@ -172,11 +172,9 @@ public struct TopNavigation: View {
                         .rotationEffect(.degrees(90))
                 }
             }
-            .padding(.top, 15)
-            .padding(.bottom, 10)
-            .padding(.leading, 15)
-            .padding(.trailing, 15)
-            .frame(height: 50, alignment: .top)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 15)
+            .frame(height: 50)
 
             Divider()
         }

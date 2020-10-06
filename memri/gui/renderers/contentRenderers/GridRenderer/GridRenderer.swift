@@ -41,7 +41,7 @@ class GridRendererController: RendererController, ObservableObject {
     }
     
     var isEditing: Bool {
-        context.currentSession?.editMode ?? false
+        context.editMode
     }
     
     func contextMenuProvider(index: Int, item: Item) -> UIContextMenuConfiguration? {
@@ -82,44 +82,87 @@ class GridRendererConfig: CascadingRendererConfig {
         set(value) { setState("columns", value) }
     }
     
-    
+    var scrollDirection: UICollectionView.ScrollDirection {
+        switch cascadeProperty("scrollDirection", type: String.self) {
+        case "horizontal": return .horizontal
+        case "vertical": return .vertical
+        default: return .vertical
+        }
+    }
     
 }
 
 struct GridRendererView: View {
     @ObservedObject var controller: GridRendererController
 
+    var scrollDirection: UICollectionView.ScrollDirection {
+        controller.config.scrollDirection
+    }
     var layout: ASCollectionLayout<Int> {
-        ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
+        ASCollectionLayout(scrollDirection: scrollDirection, interSectionSpacing: 0) {
             ASCollectionLayoutSection { environment in
                 let contentInsets = self.controller.config.nsEdgeInset
                 let numberOfColumns = self.controller.config.columns
-                let xSpacing = self.controller.config.spacing.width
-                let estimatedGridBlockSize = (environment.container.effectiveContentSize
-                    .width - contentInsets.leading - contentInsets
-                    .trailing - xSpacing * (CGFloat(numberOfColumns) - 1)) /
-                    CGFloat(numberOfColumns)
-
-                let item = NSCollectionLayoutItem(
-                    layoutSize: NSCollectionLayoutSize(
-                        widthDimension: .fractionalWidth(1.0),
-                        heightDimension: .estimated(estimatedGridBlockSize)
+                
+                switch scrollDirection {
+                case .horizontal:
+                    let ySpacing = self.controller.config.spacing.height
+                    let estimatedGridBlockSize = (environment.container.effectiveContentSize
+                                                    .height - contentInsets.top - contentInsets
+                                                    .bottom - ySpacing * (CGFloat(numberOfColumns) - 1)) /
+                        CGFloat(numberOfColumns)
+                    
+                    let item = NSCollectionLayoutItem(
+                        layoutSize: NSCollectionLayoutSize(
+                            widthDimension: .estimated(estimatedGridBlockSize),
+                            heightDimension: .fractionalHeight(1.0)
+                        )
                     )
-                )
-
-                let itemsGroup = NSCollectionLayoutGroup.horizontal(
-                    layoutSize: NSCollectionLayoutSize(
-                        widthDimension: .fractionalWidth(1.0),
-                        heightDimension: .estimated(estimatedGridBlockSize)
-                    ),
-                    subitem: item, count: numberOfColumns
-                )
-                itemsGroup.interItemSpacing = .fixed(xSpacing)
-
-                let section = NSCollectionLayoutSection(group: itemsGroup)
-                section.interGroupSpacing = self.controller.config.spacing.height
-                section.contentInsets = contentInsets
-                return section
+                    
+                    let itemsGroup = NSCollectionLayoutGroup.vertical(
+                        layoutSize: NSCollectionLayoutSize(
+                            widthDimension: .estimated(estimatedGridBlockSize),
+                            heightDimension: .fractionalHeight(1.0)
+                        ),
+                        subitem: item, count: numberOfColumns
+                    )
+                    itemsGroup.interItemSpacing = .fixed(ySpacing)
+                    
+                    let section = NSCollectionLayoutSection(group: itemsGroup)
+                    section.interGroupSpacing = self.controller.config.spacing.width
+                    section.contentInsets = contentInsets
+                    return section
+                default:
+                    let xSpacing = self.controller.config.spacing.width
+                    let estimatedGridBlockSize = (environment.container.effectiveContentSize
+                                                    .width - contentInsets.leading - contentInsets
+                                                    .trailing - xSpacing * (CGFloat(numberOfColumns) - 1)) /
+                        CGFloat(numberOfColumns)
+                    
+                    let item = NSCollectionLayoutItem(
+                        layoutSize: NSCollectionLayoutSize(
+                            widthDimension: .fractionalWidth(1.0),
+                            heightDimension: .estimated(estimatedGridBlockSize)
+                        )
+                    )
+                    
+                    let itemsGroup = NSCollectionLayoutGroup.horizontal(
+                        layoutSize: NSCollectionLayoutSize(
+                            widthDimension: .fractionalWidth(1.0),
+                            heightDimension: .estimated(estimatedGridBlockSize)
+                        ),
+                        subitem: item, count: numberOfColumns
+                    )
+                    itemsGroup.interItemSpacing = .fixed(xSpacing)
+                    
+                    let section = NSCollectionLayoutSection(group: itemsGroup)
+                    section.interGroupSpacing = self.controller.config.spacing.height
+                    section.contentInsets = contentInsets
+                    return section
+                }
+                
+                
+               
             }
         }
     }
@@ -164,7 +207,8 @@ struct GridRendererView: View {
             if controller.hasItems {
                 ASCollectionView(editMode: controller.isEditing, section: section)
                     .layout(self.layout)
-                    .alwaysBounceVertical()
+                    .alwaysBounceHorizontal(scrollDirection == .horizontal)
+                    .alwaysBounceVertical(scrollDirection == .vertical)
                     .background(controller.config.backgroundColor?.color ?? Color(.systemBackground))
             } else {
                 HStack(alignment: .top) {

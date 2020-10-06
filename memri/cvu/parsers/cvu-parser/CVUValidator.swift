@@ -5,6 +5,75 @@
 import Foundation
 import SwiftUI
 
+
+
+public enum UIElementProperties: String, CaseIterable {
+    case resizable, show, alignment, align, textAlign, spacing, title, text, image, nopadding,
+    press, bold, italic, underline, strikethrough, list, viewName, view, arguments, location,
+    address, systemName, cornerRadius, hint, value, datasource, defaultValue, empty, style,
+    frame, color, font, padding, background, rowbackground, cornerborder, border, margin,
+    shadow, offset, blur, opacity, zindex, minWidth, maxWidth, minHeight, maxHeight
+    
+    func validate(_ key: String, _ value: Any?) -> Bool {
+        if value is Expression { return true }
+        
+        let prop = UIElementProperties(rawValue: key)
+        switch prop {
+        case .resizable, .title, .text, .viewName, .systemName, .hint, .empty, .style,
+             .defaultValue:
+            return value is String
+        case .show, .nopadding, .bold, .italic, .underline, .strikethrough:
+            return value is Bool
+        case .alignment: return value is VerticalAlignment || value is HorizontalAlignment
+        case .align: return value is Alignment
+        case .textAlign: return value is TextAlignment
+        case .spacing, .cornerRadius, .minWidth, .maxWidth, .minHeight, .maxHeight, .blur, .opacity,
+             .zindex:
+            return value is CGFloat
+        case .image: return value is File || value is String
+        case .press: return value is Action || value is [Action]
+        case .list: return value is [Item]
+        case .view: return value is CVUParsedDefinition || value is [String: Any?]
+        case .arguments: return value is [String: Any?]
+        case .location: return value is Location
+        case .address: return value is Address
+        case .value: return true
+        case .datasource: return value is Datasource
+        case .color, .background, .rowbackground: return value is CVUColor
+        case .font:
+            if let list = value as? [Any?] {
+                return list[0] is CGFloat || list[0] is CGFloat && list[1] is Font.Weight
+            }
+            else { return value is CGFloat }
+        case .padding, .margin:
+            if let list = value as? [Any?] {
+                return list[0] is CGFloat && list[1] is CGFloat
+                    && list[2] is CGFloat && list[3] is CGFloat
+            }
+            else { return value is CGFloat }
+        case .border:
+            if let list = value as? [Any?] {
+                return list[0] is CVUColor && list[1] is CGFloat
+            }
+            else { return false }
+        case .shadow:
+            if let list = value as? [Any?] {
+                return list[0] is CVUColor && list[1] is CGFloat
+                    && list[2] is CGFloat && list[3] is CGFloat
+            }
+            else { return false }
+        case .offset:
+            if let list = value as? [Any?] {
+                return list[0] is CGFloat && list[1] is CGFloat
+            }
+            else { return false }
+        default:
+            return false
+        }
+    }
+}
+
+
 class CVUValidator {
     // Based on keyword when its added to the dict
     let knownActions: [String: String] = {
@@ -49,7 +118,7 @@ class CVUValidator {
     // Check that there are no fields that are not known UIElement properties (warn)
     // Check that they have the right type (error)
     // Error if required fields are missing (e.g. text for Text, image for Image)
-    func validateUIElement(_ element: UIElement) {
+    func validateUIElement(_ element: UINode) {
         func validate(_ prop: UIElementProperties, _ key: String, _ value: Any) {
             if !prop.validate(key, value) {
                 errors
@@ -59,32 +128,12 @@ class CVUValidator {
             }
         }
 
-        for (key, value) in element.propertyResolver.properties {
+        for (key, value) in element.properties {
             if let prop = UIElementProperties(rawValue: key) {
-                if key == "frame" {
-                    if let list = value as? [Any?] {
-                        if let v = list[0] { validate(prop, "minWidth", v) }
-                        if let v = list[1] { validate(prop, "maxWidth", v) }
-                        if let v = list[2] { validate(prop, "minHeight", v) }
-                        if let v = list[3] { validate(prop, "maxHeight", v) }
-                        if let v = list[4] { validate(prop, "align", v) }
-                        continue
-                    }
-                }
-                else if key == "cornerborder" {
-                    if let list = value as? [Any] {
-                        validate(prop, "border", [list[0], list[1]])
-                        validate(prop, "cornerRadius", list[2])
-                        continue
-                    }
-                }
-                else {
-                    value.map { validate(prop, key, $0) }
-                    continue
-                }
+                value.map { validate(prop, key, $0) }
+            } else {
+                warnings.append("Unknown property '\(key)' for element \(element.type).")
             }
-
-            warnings.append("Unknown property '\(key)' for element \(element.type).")
         }
 
         for child in element.children {
@@ -213,7 +262,7 @@ class CVUValidator {
 
             if let children = definition.parsed?["children"] as? [Any] {
                 for child in children {
-                    if let element = child as? UIElement { validateUIElement(element) }
+                    if let element = child as? UINode { validateUIElement(element) }
                     else {
                         errors
                             .append(

@@ -11,7 +11,7 @@ struct LineChartModel {
     var lineWidth: CGFloat = 0
     var hideGridLines: Bool = false
     var forceMinYOfZero: Bool = true
-	var primaryColor: ColorDefinition = ColorDefinition.system(.systemBlue)
+	var primaryColor: CVUColor = CVUColor.system(.systemBlue)
 	var showValueLabels: Bool = true
 	var valueLabelFont: UIFont = UIFont.systemFont(ofSize: 14)
 

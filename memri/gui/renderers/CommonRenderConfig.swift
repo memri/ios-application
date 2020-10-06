@@ -18,12 +18,12 @@ protocol ConfigurableRenderConfig {
 
 // MARK: Common variables needed by renderers
 extension CascadingRendererConfig {
-	var primaryColor: ColorDefinition {
-		get { cascadeProperty("color") ?? ColorDefinition.system(.systemBlue) }
+	var primaryColor: CVUColor {
+		get { cascadeProperty("color") ?? CVUColor.system(.systemBlue) }
 		set(value) { setState("color", value) }
 	}
 	
-	var backgroundColor: ColorDefinition? {
+	var backgroundColor: CVUColor? {
 		get { cascadeProperty("background") }
 		set(value) { setState("background", value) }
 	}

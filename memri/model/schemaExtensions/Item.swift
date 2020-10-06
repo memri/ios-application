@@ -108,7 +108,7 @@ public class Item: SchemaItem {
     /// Get string, or string representation (e.g. "true) from property name
     /// - Parameter name: property name
     /// - Returns: string representation
-    public func getString(_ name: String) -> String {
+    public func getString(_ name: String) -> String? {
         if objectSchema[name] == nil {
             #if DEBUG
                 print(
@@ -116,10 +116,10 @@ public class Item: SchemaItem {
                 )
             #endif
 
-            return ""
+            return nil
         }
         else {
-            return ExprInterpreter.evaluateString(self[name], "")
+            return ExprInterpreter.evaluateString(self[name])
         }
     }
 

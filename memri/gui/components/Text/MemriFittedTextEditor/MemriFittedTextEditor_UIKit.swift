@@ -76,7 +76,7 @@ public class MemriFittedTextEditor_UIKit: UITextView, UITextViewDelegate {
     public init(
         textContent: String?,
         fontSize: CGFloat = 18,
-        backgroundColor: ColorDefinition?
+        backgroundColor: CVUColor?
     ) {
         self.fontSize = fontSize
 

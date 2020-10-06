@@ -4,6 +4,7 @@
 
 import Foundation
 import RealmSwift
+import CoreGraphics
 
 public class Expression: CVUToString {
     let code: String
@@ -157,11 +158,14 @@ public class Expression: CVUToString {
         if !parsed { try parse() }
 
         let value = try interpreter?.execute(args)
-
-        if value == nil { return nil }
-        if T.self == Bool.self { return ExprInterpreter.evaluateBoolean(value) as? T }
+        
+        if T.self == Bool.self {
+            return ExprInterpreter.evaluateBoolean(value, nilValue: false) as? T
+        }
+        if T.self == [Double].self { return ExprInterpreter.evaluateNumberArray(value) as? T }
         if T.self == Double.self { return ExprInterpreter.evaluateNumber(value) as? T }
-        if T.self == Int.self { return ExprInterpreter.evaluateNumber(value) as? T }
+        if T.self == Int.self { return Int(ExprInterpreter.evaluateNumber(value)) as? T }
+        if T.self == CGFloat.self { return CGFloat(ExprInterpreter.evaluateNumber(value)) as? T }
         if T.self == String.self { return ExprInterpreter.evaluateString(value) as? T }
         if T.self == Date.self { return ExprInterpreter.evaluateDateTime(value) as? T }
 

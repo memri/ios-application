@@ -10,8 +10,7 @@ public struct ItemCell: View {
 
     let item: Item?
     let rendererNames: [String]
-    let arguments: ViewArguments?
-    //    let viewOverride: String // TODO Refactor: implement viewoverride
+    let arguments: ViewArguments
 
     public var body: some View {
         context.views.renderItemCell(with: item, search: rendererNames, use: arguments)

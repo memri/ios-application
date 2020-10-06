@@ -9,7 +9,7 @@ struct ContextualBottomBar: View {
 
     var shouldShow: Bool {
         ((context.currentView?.renderConfig as? ConfigurableRenderConfig)?.showContextualBarInEditMode ?? true)
-        && (context.currentSession?.editMode ?? false)
+        && (context.editMode)
     }
 
     var nonEmptySelection: Bool {
@@ -22,19 +22,18 @@ struct ContextualBottomBar: View {
             VStack(spacing: 0) {
                 Divider()
                 HStack {
-                    // TODO: Needs support for setting selectAll for ASCollectionView automatically
-                    //					if context.currentSession?.editMode ?? false {
-                    //						Button(action: {
-                    //							withAnimation {
-                    //								self.context.executeAction(ActionSelectAll(self.context))
-                    //							}
-                    //						}) {
-                    //							Text("Select All")
-                    //								.padding(5)
-                    //						}
-                    //					}
+                    if context.editMode {
+                        Button(action: {
+                            withAnimation {
+                                self.context.executeAction(ActionSelectAll(self.context))
+                            }
+                        }) {
+                            Text("Select All")
+                                .padding(5)
+                        }
+                    }
                     Spacer()
-                    if context.currentSession?.editMode ?? false {
+                    if context.editMode {
                         Button(action: {
                             withAnimation {
                                 self.context.executeAction(ActionDelete(self.context))

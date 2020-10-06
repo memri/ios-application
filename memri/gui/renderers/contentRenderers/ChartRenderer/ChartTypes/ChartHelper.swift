@@ -19,7 +19,7 @@ struct ChartHelper {
                 !y.isNaN
             else { return nil }
             let label: String? = labelExpression.flatMap { $0(item) }
-            return ChartPointXY(x: x, y: y, label: label, itemID: item.getString("uid"))
+            return ChartPointXY(x: x, y: y, label: label, itemID: item.getString("uid") ?? "")
         }
         return ChartSetXY(points: points)
     }
@@ -35,7 +35,7 @@ struct ChartHelper {
                 let y: Double = yAxis(item),
                 !y.isNaN
             else { return nil }
-            return ChartPointLabelledY(label: label, y: y, itemID: item.getString("uid"))
+            return ChartPointLabelledY(label: label, y: y, itemID: item.getString("uid") ?? "")
         }
         return ChartSetLabelledY(points: points)
     }

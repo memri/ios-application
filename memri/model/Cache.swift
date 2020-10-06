@@ -192,9 +192,13 @@ public class Cache {
 
                     for dtype in ItemFamily.allCases {
                         // NOTE: Allowed forced cast
-                        let objects = realm.objects(dtype.getType() as! Object.Type)
-                            .filter("deleted = false " + (filter ?? ""))
-                        for item in objects { returnValue.append(item as! Item) }
+                        guard let type = dtype.getType() as? Object.Type else { continue }
+                        realm.objects(type).filter("deleted = false " + (filter ?? ""))
+                            .forEach { (item) in
+                                if let item = item as? Item {
+                                    returnValue.append(item)
+                                }
+                            }
                     }
 
                     try callback(nil, returnValue)

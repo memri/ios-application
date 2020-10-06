@@ -26,7 +26,7 @@ class ExprInterpreter {
         try execSingle(ast, args)
     }
 
-    class func evaluateBoolean(_ x: Any?) -> Bool {
+    class func evaluateBoolean(_ x: Any?, nilValue: Bool = false) -> Bool? {
         if let x = x as? Bool { return x }
         else if let x = x as? Int { return x != 0 }
         else if let x = x as? Double { return x != 0 }
@@ -40,24 +40,35 @@ class ExprInterpreter {
         else if let x = x as? [Item] { return x.count > 0 }
         else if let x = x as? Results<Edge> { return x.count > 0 }
         else if let x = x as? Results<Item> { return x.count > 0 }
-        else if x == nil { return false }
-        else { return true }
+        else if x == nil { return nilValue }
+        return nil
     }
 
     class func evaluateNumber(_ x: Any?) -> Double {
         if let x = x as? Bool { return x ? 1 : 0 }
         else if let x = x as? Int { return Double(x) }
         else if let x = x as? Double { return x }
-        else if let x = x as? String { return Double(x) ?? .nan }
-        else if x == nil { return .nan }
-        else { return .nan }
+        else if let x = x as? String { return Double(x) ?? 0}
+        else { return 0 }
+    }
+    
+    
+    class func evaluateNumberArray(_ x: Any?) -> [Double] {
+        if let x = x as? String { return x.split(separator: " ").map { Double($0) ?? 0 }}
+        else if let x = x as? Double { return [x] }
+        else if let x = x as? Int { return [Double(x)] }
+        else { return [] }
     }
 
     class func evaluateDateTime(_ x: Any?) -> Date? {
         x as? Date
     }
+    
+    class func evaluateString(_ x: Any?, defaultValue: String) -> String {
+        evaluateString(x) ?? defaultValue
+    }
 
-    class func evaluateString(_ x: Any?, _ defaultValue: String = "") -> String {
+    class func evaluateString(_ x: Any?) -> String? {
         if let x = x as? Bool { return x ? "true" : "false" }
         else if let x = x as? Int { return String(x) }
         else if let x = x as? Double {
@@ -73,8 +84,7 @@ class ExprInterpreter {
                 .get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
             return formatter.string(from: x)
         }
-        else if x == nil { return defaultValue }
-        else { return defaultValue }
+        return nil
     }
 
     func compare(_ a: Any?, _ b: Any?) -> Bool {
@@ -171,7 +181,7 @@ class ExprInterpreter {
                 let otherResult = try execSingle(expr.rhs, args)
                 return IP.evaluateNumber(result) <= IP.evaluateNumber(otherResult)
             case .ConditionAND:
-                let boolLHS = IP.evaluateBoolean(result)
+                let boolLHS = IP.evaluateBoolean(result) ?? false
                 if !boolLHS { return false }
                 else {
                     let otherResult = try execSingle(expr.rhs, args)
@@ -179,7 +189,7 @@ class ExprInterpreter {
                 }
             case .ConditionOR:
                 let boolLHS = result // IP.evaluateBoolean(result)
-                if IP.evaluateBoolean(boolLHS) { return boolLHS }
+                if IP.evaluateBoolean(boolLHS) ?? false { return boolLHS }
                 else {
                     let otherResult = try execSingle(expr.rhs, args)
                     return otherResult // IP.evaluateBoolean(otherResult)
@@ -201,7 +211,7 @@ class ExprInterpreter {
             }
         }
         else if let expr = expr as? ExprConditionNode {
-            if IP.evaluateBoolean(try execSingle(expr.condition, args)) {
+            if IP.evaluateBoolean(try execSingle(expr.condition, args)) ?? false {
                 return try execSingle(expr.trueExp, args)
             }
             else {
@@ -211,13 +221,13 @@ class ExprInterpreter {
         else if let expr = expr as? ExprStringModeNode {
             var result = [String]()
             for expr in expr.expressions {
-                result.append(IP.evaluateString(try execSingle(expr, args), ""))
+                result.append(IP.evaluateString(try execSingle(expr, args), defaultValue: ""))
             }
             return result.joined()
         }
         else if let expr = expr as? ExprNegationNode {
             let result = try execSingle(expr.exp, args)
-            return !IP.evaluateBoolean(result)
+            return !(IP.evaluateBoolean(result) ?? true)
         }
         else if let expr = expr as? ExprNumberNode { return expr.value }
         else if let expr = expr as? ExprStringNode { return expr.value }

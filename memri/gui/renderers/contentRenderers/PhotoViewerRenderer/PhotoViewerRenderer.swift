@@ -49,11 +49,11 @@ class PhotoViewerRendererController: RendererController, ObservableObject {
     
     func photoItemProvider(forIndex index: Int) -> PhotoViewerController.PhotoItem? {
         guard let item = context.items[safe: index],
-            let file = resolveExpression(config.imageFile, toType: File.self, forItem: item),
-            let url = file.url
+            let file = resolveExpression(config.imageFile, toType: File.self, forItem: item)
             else {
                 return nil
         }
+        let url = file.url
         let overlay = config.render(item: item).environmentObject(context).eraseToAnyView()
         return PhotoViewerController.PhotoItem(index: index, imageURL: url, overlay: overlay)
     }

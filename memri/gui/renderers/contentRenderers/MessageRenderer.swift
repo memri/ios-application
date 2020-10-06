@@ -44,7 +44,7 @@ class MessageRendererController: RendererController, ObservableObject {
     }
     
     var editMode: Bool {
-        context.currentSession?.editMode ?? false
+        context.editMode
     }
     
     func onSelectSingle(_ index: Int) {
@@ -119,7 +119,7 @@ struct MessageRendererView: View {
 
     var messageComposer: some View {
         HStack(spacing: 6) {
-            MemriFittedTextEditor(contentBinding: $controller.composedMessage, placeholder: "Type a message...", backgroundColor: ColorDefinition.system(.systemBackground), isEditing: $isEditingComposedMessage)
+            MemriFittedTextEditor(contentBinding: $controller.composedMessage, placeholder: "Type a message...", backgroundColor: CVUColor.system(.systemBackground), isEditing: $isEditingComposedMessage)
                 
             Button(action: onPressSend) {
                 Image(systemName: "arrow.up.circle.fill")

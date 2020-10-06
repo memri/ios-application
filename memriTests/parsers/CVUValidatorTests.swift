@@ -136,7 +136,7 @@ class CVUValidatorTests: XCTestCase {
                 font: 14
 
                 Text {
-                    align: top
+                    alignment: top
                     textAlign: center
                     font: 12 light
                 }

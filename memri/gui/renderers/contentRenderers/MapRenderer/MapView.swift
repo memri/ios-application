@@ -6,7 +6,6 @@ import Foundation
 import SwiftUI
 
 struct MapView: View {
-    var useMapBox = false
     var config: MapViewConfig
 
     var body: some View {
