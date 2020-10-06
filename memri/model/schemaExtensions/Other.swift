@@ -198,7 +198,7 @@ extension IndexerRun {
         name: String? = nil,
         query: String? = nil,
         indexer: Indexer? = nil,
-        progress: Int? = nil
+        progress: Double? = nil
     ) {
         self.init()
         self.name = name ?? self.name
