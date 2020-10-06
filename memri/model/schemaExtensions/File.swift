@@ -45,7 +45,7 @@ class LocalFileSyncQueue : Object {
 
 extension File {
     public var url: URL {
-       FileStorageController.getURLForFile(withUUID: fileUID)
+       FileStorageController.getURLForFile(withUUID: filename)
     }
 
     public var asString: String? {
@@ -140,7 +140,7 @@ extension File {
         let cachedData: T? = InMemoryObjectCache.global.get(sha256) as? T
         if cachedData != nil { return cachedData }
 
-        guard let data = FileStorageController.getData(fromFileForUUID: fileUID)
+        guard let data = FileStorageController.getData(fromFileForUUID: filename)
         else { throw "Couldn't read file" }
 
         let decoded = try JSONDecoder().decode(T.self, from: data)
@@ -177,8 +177,8 @@ extension File {
             let sha256 = try createSHA256(data)
             self.set("sha256", sha256)
 
-            try FileStorageController.writeData(data, toFileForUUID: fileUID)
-            try InMemoryObjectCache.global.set(fileUID, value)
+            try FileStorageController.writeData(data, toFileForUUID: filename)
+            try InMemoryObjectCache.global.set(filename, value)
             LocalFileSyncQueue.add(sha256, task:"upload")
             
             // Cleanup
@@ -200,8 +200,8 @@ extension File {
             let sha256 = try createSHA256(jsonData)
             self.set("sha256", sha256)
 
-            try FileStorageController.writeData(jsonData, toFileForUUID: fileUID)
-            try InMemoryObjectCache.global.set(fileUID, value)
+            try FileStorageController.writeData(jsonData, toFileForUUID: filename)
+            try InMemoryObjectCache.global.set(filename, value)
             LocalFileSyncQueue.add(sha256, task:"upload")
             
             // Cleanup

@@ -130,17 +130,17 @@ class Authentication {
 //    }
     
     static func authenticateOwnerByPasscode(_ callback: @escaping (Error?) -> Void) {
-//        #if targetEnvironment(simulator) || (targetEnvironment(macCatalyst) && DEBUG)
-//        if DatabaseController.realmTesting || autologin {
-        #warning("AUTHENTICATION DISABLED!!")
+        #if targetEnvironment(simulator) || (targetEnvironment(macCatalyst) && DEBUG)
+        if DatabaseController.realmTesting || autologin {
+//        #warning("AUTHENTICATION DISABLED!!")
             isOwnerAuthenticated = true
             callback(nil)
             return
-//        }
+        }
         
         authenticateOwner(callback)
         return
-//        #endif
+        #endif
         
         let query: NSDictionary = [
             kSecClass:  kSecClassGenericPassword,

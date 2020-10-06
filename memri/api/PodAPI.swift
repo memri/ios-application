@@ -675,7 +675,7 @@ public class PodAPI {
                 "ownerKey": ownerKey
             ]
 
-            self.http(path: "run_importer", payload:payload) { error, _ in
+            self.http(path: "run_importer", payload:payload) { error, result in
                 callback(error, error == nil)
             }
         }
