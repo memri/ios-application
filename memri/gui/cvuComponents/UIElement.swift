@@ -146,10 +146,10 @@ public struct UINodeResolver: Identifiable {
     
     func fileURI(for propertyName: String) -> String? {
         if let file: File = resolve(propertyName) {
-            return file.fileUID
+            return file.filename
         }
         else if let photo: Photo? = resolve(propertyName), let file = photo?.file {
-            return file.fileUID
+            return file.filename
         }
         return nil
     }

@@ -261,14 +261,17 @@ func getItem(_ type: String, _ uid: Int) -> Item? {
 }
 
 func me() -> Person {
+    let realm = try! DatabaseController.getRealmSync()
     do {
-        let realm = try DatabaseController.getRealmSync()
         guard let myself = realm.objects(Person.self).filter("ANY allEdges.type = 'me'").first else {
             throw "Unexpected error. Cannot find 'me' in the database"
         }
         return myself
     }
     catch {
-        return Person()
+        let person = Person()
+        //Add to realm
+        realm.add(person)
+        return person
     }
 }

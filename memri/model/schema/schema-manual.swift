@@ -120,7 +120,7 @@ public class File : Item {
     @objc dynamic var key:String? = nil
     
     /// A unique identifier that can be used as a filename for the resource.
-    @objc dynamic var fileUID:String = UUID().uuidString
+    @objc dynamic var filename:String = UUID().uuidString
     
     /// A universal resource location
     var resource: Results<Resource>? {
@@ -139,7 +139,7 @@ public class File : Item {
             sha256 = try decoder.decodeIfPresent("sha256")
             nonce = try decoder.decodeIfPresent("nonce")
             key = try decoder.decodeIfPresent("key")
-            fileUID = try decoder.decodeIfPresent("fileUID") ?? UUID().uuidString
+            filename = try decoder.decodeIfPresent("filename") ?? UUID().uuidString
             
             try self.superDecode(from: decoder)
         }
