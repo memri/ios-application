@@ -27,7 +27,6 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeCountry = "Country"
     case typeCreativeWork = "CreativeWork"
     case typeCryptoKey = "CryptoKey"
-    case typeDatasource = "Datasource"
     case typeDevice = "Device"
     case typeDiet = "Diet"
     case typeDownloader = "Downloader"
@@ -86,9 +85,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeTransaction = "Transaction"
     case typeTrip = "Trip"
     case typeUnit = "Unit"
-    case typeUserState = "UserState"
     case typeVideo = "Video"
-    case typeViewArguments = "ViewArguments"
     case typeVisualArt = "VisualArt"
     case typeVote = "Vote"
     case typeVoteAction = "VoteAction"
@@ -110,7 +107,6 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeCountry: return Color(hex: "#93c47d")
         case .typeCreativeWork: return Color(hex: "#93c47d")
         case .typeCryptoKey: return Color(hex: "#93c47d")
-        case .typeDatasource: return Color(hex: "#93c47d")
         case .typeDevice: return Color(hex: "#93c47d")
         case .typeDiet: return Color(hex: "#37af1c")
         case .typeDownloader: return Color(hex: "#93c47d")
@@ -169,9 +165,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeTransaction: return Color(hex: "#3a5eb2")
         case .typeTrip: return Color(hex: "#93c47d")
         case .typeUnit: return Color(hex: "#93c47d")
-        case .typeUserState: return Color(hex: "#93c47d")
         case .typeVideo: return Color(hex: "#93c47d")
-        case .typeViewArguments: return Color(hex: "#93c47d")
         case .typeVisualArt: return Color(hex: "#93c47d")
         case .typeVote: return Color(hex: "#93c47d")
         case .typeVoteAction: return Color(hex: "#93c47d")
@@ -194,7 +188,6 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeCountry: return Color(hex: "#ffffff")
         case .typeCreativeWork: return Color(hex: "#ffffff")
         case .typeCryptoKey: return Color(hex: "#ffffff")
-        case .typeDatasource: return Color(hex: "#ffffff")
         case .typeDevice: return Color(hex: "#ffffff")
         case .typeDiet: return Color(hex: "#ffffff")
         case .typeDownloader: return Color(hex: "#ffffff")
@@ -253,9 +246,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeTransaction: return Color(hex: "#ffffff")
         case .typeTrip: return Color(hex: "#ffffff")
         case .typeUnit: return Color(hex: "#ffffff")
-        case .typeUserState: return Color(hex: "#ffffff")
         case .typeVideo: return Color(hex: "#ffffff")
-        case .typeViewArguments: return Color(hex: "#ffffff")
         case .typeVisualArt: return Color(hex: "#ffffff")
         case .typeVote: return Color(hex: "#ffffff")
         case .typeVoteAction: return Color(hex: "#ffffff")
@@ -282,7 +273,6 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeCountry: return Country.self
         case .typeCreativeWork: return CreativeWork.self
         case .typeCryptoKey: return CryptoKey.self
-        case .typeDatasource: return Datasource.self
         case .typeDevice: return Device.self
         case .typeDiet: return Diet.self
         case .typeDownloader: return Downloader.self
@@ -341,9 +331,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeTransaction: return Transaction.self
         case .typeTrip: return Trip.self
         case .typeUnit: return Unit.self
-        case .typeUserState: return UserState.self
         case .typeVideo: return Video.self
-        case .typeViewArguments: return ViewArguments.self
         case .typeVisualArt: return VisualArt.self
         case .typeVote: return Vote.self
         case .typeVoteAction: return VoteAction.self
