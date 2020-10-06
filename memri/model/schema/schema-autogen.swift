@@ -30,7 +30,6 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeDevice = "Device"
     case typeDiet = "Diet"
     case typeDownloader = "Downloader"
-    case typeEdge = "Edge"
     case typeEmailMessage = "EmailMessage"
     case typeEvent = "Event"
     case typeExercisePlan = "ExercisePlan"
@@ -110,7 +109,6 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeDevice: return Color(hex: "#93c47d")
         case .typeDiet: return Color(hex: "#37af1c")
         case .typeDownloader: return Color(hex: "#93c47d")
-        case .typeEdge: return Color(hex: "#93c47d")
         case .typeEmailMessage: return Color(hex: "#93c47d")
         case .typeEvent: return Color(hex: "#93c47d")
         case .typeExercisePlan: return Color(hex: "#93c47d")
@@ -191,7 +189,6 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeDevice: return Color(hex: "#ffffff")
         case .typeDiet: return Color(hex: "#ffffff")
         case .typeDownloader: return Color(hex: "#ffffff")
-        case .typeEdge: return Color(hex: "#ffffff")
         case .typeEmailMessage: return Color(hex: "#ffffff")
         case .typeEvent: return Color(hex: "#ffffff")
         case .typeExercisePlan: return Color(hex: "#ffffff")
@@ -276,7 +273,6 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeDevice: return Device.self
         case .typeDiet: return Diet.self
         case .typeDownloader: return Downloader.self
-        case .typeEdge: return Edge.self
         case .typeEmailMessage: return EmailMessage.self
         case .typeEvent: return Event.self
         case .typeExercisePlan: return ExercisePlan.self
