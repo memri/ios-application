@@ -44,8 +44,19 @@ class LocalFileSyncQueue : Object {
 }
 
 extension File {
+    func getFilename() -> String {
+        guard let filename = filename else {
+            let newFilename = UUID().uuidString
+            DatabaseController.sync(write: true) { _ in
+                self.filename = newFilename
+            }
+            return newFilename
+        }
+        return filename
+    }
+    
     public var url: URL {
-       FileStorageController.getURLForFile(withUUID: filename)
+        FileStorageController.getURLForFile(withUUID: getFilename())
     }
 
     public var asString: String? {
@@ -140,7 +151,7 @@ extension File {
         let cachedData: T? = InMemoryObjectCache.global.get(sha256) as? T
         if cachedData != nil { return cachedData }
 
-        guard let data = FileStorageController.getData(fromFileForUUID: filename)
+        guard let data = FileStorageController.getData(fromFileForUUID: getFilename())
         else { throw "Couldn't read file" }
 
         let decoded = try JSONDecoder().decode(T.self, from: data)
@@ -177,8 +188,8 @@ extension File {
             let sha256 = try createSHA256(data)
             self.set("sha256", sha256)
 
-            try FileStorageController.writeData(data, toFileForUUID: filename)
-            try InMemoryObjectCache.global.set(filename, value)
+            try FileStorageController.writeData(data, toFileForUUID: getFilename())
+            try InMemoryObjectCache.global.set(getFilename(), value)
             LocalFileSyncQueue.add(sha256, task:"upload")
             
             // Cleanup
@@ -200,8 +211,8 @@ extension File {
             let sha256 = try createSHA256(jsonData)
             self.set("sha256", sha256)
 
-            try FileStorageController.writeData(jsonData, toFileForUUID: filename)
-            try InMemoryObjectCache.global.set(filename, value)
+            try FileStorageController.writeData(jsonData, toFileForUUID: getFilename())
+            try InMemoryObjectCache.global.set(getFilename(), value)
             LocalFileSyncQueue.add(sha256, task:"upload")
             
             // Cleanup
