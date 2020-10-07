@@ -296,7 +296,7 @@ class MemriTextEditor_UIKit: WKWebView {
     override var bounds: CGRect {
         didSet {
             if bounds != oldValue {
-                self.evaluateJavaScript("window.getSelection().getRangeAt(0).startContainer.parentNode.scrollIntoViewIfNeeded(false);")
+                self.evaluateJavaScript("window.scrollToSelection();")
             }
         }
     }
