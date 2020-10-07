@@ -134,7 +134,6 @@ class MemriTextEditor_UIKit: WKWebView {
         self.scrollView.delegate = self
         self.scrollView.isScrollEnabled = false
         
-        
         config.userContentController = userController
         userController.add(self, name: "formatChange")
         userController.add(self, name: "textChange")
@@ -261,11 +260,11 @@ class MemriTextEditor_UIKit: WKWebView {
         .store(in: &cancellableBag)
     }
     
-    func grabFocus(moveToEnd: Bool = false) {
-        self.evaluateJavaScript(moveToEnd ? """
-window.editor.setSelection(editor.state.doc.content.size, editor.state.doc.content.size);
-""" : "window.editor.focus();")
-        becomeFirstResponder()
+    func grabFocus(takeFirstResponder: Bool = true) {
+        self.evaluateJavaScript("window.editor.focus();")
+        if takeFirstResponder {
+            becomeFirstResponder()
+        }
     }
     
     override var inputAccessoryView: UIView? {
@@ -294,6 +293,13 @@ window.editor.setSelection(editor.state.doc.content.size, editor.state.doc.conte
         return false
     }
     
+    override var bounds: CGRect {
+        didSet {
+            if bounds != oldValue {
+                self.evaluateJavaScript("window.getSelection().getRangeAt(0).startContainer.parentNode.scrollIntoViewIfNeeded(false);")
+            }
+        }
+    }
 }
 
 
@@ -320,7 +326,7 @@ extension MemriTextEditor_UIKit: WKNavigationDelegate {
         }.store(in: &cancellableBag)
         (superview as? TextEditorWrapperUIView)?.showActivityIndicator = false
         updateToolbar()
-        grabFocus(moveToEnd: true)
+        grabFocus(takeFirstResponder: false)
     }
 }
 

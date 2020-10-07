@@ -35,6 +35,7 @@ export default class TodoItem extends Node {
                         class: 'todo-checkbox',
                         attrs: {
                             contenteditable: false,
+                            readonly: true,
                         },
                         on: {
                             click: this.onChange,
@@ -70,8 +71,7 @@ export default class TodoItem extends Node {
                         'data-type': this.name,
                         'data-done': done.toString(),
                     },
-                    ['span', { class: 'todo-checkbox', contenteditable: 'false' }],
-                    ['div', { class: 'todo-content' }, 0],
+                    0,
                 ]
             },
             parseDOM: [{

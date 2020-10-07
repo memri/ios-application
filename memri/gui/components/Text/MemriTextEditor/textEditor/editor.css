@@ -12,7 +12,6 @@ body {
 	width: 100%;
 	margin: 0;
 	display: block;
-	overflow-y: auto;
 }
 
 #container {
@@ -24,14 +23,6 @@ body {
 
 textarea:focus, input:focus{
     outline: none;
-}
-
-#scrolling-container>div {
-	box-sizing: border-box;
-	font-family: Helvetica, Arial, sans-serif;
-	margin: 0;
-	position: relative;
-	flex: 1;
 }
 
 [data-type=drag_item] {
@@ -63,6 +54,7 @@ textarea:focus, input:focus{
 	white-space: pre-wrap;
 	word-wrap: break-word;
 	height: 100%;
+	overflow-y: auto;
 }
 
 
