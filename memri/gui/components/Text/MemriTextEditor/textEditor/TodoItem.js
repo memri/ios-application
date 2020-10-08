@@ -35,7 +35,6 @@ export default class TodoItem extends Node {
                         class: 'todo-checkbox',
                         attrs: {
                             contenteditable: false,
-                            readonly: true,
                         },
                         on: {
                             click: this.onChange,

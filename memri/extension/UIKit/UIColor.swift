@@ -39,14 +39,14 @@ extension UIColor {
 
      - parameter includeAlpha: Whether the alpha should be included.
      */
-    public func hexString(_ includeAlpha: Bool = true) -> String {
+    public func hexString(includingAlpha: Bool = false) -> String {
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
         getRed(&r, green: &g, blue: &b, alpha: &a)
 
-        if includeAlpha {
+        if includingAlpha {
             return String(format: "#%02X%02X%02X%02X",
                           Int(round(bounded(r) * 255)), Int(round(bounded(g) * 255)),
                           Int(round(bounded(b) * 255)), Int(round(bounded(a) * 255)))

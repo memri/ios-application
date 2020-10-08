@@ -10,9 +10,9 @@ export default class Title extends Node {
         return {
             content: 'inline*',
             parseDOM: [{
-                tag: 'h1',
+                tag: 'h1[id="title"]',
             }],
-            toDOM: () => ['h1', 0],
+            toDOM: () => ['h1', { id: "title" }, 0],
         }
     }
 

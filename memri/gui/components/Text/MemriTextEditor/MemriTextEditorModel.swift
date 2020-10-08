@@ -30,7 +30,7 @@ struct MemriTextEditorModel {
     static func splitHTML(string: String) -> (title: String?, body: String) {
         do {
             let doc = try SwiftSoup.parseBodyFragment(string)
-            let titleElement = doc.body()?.children().first(where: { $0.tag().getName() == "h1" })
+            let titleElement = doc.body()?.children().first(where: { $0.tag().getName() == "h1" && $0.id() == "title" })
             let title = try titleElement?.html()
             try titleElement?.remove()
             let body = try doc.body()?.html() ?? ""
@@ -45,6 +45,7 @@ struct MemriTextEditorModel {
         do {
             let doc = try SwiftSoup.parseBodyFragment(body)
             let titleElement = try doc.body()?.prependElement("h1")
+            try titleElement?.attr("id", "title")
             try titleElement?.html(title ?? "")
             return try doc.body()?.html() ?? ""
         }

@@ -19,6 +19,7 @@ import TipTapCustomImage from "./TipTapImage";
 import OrderedList from "./OrderedList";
 import BulletList from "./BulletList";
 import TodoItem from "./TodoItem";
+import TextColor from "./TextColor";
 
 // Enable smooth scrolling on safari iOS
 import "scroll-behavior-polyfill";
@@ -67,7 +68,7 @@ import {
   Bold,
   Code,
   Italic,
-  // Link,
+  Link,
   Strike,
   Underline,
   History,
@@ -106,7 +107,7 @@ window.editor = new Editor({
       nested: true,
     }),
     new TodoList(),
-    // new Link(),
+    new Link(),
     new Bold(),
     new Code(),
     new Italic(),
@@ -128,6 +129,7 @@ window.editor = new Editor({
       notAfter: ["paragraph"],
     }),
     new TipTapCustomImage(),
+    new TextColor(),
   ],
   autoFocus: true,
   onTransaction: () => {
@@ -139,7 +141,13 @@ window.editor = new Editor({
         italic: isActive.italic(),
         underline: isActive.underline(),
         strike: isActive.strike(),
-        heading: isActive.heading(),
+        heading: isActive.heading({ level: 1 })
+          ? 1
+          : isActive.heading({ level: 2 })
+          ? 2
+          : isActive.heading({ level: 3 })
+          ? 3
+          : 0,
         todo_list: isActive.todo_list(),
         ordered_list: isActive.ordered_list(),
         bullet_list: isActive.bullet_list(),
@@ -147,6 +155,7 @@ window.editor = new Editor({
         lift_list: window.editor.commands.can_lift_list(),
         code_block: isActive.code_block(),
         blockquote: isActive.blockquote(),
+        text_color: window.editor.activeMarkAttrs.text_color["color"],
       };
     } catch (err) {
       console.log(err);

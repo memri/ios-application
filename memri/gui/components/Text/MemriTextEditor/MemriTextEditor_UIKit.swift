@@ -153,54 +153,78 @@ class MemriTextEditor_UIKit: WKWebView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    let toolbarIconFont = Font.system(size: 17).bold()
+    
+    @ArrayBuilder<MemriTextEditor_Toolbar.Item>
+    func getToolbarItems() -> [MemriTextEditor_Toolbar.Item] {
+        MemriTextEditor_Toolbar.Item.button(label: "Bold", icon: Image(systemName: "bold").eraseToAnyView(),
+                                            isActive: currentFormatting["bold"] as? Bool ?? false,
+                                            onPress: { [weak self] in self?.toggleFormat("bold") })
+        MemriTextEditor_Toolbar.Item.button(label: "Italic", icon: Image(systemName: "italic").eraseToAnyView(),
+                                            isActive: currentFormatting["italic"] as? Bool ?? false,
+                                            onPress: { [weak self] in self?.toggleFormat("italic") })
+        MemriTextEditor_Toolbar.Item.button(label: "Underline", icon: Image(systemName: "underline").eraseToAnyView(),
+                                            isActive: currentFormatting["underline"] as? Bool ?? false,
+                                            onPress: { [weak self] in self?.toggleFormat("underline") })
+        MemriTextEditor_Toolbar.Item.button(label: "Strike", icon: Image(systemName: "strikethrough").eraseToAnyView(),
+                                            isActive: currentFormatting["strike"] as? Bool ?? false,
+                                            onPress: { [weak self] in self?.toggleFormat("strike") })
+        MemriTextEditor_Toolbar.Item.divider
+        MemriTextEditor_Toolbar.Item.button(label: "Heading", icon: Text("H1").font(toolbarIconFont).eraseToAnyView(),
+                                            isActive: (currentFormatting["heading"] as? Int).map { $0 != 0 } ?? false,
+                                            onPress: { [weak self] in self?.toggleFormat("heading") })
+        //            .button(label: "Quote", icon: Image(systemName: "decrease.quotelevel",
+        //                    isActive: currentFormatting["blockquote"] as? Bool ?? false,
+        //                    onPress: { [weak self] in self?.toggleFormat("blockquote") }),
+        MemriTextEditor_Toolbar.Item.button(label: "Todo List", icon: Image(systemName: "checkmark.square").eraseToAnyView(),
+                                            isActive: currentFormatting["todo_list"] as? Bool ?? false,
+                                            onPress: { [weak self] in self?.toggleFormat("todo_list") })
+        MemriTextEditor_Toolbar.Item.button(label: "Unordered List", icon: Image(systemName: "list.bullet").eraseToAnyView(),
+                                            isActive: currentFormatting["bullet_list"] as? Bool ?? false,
+                                            onPress: { [weak self] in self?.toggleFormat("bullet_list") })
+        MemriTextEditor_Toolbar.Item.button(label: "Ordered List", icon: Image(systemName: "list.number").eraseToAnyView(),
+                                            isActive: currentFormatting["ordered_list"] as? Bool ?? false,
+                                            onPress: { [weak self] in self?.toggleFormat("ordered_list") })
+        MemriTextEditor_Toolbar.Item.button(label: "Outdent List", icon: Image(systemName: "decrease.indent").eraseToAnyView(),
+                                            hideInactive: true,
+                                            isActive: currentFormatting["lift_list"] as? Bool ?? false,
+                                            onPress: { [weak self] in self?.toggleFormat("lift_list") })
+        MemriTextEditor_Toolbar.Item.divider
+        MemriTextEditor_Toolbar.Item.button(label: "Indent List", icon: Image(systemName: "increase.indent").eraseToAnyView(),
+                                            hideInactive: true,
+                                            isActive: currentFormatting["sink_list"] as? Bool ?? false,
+                                            onPress: { [weak self] in self?.toggleFormat("sink_list") })
+        MemriTextEditor_Toolbar.Item.button(label: "Code block", icon: Image(systemName: "textbox").eraseToAnyView(),
+                                            isActive: currentFormatting["code_block"] as? Bool ?? false,
+                                            onPress: { [weak self] in self?.toggleFormat("code_block") })
+    }
+    
+    @ArrayBuilder<MemriTextEditor_Toolbar.Item>
+    func getToolbarSubitems() -> [MemriTextEditor_Toolbar.Item] {
+        if (currentFormatting["heading"] as? Int).map({ $0 != 0 }) ?? false {
+            MemriTextEditor_Toolbar.Item.button(label: "H1", icon: Text("H1").font(toolbarIconFont).eraseToAnyView(),
+                                                isActive: (currentFormatting["heading"] as? Int).map { $0 == 1 } ?? false,
+                                                onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 1]) })
+            MemriTextEditor_Toolbar.Item.button(label: "H2", icon: Text("H2").font(toolbarIconFont).eraseToAnyView(),
+                                                isActive: (currentFormatting["heading"] as? Int).map { $0 == 2 } ?? false,
+                                                onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 2]) })
+            MemriTextEditor_Toolbar.Item.button(label: "H3", icon: Text("H3").font(toolbarIconFont).eraseToAnyView(),
+                                                isActive: (currentFormatting["heading"] as? Int).map { $0 == 3 } ?? false,
+                                                onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 3]) })
+        }
+    }
+    
     func updateToolbar() {
-        let items: [MemriTextEditor_Toolbar.Item] = [
-            .button(label: "Bold", icon: "bold",
-                    isActive: currentFormatting["bold"] as? Bool ?? false,
-                    onPress: { [weak self] in self?.toggleFormat("bold") }),
-            .button(label: "Italic", icon: "italic",
-                    isActive: currentFormatting["italic"] as? Bool ?? false,
-                    onPress: { [weak self] in self?.toggleFormat("italic") }),
-            .button(label: "Underline", icon: "underline",
-                    isActive: currentFormatting["underline"] as? Bool ?? false,
-                    onPress: { [weak self] in self?.toggleFormat("underline") }),
-            .button(label: "Strike", icon: "strikethrough",
-                    isActive: currentFormatting["strike"] as? Bool ?? false,
-                    onPress: { [weak self] in self?.toggleFormat("strike") }),
-            .divider,
-//            .button(label: "Heading", icon: "textformat.alt",
-//                    isActive: (currentFormatting["heading"] as? Int).map { $0 != 0 } ?? false,
-//                    onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 1]) }),
-//            .button(label: "Quote", icon: "decrease.quotelevel",
-//                    isActive: currentFormatting["blockquote"] as? Bool ?? false,
-//                    onPress: { [weak self] in self?.toggleFormat("blockquote") }),
-            .button(label: "Todo List", icon: "checkmark.square",
-                    isActive: currentFormatting["todo_list"] as? Bool ?? false,
-                    onPress: { [weak self] in self?.toggleFormat("todo_list") }),
-            .button(label: "Unordered List", icon: "list.bullet",
-                    isActive: currentFormatting["bullet_list"] as? Bool ?? false,
-                    onPress: { [weak self] in self?.toggleFormat("bullet_list") }),
-            .button(label: "Ordered List", icon: "list.number",
-                    isActive: currentFormatting["ordered_list"] as? Bool ?? false,
-                    onPress: { [weak self] in self?.toggleFormat("ordered_list") }),
-            .button(label: "Outdent List", icon: "decrease.indent",
-                    hideInactive: true,
-                    isActive: currentFormatting["lift_list"] as? Bool ?? false,
-                    onPress: { [weak self] in self?.toggleFormat("lift_list") }),
-            .divider,
-            .button(label: "Indent List", icon: "increase.indent",
-                    hideInactive: true,
-                    isActive: currentFormatting["sink_list"] as? Bool ?? false,
-                    onPress: { [weak self] in self?.toggleFormat("sink_list") }),
-            .button(label: "Code block", icon: "textbox",
-                    isActive: currentFormatting["code_block"] as? Bool ?? false,
-                    onPress: { [weak self] in self?.toggleFormat("code_block") }),
-        ]
         let view = MemriTextEditor_Toolbar(
             textView: self,
-            items: items
+            items: getToolbarItems(),
+            subitems: getToolbarSubitems(),
+            color: currentFormatting["text_color"] as? String,
+            setColor: { [weak self] color in self?.toggleFormat("text_color", info: color) }
         )
         self._setToolbar(view)
+        toolbarWrapperView?.sizeToFit()
+        reloadInputViews()
     }
     
     func didBeginEditing() {
@@ -251,13 +275,17 @@ class MemriTextEditor_UIKit: WKWebView {
     }
     
     func toggleFormat(_ format: String, info: [String: Any] = [:]) {
-        let oldValue = (currentFormatting[format] as? Bool) ?? false
-        currentFormatting[format] = !oldValue
-        updateToolbar()
         setFormatting(format: format, info: info)
-        .receive(on: DispatchQueue.main)
-        .sink {}
-        .store(in: &cancellableBag)
+            .receive(on: DispatchQueue.main)
+            .sink {}
+            .store(in: &cancellableBag)
+    }
+    
+    func toggleFormat(_ format: String, info: String) {
+        setFormatting(format: format, info: info)
+            .receive(on: DispatchQueue.main)
+            .sink {}
+            .store(in: &cancellableBag)
     }
     
     func grabFocus(takeFirstResponder: Bool = true) {
@@ -352,6 +380,14 @@ extension MemriTextEditor_UIKit {
         }
     }
     
+    func setFormatting(format: String, info: String) -> Future<Void, Never> {
+        let script = "window.editor.commands.\(format)(\"\(info)\");"
+        return Future { (promise) in
+            self.evaluateJavaScript(script) { (some, error) in
+                promise(.success(()))
+            }
+        }
+    }
     func setFormatting(format: String, info: [String: Any] = [:]) -> Future<Void, Never> {
         let infoString = (try? String(data: JSONSerialization.data(withJSONObject: info), encoding: .utf8)) ?? ""
         let script = "window.editor.commands.\(format)(\(infoString));"
@@ -381,6 +417,8 @@ class ToolbarWrapperView: UIView {
     init(toolbarView: UIView) {
         self.toolbarView = toolbarView
         super.init(frame: .zero)
+        clipsToBounds = false
+        toolbarView.clipsToBounds = false
         addSubview(toolbarView)
         translatesAutoresizingMaskIntoConstraints = false
         toolbarView.translatesAutoresizingMaskIntoConstraints = false

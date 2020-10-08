@@ -15,7 +15,7 @@ struct MemriTextEditor_Toolbar: View {
     enum Item {
         case button(
             label: String,
-            icon: String,
+            icon: AnyView,
             hideInactive: Bool = false,
             isActive: Bool = false,
             onPress: () -> Void
@@ -31,7 +31,7 @@ struct MemriTextEditor_Toolbar: View {
                             EmptyView()
                         } else {
                             Button(action: onPress) {
-                                Image(systemName: icon)
+                                icon
                                     .frame(minWidth: 30, minHeight: 36)
                                     .background(RoundedRectangle(cornerRadius: 4).fill((isActive && !hideInactive) ? Color(.tertiarySystemBackground) : .clear))
                                     .contentShape(Rectangle())
@@ -46,38 +46,64 @@ struct MemriTextEditor_Toolbar: View {
     }
     
     var items: [Item]
+    var subitems: [Item] = []
+    var color: String?
+    var setColor: ((String) -> Void)?
+    
+    private var colorBinding: Binding<CGColor> {
+        Binding<CGColor>(
+            get: { (color.map { UIColor(hex: $0) } ?? .black).cgColor },
+            set: { setColor?(UIColor(cgColor: $0).hexString(includingAlpha: false)) }
+        )
+    }
     
     var body: some View {
-        //ScrollView(.horizontal) {
-        return VStack(spacing: 0) {
-            Divider()
-            HStack {
-                GeometryReader { geom in
-                    HStack(spacing: 2) {
-                        ForEach(self.items.indexed(), id: \.index) { item in
+            VStack(spacing: 0) {
+                if !subitems.isEmpty {
+                    Divider()
+                    HStack {
+                        ForEach(self.subitems.indexed(), id: \.index) { item in
                             item.view
                         }
                     }
-                    .frame(width: geom.size.width, height: geom.size.height, alignment: .leading)
+                    .frame(minHeight: 40)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
-                Spacer()
-                #if !targetEnvironment(macCatalyst)
                 Divider()
-                Button(action: { self.textView?.resignFirstResponder() }) {
-                    Image(systemName: "keyboard.chevron.compact.down")
-                        .foregroundColor(Color(.label))
-                        .frame(minWidth: 30, minHeight: 36)
-                        .contentShape(Rectangle())
-                        .accessibility(hint: Text("Close Keyboard"))
+                HStack(spacing: 0) {
+                    ScrollView(.horizontal) {
+                        HStack(spacing: 2) {
+                            ForEach(self.items.indexed(), id: \.index) { item in
+                                item.view
+                            }
+                            #if !targetEnvironment(macCatalyst)
+                            if #available(iOS 14.0, *) {
+                                ColorPicker(selection: colorBinding, supportsOpacity: false) {
+                                    EmptyView()
+                                }.labelsHidden()
+                            }
+                            #endif
+                        }
+                        .padding(.horizontal, self.padding)
+                    }
+                    
+                    #if !targetEnvironment(macCatalyst)
+                    Divider()
+                    Button(action: { self.textView?.resignFirstResponder() }) {
+                        Image(systemName: "keyboard.chevron.compact.down")
+                            .foregroundColor(Color(.label))
+                            .frame(minWidth: 30, minHeight: 36)
+                            .padding(.horizontal, 10)
+                            .contentShape(Rectangle())
+                            .accessibility(hint: Text("Close Keyboard"))
+                    }
+                    #endif
                 }
+                .frame(minHeight: 40)
+                #if targetEnvironment(macCatalyst)
+                Divider()
                 #endif
             }
-            .padding(.horizontal, self.padding)
-            #if targetEnvironment(macCatalyst)
-            Divider()
-            #endif
-        }
-        .frame(minHeight: 40, idealHeight: 40, maxHeight: 60)
         .background(Color(.secondarySystemBackground))
         .edgesIgnoringSafeArea(.bottom)
     }
