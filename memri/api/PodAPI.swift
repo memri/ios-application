@@ -297,7 +297,7 @@ public class PodAPI {
                 result["_type"] = edge[prop.name]
             }
             else {
-                #warning("Implement checking for updatedfields")
+                // TODO: Implement checking for updatedfields
                 result[prop.name] = edge[prop.name]
             }
         }
@@ -376,7 +376,6 @@ public class PodAPI {
         if updateEdges?.count ?? 0 > 0 {
             result["updateEdges"] = updateEdges?.compactMap { simplify($0) }
         }
-        #warning("This is untested")
         if deleteEdges?.count ?? 0 > 0 {
             result["deleteEdges"] = deleteEdges?.compactMap { simplify($0) }
         }

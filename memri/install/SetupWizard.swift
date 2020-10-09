@@ -171,5 +171,6 @@ struct SetupWizard: View {
             }
             .navigationBarTitle(Text("Setup Wizard"))
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }

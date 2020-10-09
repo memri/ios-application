@@ -13,7 +13,6 @@ struct SettingsPane: View {
         Binding<T>(
             get: { () -> T in
                 // TODO: Error handling
-                #warning("@Toby this is being called in a loop continuously when settings is opened. do you know why?")
                 if let x: T = self.context.settings.get(path) {
                     return x
                 }

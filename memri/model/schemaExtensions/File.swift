@@ -69,12 +69,7 @@ extension File {
     }
 
     public var asData: Data? {
-        do { if let x: Data = try read() { return x } }
-        catch {
-            // TODO: User error handling
-            // TODO: Refactor: error handling
-        }
-        return nil
+        FileStorageController.getData(fromFileForUUID: getFilename())
     }
     
     private func createSHA256() throws -> String {

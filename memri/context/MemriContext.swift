@@ -317,10 +317,6 @@ public class SubContext: MemriContext {
 public class RootContext: MemriContext {
     private var cancellable: AnyCancellable?
 
-    #warning("@Toby how can we tell when the sub context is done and how can we clear it?")
-    #warning(
-        "We can assume that they are all cleared when the root view is reloaded or detect the specific one when a sheet is closed"
-    )
     var subContexts = [SubContext]()
 
     // TODO: Refactor: Should installer be moved to rootmain?

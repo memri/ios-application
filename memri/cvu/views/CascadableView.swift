@@ -64,7 +64,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         set(value) { setState("showBottomBar", value) }
     }
 
-    #warning("Implement this in all renderers")
+    // TODO: Implement this in all renderers")
     var readOnly: Bool {
         get { viewArguments?.get("readOnly") ?? cascadeProperty("readOnly") ?? true }
         set(value) { setState("readOnly", value) }
@@ -299,7 +299,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                 // _subtitleTemp = " " // TODO how to clear the subtitle ??
                 
                 _emptyResultTextTemp =
-                    "No results found using '\(userState.get("filterText") ?? "")'"
+                    "No results found using '\(filterText)'"
             }
             else {
                 _titleTemp = nil

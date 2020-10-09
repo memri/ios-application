@@ -121,7 +121,7 @@ IndexerRun {
                     alignment: left
                     readOnly: true
                     padding: 0 10
-                    background: #f9f9f9
+                    background: secondaryBackground
                     
                     Button {
                         press: runIndexer {
@@ -184,20 +184,20 @@ IndexerRun[] {
             Text {
                 text: "{.name}"
                 font: 18 semibold
-                color: #333
+                color: primary
                 padding: 0 0 3 0
             }
             Text {
                 text: "{.datatype}"
                 removeWhiteSpace: true
                 maxChar: 100
-                color: #555
+                color: secondary
                 font: 14 regular
             }
             Text {
                 text: "{.dateModified}"
                 font: 11 regular
-                color: #888
+                color: secondary
                 padding: 8 0 5 0
             }
         }

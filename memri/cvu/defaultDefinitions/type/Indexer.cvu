@@ -106,7 +106,7 @@ Indexer[] {
                 systemName: {{.icon}}
                 bundleImage: {{.bundleImage}}
                 font: 30
-                color: #d64f4f
+                color: red
                 width: 90
             }
         
@@ -119,7 +119,7 @@ Indexer[] {
                     Text {
                         text: "{.name}"
                         font: 18 semibold
-                        color: #333
+                        color: primary
                         padding: 0 0 3 0
                     }
                     Text {
@@ -132,7 +132,7 @@ Indexer[] {
                         text: "{.itemDescription}"
                         removeWhiteSpace: true
                         maxChar: 100
-                        color: #555
+                        color: secondary
                         font: 14 regular
                         padding: 0 20 0 0
                     }
@@ -140,7 +140,7 @@ Indexer[] {
                 Text {
                     text: "{.dateModified}"
                     font: 11 regular
-                    color: #888
+                    color: secondary
                     padding: 8 0 5 0
                 }
             }

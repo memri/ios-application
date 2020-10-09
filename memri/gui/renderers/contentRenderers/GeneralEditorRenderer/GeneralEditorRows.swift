@@ -73,7 +73,7 @@ struct DefaultGeneralEditorRow: View {
                 .fullWidth()
                 .padding(.bottom, 10)
                 .padding(.horizontal)
-                .background(readOnly ? Color(hex: "#f9f9f9") : Color(hex: "#f7fcf5"))
+                .background(Color(.systemBackground))
                 
                 if !isLast {
                     Divider().padding(.leading, 35)
@@ -160,16 +160,8 @@ struct DefaultGeneralEditorRow: View {
         }
         )
         
-        if #available(iOS 14.0, *) {
-            DatePicker("", selection: binding, displayedComponents: .date)
-                .labelsHidden()
-        } else {
-            DatePicker("", selection: binding, displayedComponents: .date)
-                .labelsHidden()
-                .frame(width: 300, height: 80, alignment: .center)
-                .clipped()
-                .padding(8)
-        }
+        DatePicker("", selection: binding, displayedComponents: .date)
+            .labelsHidden()
     }
     
     func defaultRow(_ caption: String? = nil) -> some View {

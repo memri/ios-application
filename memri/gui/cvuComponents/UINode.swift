@@ -159,8 +159,12 @@ public struct UINodeResolver: Identifiable {
         if let colorDef = resolve(propertyName, type: CVUColor.self) {
             return colorDef
         }
-        else if let colorHex = resolve(propertyName, type: String.self) {
-            return CVUColor.hex(colorHex)
+        else if let colorName = resolve(propertyName, type: String.self) {
+            if CVUColor.hasNamed(colorName) {
+                return CVUColor.named(colorName)
+            } else {
+                return CVUColor.hex(colorName)
+            }
         }
         return nil
     }

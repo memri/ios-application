@@ -64,7 +64,7 @@ final class ItemSubscription<SubscriberType: Subscriber, Data: Item>: Subscripti
         cache.isOnRemote(item) { error in
             if error != nil {
                 // How to handle??
-                #warning("Look at this when implementing syncing")
+                // TODO: Look at this when implementing syncing")
                 debugHistory.error("Polling timeout. All polling services disabled")
                 return
             }

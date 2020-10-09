@@ -15,11 +15,15 @@ import Doc from "./customDoc";
 import Title from "./title";
 
 import CodeBlockHighlight from "./codeBlockHighlight";
-import TipTapCustomImage from "./TipTapImage";
+// import TipTapCustomImage from "./TipTapImage";
 import OrderedList from "./OrderedList";
 import BulletList from "./BulletList";
 import TodoItem from "./TodoItem";
 import TextColor from "./TextColor";
+import HighlightColor from "./HighlightColor";
+import Image from "./image";
+import NativeUndo from "./nativeUndo";
+import { currentMarkAttribs } from "./markFunctions";
 
 // Enable smooth scrolling on safari iOS
 import "scroll-behavior-polyfill";
@@ -71,10 +75,10 @@ import {
   Link,
   Strike,
   Underline,
-  History,
   Search,
   Placeholder,
   TrailingNode,
+  History,
 } from "tiptap-extensions";
 
 // Highlight.js imports
@@ -113,7 +117,6 @@ window.editor = new Editor({
     new Italic(),
     new Strike(),
     new Underline(),
-    new History(),
     new Search(),
     new Placeholder({
       showOnlyCurrent: false,
@@ -128,8 +131,13 @@ window.editor = new Editor({
       node: "paragraph",
       notAfter: ["paragraph"],
     }),
-    new TipTapCustomImage(),
     new TextColor(),
+    new HighlightColor(),
+    new Image(),
+    new History({
+      newGroupDelay: 200,
+    }),
+    new NativeUndo(),
   ],
   autoFocus: true,
   onTransaction: () => {
@@ -155,7 +163,9 @@ window.editor = new Editor({
         lift_list: window.editor.commands.can_lift_list(),
         code_block: isActive.code_block(),
         blockquote: isActive.blockquote(),
-        text_color: window.editor.activeMarkAttrs.text_color["color"],
+        text_color: currentMarkAttribs("text_color")?.color,
+        highlight_color: currentMarkAttribs("highlight_color")?.backColor,
+        selected_image: window.editor.state.selection?.node?.attrs?.src,
       };
     } catch (err) {
       console.log(err);

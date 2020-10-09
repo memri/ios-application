@@ -68,7 +68,6 @@
 		5D599BBB23F2B77500F218A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D599BBA23F2B77500F218A0 /* AppDelegate.swift */; };
 		5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D599BBC23F2B77500F218A0 /* SceneDelegate.swift */; };
 		5D599BBF23F2B77500F218A0 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D599BBE23F2B77500F218A0 /* Browser.swift */; };
-		5D599BC123F2B77700F218A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D599BC023F2B77700F218A0 /* Assets.xcassets */; };
 		5D599BC423F2B77700F218A0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D599BC323F2B77700F218A0 /* Preview Assets.xcassets */; };
 		5D599BC723F2B77700F218A0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D599BC523F2B77700F218A0 /* LaunchScreen.storyboard */; };
 		5D599BDD23F2B77700F218A0 /* memriUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D599BDC23F2B77700F218A0 /* memriUITests.swift */; };
@@ -167,7 +166,7 @@
 		868EF63624766A8800C0375F /* ExprInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62B24766A8800C0375F /* ExprInterpreter.swift */; };
 		868EF63724766A8800C0375F /* ExprLexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62C24766A8800C0375F /* ExprLexer.swift */; };
 		868EF63824766A8800C0375F /* ExprNodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62D24766A8800C0375F /* ExprNodes.swift */; };
-		868EF6552476768C00C0375F /* UIElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF6542476768C00C0375F /* UIElement.swift */; };
+		868EF6552476768C00C0375F /* UINode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF6542476768C00C0375F /* UINode.swift */; };
 		868EF657247678B100C0375F /* Languages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF656247678B100C0375F /* Languages.swift */; };
 		868EF659247678BC00C0375F /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF658247678BC00C0375F /* Colors.swift */; };
 		868EF697247784C600C0375F /* ResultSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF696247784C600C0375F /* ResultSet.swift */; };
@@ -304,6 +303,8 @@
 		B8BF6F4A24BEA16A0058067C /* MessageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BF6F4924BEA16A0058067C /* MessageRenderer.swift */; };
 		B8BF6F4D24BEA4DB0058067C /* messages.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B8BF6F4B24BEA3E60058067C /* messages.cvu */; };
 		B8BF6F5124BEA9260058067C /* ContextualBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BF6F5024BEA9260058067C /* ContextualBottomBar.swift */; };
+		B8CE6FB02537E99E00FC8CDD /* MemriTextEditorFileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CE6FAF2537E99E00FC8CDD /* MemriTextEditorFileHandler.swift */; };
+		B8CE6FB52537EBF700FC8CDD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8CE6FB42537EBF700FC8CDD /* Assets.xcassets */; };
 		B8CECC082503092C006EE229 /* CVUFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CECC072503092C006EE229 /* CVUFont.swift */; };
 		B8CECC0A25030956006EE229 /* CVUColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CECC0925030956006EE229 /* CVUColor.swift */; };
 		B8CECC0E250309CA006EE229 /* CVU_Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CECC0D250309CA006EE229 /* CVU_Image.swift */; };
@@ -389,7 +390,6 @@
 		5D599BBA23F2B77500F218A0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5D599BBC23F2B77500F218A0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D599BBE23F2B77500F218A0 /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
-		5D599BC023F2B77700F218A0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5D599BC323F2B77700F218A0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5D599BC623F2B77700F218A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5D599BC823F2B77700F218A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -475,7 +475,7 @@
 		868EF63A24766AA100C0375F /* ExprParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprParserTests.swift; sourceTree = "<group>"; wrapsLines = 1; };
 		868EF63B24766AA100C0375F /* CVUParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVUParserTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF63D24766AA100C0375F /* ExprInterpreterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprInterpreterTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		868EF6542476768C00C0375F /* UIElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIElement.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		868EF6542476768C00C0375F /* UINode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINode.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF656247678B100C0375F /* Languages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Languages.swift; sourceTree = "<group>"; };
 		868EF658247678BC00C0375F /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		868EF696247784C600C0375F /* ResultSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultSet.swift; sourceTree = "<group>"; };
@@ -611,6 +611,8 @@
 		B8BF6F4924BEA16A0058067C /* MessageRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageRenderer.swift; sourceTree = "<group>"; };
 		B8BF6F4B24BEA3E60058067C /* messages.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = messages.cvu; sourceTree = "<group>"; };
 		B8BF6F5024BEA9260058067C /* ContextualBottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualBottomBar.swift; sourceTree = "<group>"; };
+		B8CE6FAF2537E99E00FC8CDD /* MemriTextEditorFileHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriTextEditorFileHandler.swift; sourceTree = "<group>"; };
+		B8CE6FB42537EBF700FC8CDD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B8CECC072503092C006EE229 /* CVUFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CVUFont.swift; path = ../../../cvu/newWIP/CVUFont.swift; sourceTree = "<group>"; };
 		B8CECC0925030956006EE229 /* CVUColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CVUColor.swift; path = ../../../cvu/newWIP/CVUColor.swift; sourceTree = "<group>"; };
 		B8CECC0D250309CA006EE229 /* CVU_Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CVU_Image.swift; path = ../../cvu/newWIP/CVU_Image.swift; sourceTree = "<group>"; };
@@ -1400,6 +1402,7 @@
 			children = (
 				B88273EC252AAF140060E56E /* MemriTextEditor_Toolbar.swift */,
 				B88273EA252AAF140060E56E /* MemriTextEditor_UIKit.swift */,
+				B8CE6FAF2537E99E00FC8CDD /* MemriTextEditorFileHandler.swift */,
 				B88273ED252AAF140060E56E /* MemriTextEditor.swift */,
 				B88273EB252AAF140060E56E /* MemriTextEditorModel.swift */,
 				B88273F5252AAF230060E56E /* textEditorDist */,
@@ -1496,7 +1499,7 @@
 			isa = PBXGroup;
 			children = (
 				5D487F21244073DF00B50202 /* UIElementView.swift */,
-				868EF6542476768C00C0375F /* UIElement.swift */,
+				868EF6542476768C00C0375F /* UINode.swift */,
 				B8AAB43C250E1160007CF0E3 /* types */,
 				B8CECC0D250309CA006EE229 /* CVU_Image.swift */,
 				B8AAB434250DAC0A007CF0E3 /* CVU_Stack.swift */,
@@ -1608,7 +1611,7 @@
 		C8A6F7332419907D00FF8183 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				5D599BC023F2B77700F218A0 /* Assets.xcassets */,
+				B8CE6FB42537EBF700FC8CDD /* Assets.xcassets */,
 				B8BF1D332529FFEB00919E6E /* demoAssets */,
 				5D599BC523F2B77700F218A0 /* LaunchScreen.storyboard */,
 				C8A6F73B241993AD00FF8183 /* Localizable.strings */,
@@ -1791,6 +1794,7 @@
 				5DAFB6382479533000719160 /* sessions.cvu in Resources */,
 				861439F62435AF91008D6B5B /* test_sessions.json in Resources */,
 				8699AA2F247BCF1E00EC85C0 /* Note.cvu in Resources */,
+				B8CE6FB52537EBF700FC8CDD /* Assets.xcassets in Resources */,
 				5DAFB61D2479526900719160 /* SessionView.cvu in Resources */,
 				B826585824D2F3120051CCFE /* HTMLResources in Resources */,
 				5D1A3E66240805C700A0583B /* empty_sessionview.json in Resources */,
@@ -1802,7 +1806,6 @@
 				863D0E0A247955A900DAB6C8 /* example.view in Resources */,
 				5D3EE57E2447701F00562AAC /* note.0x01.json in Resources */,
 				5DAFB630247952D300719160 /* all-items-with-label.cvu in Resources */,
-				5D599BC123F2B77700F218A0 /* Assets.xcassets in Resources */,
 				5D5327DB248FD03E001FF168 /* Indexer.cvu in Resources */,
 				86AECB2024D400050024D7B9 /* CryptoKey.cvu in Resources */,
 				8699AA2E247BCF1E00EC85C0 /* Session.cvu in Resources */,
@@ -2001,7 +2004,7 @@
 				B8E0FBDD24A43FDB009C3C30 /* MapStyle.swift in Sources */,
 				5D228B062432385300464506 /* ActionView.swift in Sources */,
 				B8E0FBD924A43F5A009C3C30 /* MapView-AppleMaps.swift in Sources */,
-				868EF6552476768C00C0375F /* UIElement.swift in Sources */,
+				868EF6552476768C00C0375F /* UINode.swift in Sources */,
 				B8CECC0A25030956006EE229 /* CVUColor.swift in Sources */,
 				8699AA2D247BBBB200EC85C0 /* SubView.swift in Sources */,
 				86CDB48B246ABE46007EAE67 /* ViewDebugger.swift in Sources */,
@@ -2015,6 +2018,7 @@
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 				5D38DE19240577BA00FF9B70 /* Views.swift in Sources */,
 				B8AAB440250E2EDF007CF0E3 /* CVU_Map.swift in Sources */,
+				B8CE6FB02537E99E00FC8CDD /* MemriTextEditorFileHandler.swift in Sources */,
 				C892B3E824A5455D006707EC /* SensorManager.swift in Sources */,
 				86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */,
 				5D38DE172405776B00FF9B70 /* Item.swift in Sources */,
@@ -2223,7 +2227,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2279,7 +2283,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -2309,7 +2313,7 @@
 				);
 				INFOPLIST_FILE = memri/Info.plist;
 				INTERMEDIATES_OUTPUT_DIR = "${BUILD_ROOT}/intermediates/${CONFIGURATION}/";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2323,7 +2327,7 @@
 				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -2347,7 +2351,7 @@
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "";
 				INFOPLIST_FILE = memri/Info.plist;
 				INTERMEDIATES_OUTPUT_DIR = "${BUILD_ROOT}/intermediates/${CONFIGURATION}/";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2359,7 +2363,7 @@
 				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

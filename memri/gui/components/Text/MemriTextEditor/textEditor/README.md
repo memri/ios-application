@@ -12,8 +12,8 @@ The command line will tell you the url to open from your browser. It is best to 
 
 **To build:**
 ```
-cd THISFOLDER;
+cd PATHTOTHISFOLDER;
 vue build editor.vue --dest textEditorDist
 ```
 
-The distribution folder is used within the main iOS project, so once you have run `vue build` you can rebuild the app to include the new version.
+The distribution folder is used within the main iOS project, so once you have run the above command you can rebuild the app to include the new version.

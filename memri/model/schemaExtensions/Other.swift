@@ -237,7 +237,7 @@ extension CVUStateDefinition {
 
 extension CVUStoredDefinition {
     override var computedTitle: String {
-        #warning("Parse and then create a proper string representation")
+        // TODO: Parse and then create a proper string representation")
         if let value = name, value != "" { return value }
         return "[No Name]"
     }

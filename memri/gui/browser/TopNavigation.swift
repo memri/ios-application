@@ -95,7 +95,7 @@ public struct TopNavigation: View {
                             .font(.system(size: 16, weight: .regular))
                             .padding(.horizontal, 5)
                             .padding(.vertical, 2)
-                            .foregroundColor(Color(hex: "#106b9f"))
+                            .foregroundColor(Color(.systemBlue))
                     }
                     .font(Font.system(size: 19, weight: .semibold))
                 }
@@ -138,7 +138,7 @@ public struct TopNavigation: View {
                             .font(.system(size: 10, weight: .bold, design: .default))
                             .padding(.horizontal, 5)
                             .padding(.vertical, 8)
-                            .foregroundColor(Color(hex: "#434343"))
+                            .foregroundColor(Color(.secondaryLabel))
                     }
                     .font(Font.system(size: 19, weight: .semibold))
                     .actionSheet(isPresented: $showingBackActions) {
@@ -174,6 +174,7 @@ public struct TopNavigation: View {
             }
             .padding(.vertical, 12)
             .padding(.horizontal, 15)
+            .background(Color(.secondarySystemGroupedBackground).edgesIgnoringSafeArea(.all))
             .frame(height: 50)
 
             Divider()
@@ -188,7 +189,7 @@ public struct TopNavigation: View {
             }) {
                 Text(context.currentView?.title ?? "")
                 .font(.headline)
-                .foregroundColor(Color(hex: "#333"))
+                    .foregroundColor(Color(.label))
                 .truncationMode(.tail)
             }
             .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: { someBool in

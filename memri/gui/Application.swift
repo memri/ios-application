@@ -22,7 +22,7 @@ var memri_shouldUseLargeScreenLayout: Bool {
     #if targetEnvironment(macCatalyst)
         return true
     #else
-        return UIDevice.current.userInterfaceIdiom == .pad
+        return false
     #endif
 }
 
@@ -49,7 +49,7 @@ struct Application: View {
             }
         }
         .background(Color(.systemBackground))
-        .colorScheme(.light) // Force light color scheme for now, until we add better dark-mode support
+//        .colorScheme(.light) // Force light color scheme for now, until we add better dark-mode support
     }
 }
 

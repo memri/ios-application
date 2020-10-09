@@ -59,7 +59,7 @@ public struct UIElementView: SwiftUI.View {
         case .Textfield:
             CVU_TextField(nodeResolver: nodeResolver, editModeBinding: editModeBinding)
         case .RichTextfield:
-            CVU_RichTextEditor(nodeResolver: nodeResolver, editModeBinding: editModeBinding, searchTerm: context.currentView?.filterText)
+            CVU_RichTextEditor(nodeResolver: nodeResolver, editModeBinding: editModeBinding, searchTerm: context.currentView?.filterText, itemID: nodeResolver.item?.uid.value)
         case .EditorSection:
             CVU_EditorSection(nodeResolver: nodeResolver)
         case .EditorRow:
@@ -100,8 +100,6 @@ public struct UIElementView: SwiftUI.View {
                      arguments: nodeResolver.viewArguments)
         case .TimelineItem:
             CVU_TimelineItem(nodeResolver: nodeResolver)
-        default:
-            Text("\(nodeResolver.node.type.rawValue) not implemented")
         }
     }
     
@@ -162,13 +160,10 @@ public struct UIElementView: SwiftUI.View {
                 viewArguments: subviewArguments
             )
         } else {
-            #warning("This was carried over from the old UIElementView - this has potential to cause performance issues")
+            #warning("This was carried over from the old UIElementView - this has potential to cause performance issues. It is creating a new CVU at every redraw. Instead architect this to only create the CVU once and have that one reload")
             SubView(
                 context: self.context,
                 view: {
-                    #warning(
-                        "This is creating a new CVU at every redraw. Instead architect this to only create the CVU once and have that one reload"
-                        )
                     if let parsed: [String: Any?] = nodeResolver.resolve("view") {
                         let def = CVUParsedViewDefinition(
                             "[view]",

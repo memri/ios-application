@@ -100,6 +100,10 @@ struct ListRendererView: View {
 												trailing: self.controller.config.edgeInset.right))
                     }
                 )
+                .onPullToRefresh({ callback in
+                    try? self.controller.context.currentView?.reload()
+                    callback()
+                })
                     .alwaysBounce()
 					.contentInsets(.init(top: controller.config.edgeInset.top, left: 0, bottom: controller.config.edgeInset.bottom, right: 0))
                     .background(controller.config.backgroundColor?.color ?? Color(.systemBackground))

@@ -20,6 +20,7 @@ struct MemriTextEditor_Toolbar: View {
             isActive: Bool = false,
             onPress: () -> Void
         )
+        case label(AnyView)
         case divider
         
         var view: AnyView {
@@ -39,6 +40,8 @@ struct MemriTextEditor_Toolbar: View {
                         }
                     }
                 })
+            case .label(let view):
+                return view
             case .divider:
                 return AnyView(Divider().padding(.vertical, 8))
             }
@@ -46,43 +49,30 @@ struct MemriTextEditor_Toolbar: View {
     }
     
     var items: [Item]
-    var subitems: [Item] = []
-    var color: String?
-    var setColor: ((String) -> Void)?
-    
-    private var colorBinding: Binding<CGColor> {
-        Binding<CGColor>(
-            get: { (color.map { UIColor(hex: $0) } ?? .black).cgColor },
-            set: { setColor?(UIColor(cgColor: $0).hexString(includingAlpha: false)) }
-        )
-    }
+    var showBackButton: Bool
+    var onBackButton: () -> Void
     
     var body: some View {
             VStack(spacing: 0) {
-                if !subitems.isEmpty {
-                    Divider()
-                    HStack {
-                        ForEach(self.subitems.indexed(), id: \.index) { item in
-                            item.view
-                        }
-                    }
-                    .frame(minHeight: 40)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                }
                 Divider()
                 HStack(spacing: 0) {
                     ScrollView(.horizontal) {
                         HStack(spacing: 2) {
+                            if showBackButton {
+                                Button(action: onBackButton) {
+                                    Image(systemName: "arrowshape.turn.up.left.circle")
+                                        .foregroundColor(Color(.label))
+                                        .frame(minWidth: 30, minHeight: 36)
+                                        .padding(.horizontal, 8)
+                                        .contentShape(Rectangle())
+                                        .accessibility(hint: Text("Back"))
+                                }
+                                Divider()
+                                    .padding(.trailing, 8)
+                            }
                             ForEach(self.items.indexed(), id: \.index) { item in
                                 item.view
                             }
-                            #if !targetEnvironment(macCatalyst)
-                            if #available(iOS 14.0, *) {
-                                ColorPicker(selection: colorBinding, supportsOpacity: false) {
-                                    EmptyView()
-                                }.labelsHidden()
-                            }
-                            #endif
                         }
                         .padding(.horizontal, self.padding)
                     }
@@ -114,11 +104,5 @@ struct MemriTextEditor_Toolbar: View {
         #else
         return 4
         #endif
-    }
-}
-
-struct TextEditorToolbar_Previews: PreviewProvider {
-    static var previews: some View {
-        MemriTextEditor_Toolbar(items: [])
     }
 }

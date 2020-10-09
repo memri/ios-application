@@ -2,8 +2,8 @@
 output: public
 clean: true
 xcodebuild_arguments:
-- -workspace
-- memri.xcworkspace
+- -project
+- memri.xcodeproj
 - -scheme
 - memri
 - CODE_SIGNING_ALLOWED = NO

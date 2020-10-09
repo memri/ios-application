@@ -58,7 +58,7 @@ class MessageRendererController: RendererController, ObservableObject {
     var composedMessage: String?
     
     func onPressSend() {
-        #warning("@Ruben: we will need to decide how `sending` a message is handled")
+        #warning("Dummy implementation")
         print(composedMessage ?? "Empty message")
         // Handle message here
         

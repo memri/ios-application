@@ -127,9 +127,6 @@ struct TimelineRendererView: View {
                              backgroundColor: ItemFamily(rawValue: element.itemType)?
                                  .backgroundColor ?? .gray)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            #warning(
-                "@Ruben: I couldn't figure out a way using current CVU options to provide a way to render for a `group` of items"
-            )
         }
         else {
             element.items.first.map {

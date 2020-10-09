@@ -228,7 +228,7 @@ public class Item: SchemaItem {
         }
 
         // TODO: collection support
-        #warning("Reverse EdgeCollection support not implemented yet")
+        // TODO: Reverse EdgeCollection support not implemented yet")
 
         
         return realm?.objects(Edge.self)
@@ -546,7 +546,7 @@ public class Item: SchemaItem {
         let updatedFields = _updated
 
         // Compare all updated properties and make sure they are the same
-        #warning("properly implement this for edges")
+        // TODO: properly implement this for edges")
         for fieldName in updatedFields {
             if item[fieldName] != nil && !isEqualProperty(fieldName, item) { return false }
         }
@@ -606,7 +606,7 @@ public class Item: SchemaItem {
                 }
             }
         }
-        #warning("Implement edge merging")
+        // TODO: Implement edge merging")
     }
 
     /// update the dateAccessed property to the current date
@@ -644,7 +644,7 @@ public class Item: SchemaItem {
             item.dateModified = Date()
             
             if previousModified?.distance(to: Date()) ?? 0 < 300 /* 5 minutes */ {
-                #warning("Test that .last gives the last added audit item")
+                // TODO: Test that .last gives the last added audit item")
                 if
                     let auditItem = item.edges("changelog")?.last?.target(type: AuditItem.self),
                     let content = auditItem.content,
@@ -781,8 +781,6 @@ extension RealmSwift.Results where Element == Edge {
         return result
     }
 
-    //    #warning("Toby, how do Ranges work exactly?")
-    //    #warning("@Ruben I think this achieves what you want")
     //    // TODO: views.removeSubrange((currentViewIndex + 1)...)
     //    func removeEdges(ofType type: String, withOrderMatchingBounds orderBounds: PartialRangeFrom<Int>) {
     //        edges(type)?.filter("order > \(orderBounds.lowerBound)").forEach { edge in

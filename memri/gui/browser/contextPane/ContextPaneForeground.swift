@@ -67,7 +67,7 @@ struct ContextPaneForeground: View {
                                 context.executeAction(actionItem)
                     }) {
                                 Text(actionItem.getString("title"))
-                                    .foregroundColor(.black)
+                                    .foregroundColor(Color(.label))
                                     .opacity(0.6)
                                     .font(.system(size: 20, weight: .regular, design: .default))
                                     .padding(.vertical, 10)
@@ -93,7 +93,7 @@ struct ContextPaneForeground: View {
                                 context.executeAction(navigateItem)
                     }) {
                                 Text(LocalizedStringKey(navigateItem.getString("title")))
-                                    .foregroundColor(.black)
+                                    .foregroundColor(Color(.label))
                                     .opacity(0.6)
                                     .font(.system(size: 20, weight: .regular, design: .default))
                                     .padding(.vertical, 10)
@@ -118,7 +118,7 @@ struct ContextPaneForeground: View {
                                 context.executeAction(addLabelAction, with: labelItem)
                     }) {
                                 Text(labelItem.name ?? "")
-                                    .foregroundColor(.black)
+                                    .foregroundColor(Color(.label))
                                     .opacity(0.6)
                                     .font(.system(size: 20, weight: .regular, design: .default))
                                     .padding(.vertical, 5)
@@ -133,7 +133,7 @@ struct ContextPaneForeground: View {
                             context.executeAction(ActionNoop(context))
                 }) {
                             Text(addLabelAction.getString("title"))
-                                .foregroundColor(.black)
+                                .foregroundColor(Color(.label))
                                 .opacity(0.6)
                                 .font(.system(size: 20, weight: .regular, design: .default))
                                 .padding(.vertical, 10)
@@ -144,8 +144,7 @@ struct ContextPaneForeground: View {
                 }
                 .padding(.top, 60)
             }
-            //            .padding(.leading, 16)
-            .background(Color.white)
+            .background(Color(.secondarySystemGroupedBackground))
     }
 }
 

@@ -579,7 +579,7 @@ public class Cache {
             }
 
             #if DEBUG
-            print("\(type) - \(dict["uid"])")
+            print("\(type) - \(String(describing: dict["uid"]))")
             #endif
 
             item = realm.create(type, value: dict)

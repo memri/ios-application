@@ -14,9 +14,6 @@ struct CVU_RichTextEditor: View {
     var searchTerm: String?
     
     
-    var fontSize: CGFloat { nodeResolver.cgFloat(for:"fontSize") ?? 18 }
-//    var titleHint: String? { nodeResolver.string(for: "titleHint")?.nilIfBlank }
-    
     var titleBinding: Binding<String?>? {
         nodeResolver.binding(for: "title")
     }
@@ -25,15 +22,18 @@ struct CVU_RichTextEditor: View {
         nodeResolver.binding(for: "content", defaultValue: "")
     }
     
+    var itemID: Int?
+    
     var body: some View {
         MemriTextEditor(model: MemriTextEditorModel(title: titleBinding?.wrappedValue, body: contentBinding.wrappedValue),
                         onModelUpdate: { (model) in
                             titleBinding?.wrappedValue = model.title
                             contentBinding.wrappedValue = model.body
                         },
+                        fileHandler: itemID.map { MemriNotesFileHandler(noteID: $0) },
                         searchTerm: searchTerm,
-                        isEditing: editModeBinding,
-                        fontSize: fontSize)
+                        isEditing: editModeBinding
+        )
     }
     
 }

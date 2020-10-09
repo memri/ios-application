@@ -135,7 +135,6 @@ class Sync {
                         // TODO: handle sync errors
                         do {
                             let finalItem = try Cache.addToCache(item)
-                            #warning("When loading photos, edges dont have any data")
                             if let file = finalItem as? File {
                                 file.queueForDownload()
                             }
@@ -284,7 +283,7 @@ class Sync {
                                 markAsDone(safeEdgeQueue) { _ in // TODO Error Handling
                                     debugHistory.info("Syncing complete")
 
-                                    #warning("Should this hold up further syncing?")
+                                    // TODO: Should this hold up further syncing?")
                                     self.syncFilesToPod() { _ in
                                         self.syncing = false
                                         self.schedule(long: true)
@@ -437,7 +436,7 @@ class Sync {
         }
     }
 
-    #warning("This is terribly brittle, we'll need to completely rearchitect syncing")
+    // TODO: This is terribly brittle, we'll need to completely rearchitect syncing")
     public func syncAllFromPod(_ callback: @escaping () -> Void) {
         syncQuery(Datasource(query: "CVUStoredDefinition"), auditable: false) {
             self.syncQuery(Datasource(query: "CVUStateDefinition"), auditable: false) {

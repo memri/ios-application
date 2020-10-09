@@ -226,6 +226,7 @@
     {
         "_type": "Note",
         "title": "A demo note",
+        "starred": true,
         "content": "<p><strong>Hi there,<\/strong><\/p><p>Let's explore the <u>new<\/u> text editor.<\/p><p><\/p><ul> <li><p>This is a list<\/p><\/li> <li><p>You can press return to make a new item<\/p>  <ul>   <li><p>Indented item<\/p><\/li>   <li><p><s>Something else<\/s><\/p><\/li>  <\/ul><\/li><\/ul><p><\/p><p>Or an ordered list:<\/p><ol> <li><p>Milk<\/p><\/li> <li><p>Eggs<\/p><\/li> <li><p>Flour<\/p>  <ol>   <li><p>Self-raising<\/p><\/li>   <li><p>Plain<\/p><\/li>  <\/ol><\/li><\/ol><p><\/p><p><strong>Todo list<\/strong><\/p><ul data-type=\"todo_list\"> <li data-type=\"todo_item\" data-done=\"true\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span>  <div class=\"todo-content\">   <p>Try out new editor<\/p>  <\/div><\/li> <li data-type=\"todo_item\" data-done=\"false\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span>  <div class=\"todo-content\">   <p>Finish writing blog post <\/p> <ul data-type=\"todo_list\"><li data-type=\"todo_item\" data-done=\"false\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span><div class=\"todo-content\"><p>Improve the second paragraph<\/p><\/div><\/li><\/ul><\/div><\/li> <li data-type=\"todo_item\" data-done=\"false\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span>  <div class=\"todo-content\">   <p>Prepare presentation<\/p>  <\/div><\/li><\/ul><p><\/p><p>It also supports both <code>inline code<\/code> and code blocks:<\/p><pre><code>def some_function(argument):\n    return \"Automatic code highlighting!\"<\/code><\/pre><p><\/p><p><\/p>"
     },
     {
@@ -2497,6 +2498,21 @@
         "version": 1
     },
     {
+        "_type": "File",
+        "uid": 219603712098,
+        "filename": "unsplash-image2"
+    },
+    {
+        "_type": "File",
+        "uid": 219603712099,
+        "filename": "karen-penroz-06ZTGDcAQFs-unsplash"
+    },
+    {
+        "_type": "File",
+        "uid": 219603712100,
+        "filename": "szabo-viktor-tarTTEaiIx4-unsplash"
+    },
+    {
         "name": "Afghanistan",
         "_type": "Country"
     },
@@ -3531,8 +3547,8 @@
     },
     {
         "_type": "Note",
-        "title": "Shopping list",
-        "content": "<ul><li>potatoes</li><li>mayonaise</li></ul>",
+        "title": "Add photos to your notes",
+        "content": "<p><strong><u>Hiking trip last month:</u></strong></p><img src=\"memriFile://unsplash-image2\">\n<ul>\n <li><p>Once we got to the trailhead the first 2km was steep as can be!</p></li>\n <li><p>The next section was a gentle slope up the ridge with amazing views over the valley</p></li>\n</ul>\n<p></p>\n<h2>Latte art goals:</h2>\n<img src=\"memriFile://szabo-viktor-tarTTEaiIx4-unsplash\"><p><br></p>\n<h2><span style=\"color: var(--text-color-blue);\">Color</span> <span style=\"color: var(--text-color-yellow);\">scheme</span> <span style=\"color: var(--text-color-pink);\">idea!</span></h2>\n<img src=\"memriFile://karen-penroz-06ZTGDcAQFs-unsplash\">",
         "starred": true,
         "dateModified": 1593710745298,
         "allEdges": [
@@ -3545,6 +3561,21 @@
                 "_type": "label",
                 "targetType": "Label",
                 "uid": 1016
+            },
+            {
+                "_type": "file",
+                "targetType": "File",
+                "uid": 219603712098
+            },
+            {
+                "_type": "file",
+                "targetType": "File",
+                "uid": 219603712099
+            },
+            {
+                "_type": "file",
+                "targetType": "File",
+                "uid": 219603712100
             }
         ],
         "_partial": true,
@@ -3553,7 +3584,7 @@
     {
         "_type": "Note",
         "title": "To read list",
-        "content": "Age of surveillance capitalism",
+        "content": "<ul data-type=\"todo_list\">\n <li data-type=\"todo_item\" data-done=\"false\"><p>Age of surveillance capitalism</p></li>\n</ul>\n<p></p>\n<p><em>What next?</em></p>",
         "allEdges": [
             {
                 "_type": "label",
@@ -3573,7 +3604,6 @@
         "_type": "Note",
         "title": "Ideas for memri",
         "content": "privacy by design, digital memory",
-        "starred": true,
         "dateModified": 1593677745298,
         "version": 1
     },

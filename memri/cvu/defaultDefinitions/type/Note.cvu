@@ -120,16 +120,16 @@ Note[] {
                 alignment: left
                 spacing: 5
                 Text {
-                    text: {{.title or "Untitled"}}
+                    text: {{.title.plainString or "Untitled"}}
 					lineLimit: 1
                     font: 18 semibold
-                    color: #333
+                    color: primary
                     padding: 0 0 0 0
                 }
                 Image {
                     systemName: "star.fill"
                     font: 14
-                    color: #eecc00
+                    color: yellow
                     margin: 5
                     show: {{.starred}}
                 }
@@ -139,14 +139,14 @@ Note[] {
 				lineLimit: 1
                 removeWhiteSpace: true
                 maxChar: 100
-                color: #555
+                color: secondary
                 font: 14 regular
             }
             Text {
                 text: "{.dateModified}"
 				lineLimit: 1
                 font: 11 regular
-                color: #888
+                color: tertiary
                 padding: 0 0 0 0
             }
         }
@@ -178,16 +178,16 @@ Note[] {
             HStack {
                 alignment: center
                 Text {
-                    text: {{.title or "Untitled"}}
+                    text: {{.title.plainString or "Untitled"}}
                     padding: 5 0 0 0
-                    color: #333
+                    color: primary
                     font: 12 semibold
                     maxChar: 100
                 }
                 Image {
                     systemName: "star.fill"
                     font: 10
-                    color: #eecc00
+                    color: yellow
                     margin: 8 0 0 2
                     show: {{.starred}}
                 }
@@ -195,15 +195,15 @@ Note[] {
             Text {
                 text: "{.dateModified}"
                 font: 9 regular
-                color: #888
+                color: secondary
                 padding: 3 0 0 0
             }
         }
     }
     
 	[renderer = calendar] {
-		background: #FFF
-		color: #FF0000 /* set the primary color to red */
+		background: background
+		color: red /* set the primary color to red */
 	}
 	
 	[renderer = timeline] {
@@ -212,7 +212,7 @@ Note[] {
 
 		TimelineItem {
 			icon: "square.and.pencil"
-			title: {{.title or "Untitled"}}
+			title: {{.title.plainString or "Untitled"}}
 			text: {{.content.plainString}}
 		}
 	}

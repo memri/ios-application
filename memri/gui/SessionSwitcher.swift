@@ -11,6 +11,8 @@ struct SessionSwitcher: View {
     @State private var _globalOffset: CGFloat = 0
     @State private var dragOffset: CGFloat = 0
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var count: Int {
         min(10, self.context.sessions.count)
     }
@@ -128,7 +130,7 @@ struct SessionSwitcher: View {
                     .rotationEffect(.degrees(90))
                     .padding(.vertical, 7)
                     .padding(.horizontal, 4)
-                    .background(Color(hex: "#ddd"))
+                    .background(Color(.darkGray))
                     .cornerRadius(25)
                     .zIndex(1000)
                     .offset(x: 4, y: -7)
@@ -141,9 +143,12 @@ struct SessionSwitcher: View {
             .zIndex(100)
 
             GeometryReader { geometry in
+                Color(.systemBackground)
+                
                 Image("session-switcher-tile")
                     .resizable(resizingMode: .tile)
-                    .edgesIgnoringSafeArea(.vertical)
+                    .opacity(colorScheme == .dark ? 0.3 : 1)
+                    .edgesIgnoringSafeArea(.all)
                 
                 ForEach(0 ..< self.count, id: \.self) { i in
                     { () -> AnyView in

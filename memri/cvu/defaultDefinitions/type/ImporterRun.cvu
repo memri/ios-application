@@ -121,7 +121,7 @@ ImporterRun {
                     alignment: left
                     readOnly: true
                     padding: 0 10
-                    background: #f9f9f9
+                    background: secondaryBackground
                     
                     Button {
                         press: runImporter {
@@ -223,12 +223,12 @@ ImporterRun[] {
                 Text {
                     text: "{.name}"
                     font: 18 semibold
-                    color: #333
+                    color: primary
                 }
                 Text {
                     text: "{.dateCreated}"
                     font: 11 regular
-                    color: #888
+                    color: secondary
                 }
             }
         }

@@ -139,7 +139,7 @@ public class Views {
         }
     }
 
-    #warning("This should be moved elsewhere")
+    // TODO: This should be moved elsewhere
     public class func formatDate(_ date: Date?, dateFormat: String? = nil) -> String {
         let showAgoDate: Bool? = Settings.shared.get("user/general/gui/showDateAgo")
 
@@ -202,7 +202,6 @@ public class Views {
         switch name {
         case "setting":
             let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
-                #warning("@Toby - how can we re-architect this?")
                 if let value = args?[safe: 0] as? String {
                     if let x = Settings.shared.get(value, type: Double.self) { return x }
                     else if let x = Settings.shared.get(value, type: Int.self) { return x }
@@ -432,7 +431,7 @@ public class Views {
 //                    case "min": value = v.min
 //                    case "max": value = v.max
                     case "items": value = v.items()
-                    #warning("Add sort")
+                    // TODO: Add sort")
                     default:
                         // TODO: Warn
                         debugHistory.warn("Could not find property \(node.name) on list of edges")
@@ -443,7 +442,7 @@ public class Views {
                     case "count": value = v.count
                     case "first": value = v.first
                     case "last": value = v.last
-                    #warning("Add sort")
+                    // TODO: Add sort")
                     default:
                         // TODO: Warn
                         debugHistory.warn("Could not find property \(node.name) on list of items")
@@ -454,7 +453,7 @@ public class Views {
                     case "count": value = v.count
                     case "first": value = v.first as Any?
                     case "last": value = v.last as Any?
-                    #warning("Add sort")
+                    // TODO: Add sort")
                     default:
                         // TODO: Warn
                         debugHistory.warn("Could not find property \(node.name) on list")
@@ -482,9 +481,9 @@ public class Views {
                         value = v[node.name] // How to handle errors?
                     }
                 }
-                else if "\(value ?? "")" != "nil" { #warning("Fix Any issue")
+                else if "\(value ?? "")" != "nil" { // TODO: Fix Any issue")
                     recursionCounter = 0
-                    throw "Unexpected fetch \(node.name) on \(value)"
+                    throw "Unexpected fetch \(node.name) on \(String(describing: value))"
                 }
             }
             // .addresses[primary = true] || [0]
@@ -492,7 +491,7 @@ public class Views {
                 // TODO: This is implemented very slowly first. Let's think about an optimization
 
                 let interpret = ExprInterpreter(node, lookupValueOfVariables, executeFunction)
-                let list = dataItemListToArray(value)
+                let list = dataItemListToArray(value as Any)
                 let args = viewArguments?.copy() ?? ViewArguments(nil)
                 let expr = node.sequence[0]
 
@@ -529,7 +528,7 @@ public class Views {
             if let f = f as? ([Any?]?) -> Any? {
                 return f(args) as Any?
             }
-            else if "\(f)" != "nil" { #warning("Temporary hack to detect nil that is not nil — .dateAccessed.format where .dateAccessed is nil")
+            else if "\(f)" != "nil" { // TODO: Temporary hack to detect nil that is not nil — .dateAccessed.format where .dateAccessed is nil")
                 throw "Could not find function to execute: \(lookup.toExprString())"
             }
         }
@@ -575,13 +574,6 @@ public class Views {
             throw "Exception: Missing Context"
         }
 
-        #warning(
-            "Turned off caching temporarily due to issue with UserState being cached wrongly (and then changed in cache)"
-        )
-//        let cached = InMemoryObjectCache.get(strDef)
-//        if let cached = cached as? CVU {
-//            return try cached.parse().first
-//        } else
             if let definition = viewDef.definition {
             let viewDefParser = CVU(definition, context,
                                     lookup: lookupValueOfVariables,
@@ -734,7 +726,7 @@ public class Views {
             }
 
             // Create a new view
-            #warning("viewArguments are not passed to cascading config, is that bad?")
+            // TODO: viewArguments are not passed to cascading config, is that bad?")
             let cascadingRendererConfig = CascadingRendererConfig(
                 nil,
                 cascadeStack,

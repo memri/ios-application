@@ -104,7 +104,7 @@ Importer[] {
 
         ZStack {
             Rectangle {
-                color: #fafafa
+                color: secondaryBackground
                 cornerRadius: 5
             }
 
@@ -117,7 +117,7 @@ Importer[] {
                         systemName: {{.icon}}
                         bundleImage: {{.bundleImage}}
                         resizable: true
-                        color: #2480d6
+                        color: blue
                         width: 50
                         height: 50
                 }
@@ -125,14 +125,14 @@ Importer[] {
                 Text {
                     text: "{.name}"
                     font: 16 semibold
-                    color: #333
+                    color: primary
                     padding: 5 0 0 0
                 }
                 
                 Text {
                     text: "{.dateModified}"
                     font: 11 regular
-                    color: #888
+                    color: secondary
                     padding: 8 0 5 0
                 }
         }
