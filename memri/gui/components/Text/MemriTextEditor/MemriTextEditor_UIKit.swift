@@ -213,7 +213,7 @@ class MemriTextEditor_UIKit: WKWebView {
         
         switch toolbarState {
         case .main:
-            
+            let isHeading = (currentFormatting["heading"] as? Int).map { $0 != 0 } ?? false
             MemriTextEditor_Toolbar.Item.button(label: "Bold", icon: Image(systemName: "bold").eraseToAnyView(),
                                                 isActive: currentFormatting["bold"] as? Bool ?? false,
                                                 onPress: { [weak self] in self?.toggleFormat("bold") })
@@ -234,32 +234,33 @@ class MemriTextEditor_UIKit: WKWebView {
                                                 onPress: { [weak self] in self?.toggleFormat("highlight_color", info: ["backColor": MemriTextEditorColor.yellow.cssVar]) })
             MemriTextEditor_Toolbar.Item.divider
             MemriTextEditor_Toolbar.Item.button(label: "Heading", icon: Text("H").font(toolbarIconFont).eraseToAnyView(),
-                                                isActive: (currentFormatting["heading"] as? Int).map { $0 != 0 } ?? false,
+                                                isActive: isHeading,
                                                 onPress: { [weak self] in self?.toolbarState.toggleHeading() })
             //            .button(label: "Quote", icon: Image(systemName: "decrease.quotelevel",
             //                    isActive: currentFormatting["blockquote"] as? Bool ?? false,
             //                    onPress: { [weak self] in self?.toggleFormat("blockquote") }),
-            MemriTextEditor_Toolbar.Item.button(label: "Todo List", icon: Image(systemName: "checkmark.square").eraseToAnyView(),
-                                                isActive: currentFormatting["todo_list"] as? Bool ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("todo_list") })
-            MemriTextEditor_Toolbar.Item.button(label: "Unordered List", icon: Image(systemName: "list.bullet").eraseToAnyView(),
-                                                isActive: currentFormatting["bullet_list"] as? Bool ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("bullet_list") })
-            MemriTextEditor_Toolbar.Item.button(label: "Ordered List", icon: Image(systemName: "list.number").eraseToAnyView(),
-                                                isActive: currentFormatting["ordered_list"] as? Bool ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("ordered_list") })
-            MemriTextEditor_Toolbar.Item.button(label: "Outdent List", icon: Image(systemName: "decrease.indent").eraseToAnyView(),
-                                                hideInactive: true,
-                                                isActive: currentFormatting["lift_list"] as? Bool ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("lift_list") })
-            MemriTextEditor_Toolbar.Item.divider
-            MemriTextEditor_Toolbar.Item.button(label: "Indent List", icon: Image(systemName: "increase.indent").eraseToAnyView(),
-                                                hideInactive: true,
-                                                isActive: currentFormatting["sink_list"] as? Bool ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("sink_list") })
-            MemriTextEditor_Toolbar.Item.button(label: "Code block", icon: Image(systemName: "textbox").eraseToAnyView(),
-                                                isActive: currentFormatting["code_block"] as? Bool ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("code_block") })
+            if !isHeading {
+                MemriTextEditor_Toolbar.Item.button(label: "Todo List", icon: Image(systemName: "checkmark.square").eraseToAnyView(),
+                                                    isActive: currentFormatting["todo_list"] as? Bool ?? false,
+                                                    onPress: { [weak self] in self?.toggleFormat("todo_list") })
+                MemriTextEditor_Toolbar.Item.button(label: "Unordered List", icon: Image(systemName: "list.bullet").eraseToAnyView(),
+                                                    isActive: currentFormatting["bullet_list"] as? Bool ?? false,
+                                                    onPress: { [weak self] in self?.toggleFormat("bullet_list") })
+                MemriTextEditor_Toolbar.Item.button(label: "Ordered List", icon: Image(systemName: "list.number").eraseToAnyView(),
+                                                    isActive: currentFormatting["ordered_list"] as? Bool ?? false,
+                                                    onPress: { [weak self] in self?.toggleFormat("ordered_list") })
+                MemriTextEditor_Toolbar.Item.button(label: "Outdent List", icon: Image(systemName: "decrease.indent").eraseToAnyView(),
+                                                    hideInactive: true,
+                                                    isActive: currentFormatting["lift_list"] as? Bool ?? false,
+                                                    onPress: { [weak self] in self?.toggleFormat("lift_list") })
+                MemriTextEditor_Toolbar.Item.button(label: "Indent List", icon: Image(systemName: "increase.indent").eraseToAnyView(),
+                                                    hideInactive: true,
+                                                    isActive: currentFormatting["sink_list"] as? Bool ?? false,
+                                                    onPress: { [weak self] in self?.toggleFormat("sink_list") })
+                MemriTextEditor_Toolbar.Item.button(label: "Code block", icon: Image(systemName: "textbox").eraseToAnyView(),
+                                                    isActive: currentFormatting["code_block"] as? Bool ?? false,
+                                                    onPress: { [weak self] in self?.toggleFormat("code_block") })
+            }
             
         case .color:
             MemriTextEditorColor.allCases.map { color in
