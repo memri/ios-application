@@ -1,6 +1,6 @@
 import { Doc } from 'tiptap'
 
-export default class CustomDoc extends Doc {
+export default class Document extends Doc {
 
     get schema() {
         return {

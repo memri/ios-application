@@ -1,6 +1,6 @@
 <style>
 @import "./editor.css";
-@import "./codehighlight.css";
+@import "./codeBlockHighlight.css";
 </style>
 
 
@@ -11,57 +11,6 @@
         
 <script>
 import { Editor, EditorContent } from "tiptap";
-import Doc from "./customDoc";
-import Title from "./title";
-
-import CodeBlockHighlight from "./codeBlockHighlight";
-// import TipTapCustomImage from "./TipTapImage";
-import OrderedList from "./OrderedList";
-import BulletList from "./BulletList";
-import TodoItem from "./TodoItem";
-import TextColor from "./TextColor";
-import HighlightColor from "./HighlightColor";
-import Image from "./image";
-import NativeUndo from "./nativeUndo";
-import { currentMarkAttribs } from "./markFunctions";
-
-// Enable smooth scrolling on safari iOS
-import "scroll-behavior-polyfill";
-
-function scrollIntoView(t) {
-  if (typeof t != "object") return;
-
-  if (t.getRangeAt) {
-    // we have a Selection object
-    if (t.rangeCount == 0) return;
-    t = t.getRangeAt(0);
-  }
-
-  if (t.cloneRange) {
-    // we have a Range object
-    var r = t.cloneRange(); // do not modify the source range
-    r.collapse(true); // collapse to start
-    t = r.startContainer;
-    // if start is an element, then startOffset is the child number
-    // in which the range starts
-    if (t.nodeType == 1) t = t.childNodes[r.startOffset];
-  }
-
-  // if t is not an element node, then we need to skip back until we find the
-  // previous element with which we can call scrollIntoView()
-  var o = t;
-  while (o && o.nodeType != 1) o = o.previousSibling;
-  t = o || t.parentNode;
-  if (t)
-    t.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-    });
-}
-
-window.scrollToSelection = () => {
-  scrollIntoView(window.getSelection());
-};
 
 import {
   Blockquote,
@@ -81,6 +30,18 @@ import {
   History,
 } from "tiptap-extensions";
 
+import Document from "./Extensions/Document";
+import DocumentTitle from "./Extensions/DocumentTitle";
+import CodeBlock from "./Extensions/CodeBlock";
+import OrderedList from "./Extensions/OrderedList";
+import BulletList from "./Extensions/BulletList";
+import TodoItem from "./Extensions/TodoItem";
+import TextColor from "./Extensions/TextColor";
+import TextHighlight from "./Extensions/TextHighlight";
+import Image from "./Extensions/Image";
+import NativeUndo from "./Extensions/NativeUndo";
+import { currentMarkAttribs } from "./Extensions/MarkFunctions";
+
 // Highlight.js imports
 import javascript from "highlight.js/lib/languages/javascript";
 import css from "highlight.js/lib/languages/css";
@@ -88,13 +49,19 @@ import swift from "highlight.js/lib/languages/swift";
 import rust from "highlight.js/lib/languages/rust";
 import python from "highlight.js/lib/languages/python";
 
+// Enable smooth scrolling on safari iOS
+import { scrollIntoView } from "./Extensions/ScrollIntoView";
+window.scrollToSelection = () => {
+  scrollIntoView(window.getSelection());
+};
+
 window.editor = new Editor({
   extensions: [
-    new Doc(),
-    new Title(),
+    new Document(),
+    new DocumentTitle(),
     new Blockquote(),
     new BulletList(),
-    new CodeBlockHighlight({
+    new CodeBlock({
       languages: {
         javascript,
         css,
@@ -104,7 +71,7 @@ window.editor = new Editor({
       },
     }),
     new HardBreak(),
-    new Heading({ levels: [1, 2, 3] }),
+    new Heading({ levels: [1, 2, 3, 4] }),
     new ListItem(),
     new OrderedList(),
     new TodoItem({
@@ -132,10 +99,10 @@ window.editor = new Editor({
       notAfter: ["paragraph"],
     }),
     new TextColor(),
-    new HighlightColor(),
+    new TextHighlight(),
     new Image(),
     new History({
-      newGroupDelay: 200,
+      newGroupDelay: 500,
     }),
     new NativeUndo(),
   ],
@@ -155,6 +122,8 @@ window.editor = new Editor({
           ? 2
           : isActive.heading({ level: 3 })
           ? 3
+          : isActive.heading({ level: 4 })
+          ? 4
           : 0,
         todo_list: isActive.todo_list(),
         ordered_list: isActive.ordered_list(),

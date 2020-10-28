@@ -1,6 +1,6 @@
 import { Node } from 'tiptap'
 
-export default class Title extends Node {
+export default class DocumentTitle extends Node {
 
     get name() {
         return 'title'

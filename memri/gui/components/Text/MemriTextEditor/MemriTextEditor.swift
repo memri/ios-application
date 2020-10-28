@@ -17,15 +17,15 @@ struct MemriTextEditor: UIViewRepresentable {
     var searchTerm: String?
     var isEditing: Binding<Bool>?
     
-    func makeUIView(context: Context) -> TextEditorWrapperUIView {
+    func makeUIView(context: Context) -> MemriTextEditor_UIKitWrapper {
         let view = MemriTextEditor_UIKit(initialModel: model)
         view.onModelUpdate = onModelUpdate
         view.fileHandler.fileHandler = fileHandler
         view.searchTerm = searchTerm?.nilIfBlankOrSingleLine
-        return TextEditorWrapperUIView(view)
+        return MemriTextEditor_UIKitWrapper(view)
     }
     
-    func updateUIView(_ wrapper: TextEditorWrapperUIView, context: Context) {
+    func updateUIView(_ wrapper: MemriTextEditor_UIKitWrapper, context: Context) {
         wrapper.textEditor.onModelUpdate = onModelUpdate
         wrapper.textEditor.searchTerm = searchTerm?.nilIfBlankOrSingleLine
         wrapper.textEditor.isEditingBinding = isEditing

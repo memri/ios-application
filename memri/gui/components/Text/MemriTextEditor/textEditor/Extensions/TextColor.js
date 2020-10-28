@@ -1,30 +1,32 @@
 import { Mark } from 'tiptap';
-import { toggleMark } from './markFunctions'
+import { toggleMark } from './MarkFunctions'
 
 
-export default class HighlightColor extends Mark {
+export default class TextColor extends Mark {
     get name() {
-        return 'highlight_color';
+        return 'text_color';
     }
 
     get schema() {
         return {
             attrs: {
-                backColor: '',
+                color: '',
             },
             inline: true,
             group: 'inline',
             parseDOM: [{
-                style: 'background',
-                getAttrs: value => ({
-                    backColor: value
-                }),
+                style: 'color',
+                getAttrs: color => {
+                    return {
+                        color,
+                    };
+                },
             }],
             toDOM(node) {
-                const { backColor } = node.attrs;
+                const { color } = node.attrs;
                 let style = '';
-                if (backColor) {
-                    style += `background: ${backColor};`;
+                if (color, color != "") {
+                    style += `color: ${color};`;
                 }
                 return ['span', { style }, 0];
             },

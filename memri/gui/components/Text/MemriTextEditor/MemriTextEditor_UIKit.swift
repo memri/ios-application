@@ -11,12 +11,15 @@ import UIKit
 import SwiftUI
 import WebKit
 
-public class TextEditorWrapperUIView: UIView {
+public class MemriTextEditor_UIKitWrapper: UIView {
     //This UIView allows us to add overlays to the UITextView if needed
     var textEditor: MemriTextEditor_UIKit
     var toolbar: UIView? {
         didSet {
-            toolbar.map(addSubview)
+            if toolbar !== oldValue {
+                toolbar.map(addSubview)
+                setupConstraints()
+            }
         }
     }
     var activityIndicator = UIActivityIndicatorView(style: .large)
@@ -183,7 +186,7 @@ class MemriTextEditor_UIKit: WKWebView {
         
         self.navigationDelegate = self
         self.scrollView.delegate = self
-        self.scrollView.isScrollEnabled = false
+        self.scrollView.isScrollEnabled = false // The scrolling of the notes view is handled by a scrollView in the html/css
         
         
         userController.add(self, name: "formatChange")
@@ -200,6 +203,17 @@ class MemriTextEditor_UIKit: WKWebView {
         }
     }
     
+    // Called once the webpage has been loaded - now we can set the contents of our editor
+    func onEditorLoaded() {
+        setContent(content: initialModel.html).sink{ [weak self] in
+            guard let self = self else { return }
+            (self.superview as? MemriTextEditor_UIKitWrapper)?.showActivityIndicator = false
+            self.updateToolbar()
+            self.updateSearchState().sink{}.store(in: &self.cancellableBag)
+            self.grabFocus(takeFirstResponder: false)
+        }.store(in: &cancellableBag)
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -209,7 +223,7 @@ class MemriTextEditor_UIKit: WKWebView {
     @ArrayBuilder<MemriTextEditor_Toolbar.Item>
     func getToolbarItems() -> [MemriTextEditor_Toolbar.Item] {
         let currentColorVar = currentFormatting["text_color"] as? String
-        let matchingColor = MemriTextEditorColor.allCases.first(where: { $0.cssVar == currentColorVar })?.swiftColor ?? .clear
+        let matchingColor = MemriTextEditorColor.allCases.first(where: { $0.cssVar == currentColorVar })?.swiftColor
         
         switch toolbarState {
         case .main:
@@ -226,7 +240,12 @@ class MemriTextEditor_UIKit: WKWebView {
             MemriTextEditor_Toolbar.Item.button(label: "Strike", icon: Image(systemName: "strikethrough").eraseToAnyView(),
                                                 isActive: currentFormatting["strike"] as? Bool ?? false,
                                                 onPress: { [weak self] in self?.toggleFormat("strike") })
-            MemriTextEditor_Toolbar.Item.button(label: "Color", icon: Circle().strokeBorder(matchingColor, lineWidth: 3).overlay(Image(systemName: "paintpalette")).frame(width: 30, height: 30).eraseToAnyView(),
+            MemriTextEditor_Toolbar.Item.button(label: "Color", icon: VStack {
+                Image(systemName: "paintpalette")
+                if let color = matchingColor {
+                    Capsule().fill(color).frame(height: 4)
+                }
+            }.frame(width: 30, height: 30).eraseToAnyView(),
                                                 isActive: false,
                                                 onPress: { [weak self] in self?.toolbarState.toggleColor() })
             MemriTextEditor_Toolbar.Item.button(label: "Highlighter", icon: Image(systemName: "highlighter").eraseToAnyView(),
@@ -236,9 +255,10 @@ class MemriTextEditor_UIKit: WKWebView {
             MemriTextEditor_Toolbar.Item.button(label: "Heading", icon: Text("H").font(toolbarIconFont).eraseToAnyView(),
                                                 isActive: isHeading,
                                                 onPress: { [weak self] in self?.toolbarState.toggleHeading() })
-            //            .button(label: "Quote", icon: Image(systemName: "decrease.quotelevel",
-            //                    isActive: currentFormatting["blockquote"] as? Bool ?? false,
-            //                    onPress: { [weak self] in self?.toggleFormat("blockquote") }),
+            // Quote not correctly toggling off currently - disabled until this is fixed
+//            MemriTextEditor_Toolbar.Item.button(label: "Quote", icon: Image(systemName: "decrease.quotelevel").eraseToAnyView(),
+//                                                isActive: currentFormatting["blockquote"] as? Bool ?? false,
+//                                                onPress: { [weak self] in self?.toggleFormat("blockquote") })
             if !isHeading {
                 MemriTextEditor_Toolbar.Item.button(label: "Todo List", icon: Image(systemName: "checkmark.square").eraseToAnyView(),
                                                     isActive: currentFormatting["todo_list"] as? Bool ?? false,
@@ -282,6 +302,9 @@ class MemriTextEditor_UIKit: WKWebView {
             MemriTextEditor_Toolbar.Item.button(label: "H3", icon: Text("H3").font(toolbarIconFont).padding(.horizontal, 4).eraseToAnyView(),
                                                 isActive: (currentFormatting["heading"] as? Int).map { $0 == 3 } ?? false,
                                                 onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 3]) })
+            MemriTextEditor_Toolbar.Item.button(label: "H4", icon: Text("H4").font(toolbarIconFont).padding(.horizontal, 4).eraseToAnyView(),
+                                                isActive: (currentFormatting["heading"] as? Int).map { $0 == 4 } ?? false,
+                                                onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 4]) })
         case .image:
             MemriTextEditor_Toolbar.Item.label(Text("Image selected").font(toolbarIconFont).padding(.horizontal, 4).eraseToAnyView())
         }
@@ -320,9 +343,9 @@ class MemriTextEditor_UIKit: WKWebView {
     
     public override func didMoveToSuperview() {
         super.didMoveToSuperview()
-        (superview as? TextEditorWrapperUIView)?.showActivityIndicator = isLoading
+        (superview as? MemriTextEditor_UIKitWrapper)?.showActivityIndicator = isLoading
         #if targetEnvironment(macCatalyst)
-        if let superview = superview as? TextEditorWrapperUIView {
+        if let superview = superview as? MemriTextEditor_UIKitWrapper {
             superview.toolbar = toolbarHost?.view
         }
         #endif
@@ -336,7 +359,7 @@ class MemriTextEditor_UIKit: WKWebView {
             let toolbarHost = UIHostingControllerNoSafeArea(rootView: view)
             self.toolbarHost = toolbarHost
             #if targetEnvironment(macCatalyst)
-            if let superview = superview as? TextEditorWrapperUIView {
+            if let superview = superview as? MemriTextEditor_UIKitWrapper {
                 superview.toolbar = toolbarHost.view
             }
             #else
@@ -413,13 +436,7 @@ extension MemriTextEditor_UIKit: WKScriptMessageHandler {
 
 extension MemriTextEditor_UIKit: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        setContent(content: initialModel.html).sink{ [weak self] in
-            guard let self = self else { return }
-            self.updateSearchState().sink{}.store(in: &self.cancellableBag)
-        }.store(in: &cancellableBag)
-        (superview as? TextEditorWrapperUIView)?.showActivityIndicator = false
-        updateToolbar()
-        grabFocus(takeFirstResponder: false)
+        onEditorLoaded()
     }
 }
 

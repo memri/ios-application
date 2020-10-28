@@ -1,9 +1,10 @@
 import { Node } from 'tiptap'
-import low from 'lowlight/lib/core'
 import { toggleBlockType, setBlockType, textblockTypeInputRule } from 'tiptap-commands'
-import HighlightPlugin from './highlightPlugin.js'
 
-export default class CodeBlockHighlight extends Node {
+import low from 'lowlight/lib/core'
+import HighlightPlugin from './CodeBlockHighlightPlugin.js'
+
+export default class CodeBlock extends Node {
 
     constructor(options = {}) {
         super(options)
