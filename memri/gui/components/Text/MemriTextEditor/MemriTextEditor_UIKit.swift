@@ -230,16 +230,16 @@ class MemriTextEditor_UIKit: WKWebView {
             let isHeading = (currentFormatting["heading"] as? Int).map { $0 != 0 } ?? false
             MemriTextEditor_Toolbar.Item.button(label: "Bold", icon: Image(systemName: "bold").eraseToAnyView(),
                                                 isActive: currentFormatting["bold"] as? Bool ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("bold") })
+                                                onPress: { [weak self] in self?.executeEditorCommand("bold") })
             MemriTextEditor_Toolbar.Item.button(label: "Italic", icon: Image(systemName: "italic").eraseToAnyView(),
                                                 isActive: currentFormatting["italic"] as? Bool ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("italic") })
+                                                onPress: { [weak self] in self?.executeEditorCommand("italic") })
             MemriTextEditor_Toolbar.Item.button(label: "Underline", icon: Image(systemName: "underline").eraseToAnyView(),
                                                 isActive: currentFormatting["underline"] as? Bool ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("underline") })
+                                                onPress: { [weak self] in self?.executeEditorCommand("underline") })
             MemriTextEditor_Toolbar.Item.button(label: "Strike", icon: Image(systemName: "strikethrough").eraseToAnyView(),
                                                 isActive: currentFormatting["strike"] as? Bool ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("strike") })
+                                                onPress: { [weak self] in self?.executeEditorCommand("strike") })
             MemriTextEditor_Toolbar.Item.button(label: "Color", icon: VStack {
                 Image(systemName: "paintpalette")
                 if let color = matchingColor {
@@ -250,7 +250,7 @@ class MemriTextEditor_UIKit: WKWebView {
                                                 onPress: { [weak self] in self?.toolbarState.toggleColor() })
             MemriTextEditor_Toolbar.Item.button(label: "Highlighter", icon: Image(systemName: "highlighter").eraseToAnyView(),
                                                 isActive: currentFormatting["highlight_color"] != nil,
-                                                onPress: { [weak self] in self?.toggleFormat("highlight_color", info: ["backColor": MemriTextEditorColor.yellow.cssVar]) })
+                                                onPress: { [weak self] in self?.executeEditorCommand("highlight_color", info: ["backColor": MemriTextEditorColor.yellow.cssVar]) })
             MemriTextEditor_Toolbar.Item.divider
             MemriTextEditor_Toolbar.Item.button(label: "Heading", icon: Text("H").font(toolbarIconFont).eraseToAnyView(),
                                                 isActive: isHeading,
@@ -259,27 +259,31 @@ class MemriTextEditor_UIKit: WKWebView {
 //            MemriTextEditor_Toolbar.Item.button(label: "Quote", icon: Image(systemName: "decrease.quotelevel").eraseToAnyView(),
 //                                                isActive: currentFormatting["blockquote"] as? Bool ?? false,
 //                                                onPress: { [weak self] in self?.toggleFormat("blockquote") })
+            
+            MemriTextEditor_Toolbar.Item.button(label: "Image", icon: Image(systemName: "photo").eraseToAnyView(),
+                                                isActive: false,
+                                                onPress: { [weak self] in self?.executeEditorCommand("image", info: ["src": "memriFile://unsplash-image2"]) })
             if !isHeading {
                 MemriTextEditor_Toolbar.Item.button(label: "Todo List", icon: Image(systemName: "checkmark.square").eraseToAnyView(),
                                                     isActive: currentFormatting["todo_list"] as? Bool ?? false,
-                                                    onPress: { [weak self] in self?.toggleFormat("todo_list") })
+                                                    onPress: { [weak self] in self?.executeEditorCommand("todo_list") })
                 MemriTextEditor_Toolbar.Item.button(label: "Unordered List", icon: Image(systemName: "list.bullet").eraseToAnyView(),
                                                     isActive: currentFormatting["bullet_list"] as? Bool ?? false,
-                                                    onPress: { [weak self] in self?.toggleFormat("bullet_list") })
+                                                    onPress: { [weak self] in self?.executeEditorCommand("bullet_list") })
                 MemriTextEditor_Toolbar.Item.button(label: "Ordered List", icon: Image(systemName: "list.number").eraseToAnyView(),
                                                     isActive: currentFormatting["ordered_list"] as? Bool ?? false,
-                                                    onPress: { [weak self] in self?.toggleFormat("ordered_list") })
+                                                    onPress: { [weak self] in self?.executeEditorCommand("ordered_list") })
                 MemriTextEditor_Toolbar.Item.button(label: "Outdent List", icon: Image(systemName: "decrease.indent").eraseToAnyView(),
                                                     hideInactive: true,
                                                     isActive: currentFormatting["lift_list"] as? Bool ?? false,
-                                                    onPress: { [weak self] in self?.toggleFormat("lift_list") })
+                                                    onPress: { [weak self] in self?.executeEditorCommand("lift_list") })
                 MemriTextEditor_Toolbar.Item.button(label: "Indent List", icon: Image(systemName: "increase.indent").eraseToAnyView(),
                                                     hideInactive: true,
                                                     isActive: currentFormatting["sink_list"] as? Bool ?? false,
-                                                    onPress: { [weak self] in self?.toggleFormat("sink_list") })
+                                                    onPress: { [weak self] in self?.executeEditorCommand("sink_list") })
                 MemriTextEditor_Toolbar.Item.button(label: "Code block", icon: Image(systemName: "textbox").eraseToAnyView(),
                                                     isActive: currentFormatting["code_block"] as? Bool ?? false,
-                                                    onPress: { [weak self] in self?.toggleFormat("code_block") })
+                                                    onPress: { [weak self] in self?.executeEditorCommand("code_block") })
             }
             
         case .color:
@@ -287,26 +291,29 @@ class MemriTextEditor_UIKit: WKWebView {
                 let isActiveColor = currentColorVar == color.cssVar
                 return MemriTextEditor_Toolbar.Item.button(label: "Set color", icon: Circle().fill(color.swiftColor ?? .black).overlay(Circle().strokeBorder(isActiveColor ? Color.primary : .clear)).frame(width: 30, height: 30).eraseToAnyView(),
                                                     isActive: false,
-                                                    onPress: { [weak self] in self?.toggleFormat("text_color", info: ["color": color.cssVar, "override": true]) })
+                                                    onPress: { [weak self] in self?.executeEditorCommand("text_color", info: ["color": color.cssVar, "override": true]) })
             }
         case .heading:
             MemriTextEditor_Toolbar.Item.button(label: "Body", icon: Text("Body").font(toolbarIconFont).padding(.horizontal, 4).eraseToAnyView(),
                                                 isActive: (currentFormatting["heading"] as? Int).map { $0 == 0 } ?? true,
-                                                onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 0]) })
+                                                onPress: { [weak self] in self?.executeEditorCommand("heading", info: ["level": 0]) })
             MemriTextEditor_Toolbar.Item.button(label: "H1", icon: Text("H1").font(toolbarIconFont).padding(.horizontal, 4).eraseToAnyView(),
                                                 isActive: (currentFormatting["heading"] as? Int).map { $0 == 1 } ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 1]) })
+                                                onPress: { [weak self] in self?.executeEditorCommand("heading", info: ["level": 1]) })
             MemriTextEditor_Toolbar.Item.button(label: "H2", icon: Text("H2").font(toolbarIconFont).padding(.horizontal, 4).eraseToAnyView(),
                                                 isActive: (currentFormatting["heading"] as? Int).map { $0 == 2 } ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 2]) })
+                                                onPress: { [weak self] in self?.executeEditorCommand("heading", info: ["level": 2]) })
             MemriTextEditor_Toolbar.Item.button(label: "H3", icon: Text("H3").font(toolbarIconFont).padding(.horizontal, 4).eraseToAnyView(),
                                                 isActive: (currentFormatting["heading"] as? Int).map { $0 == 3 } ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 3]) })
+                                                onPress: { [weak self] in self?.executeEditorCommand("heading", info: ["level": 3]) })
             MemriTextEditor_Toolbar.Item.button(label: "H4", icon: Text("H4").font(toolbarIconFont).padding(.horizontal, 4).eraseToAnyView(),
                                                 isActive: (currentFormatting["heading"] as? Int).map { $0 == 4 } ?? false,
-                                                onPress: { [weak self] in self?.toggleFormat("heading", info: ["level": 4]) })
+                                                onPress: { [weak self] in self?.executeEditorCommand("heading", info: ["level": 4]) })
         case .image:
             MemriTextEditor_Toolbar.Item.label(Text("Image selected").font(toolbarIconFont).padding(.horizontal, 4).eraseToAnyView())
+            MemriTextEditor_Toolbar.Item.button(label: "Delete", icon: Image(systemName: "trash").foregroundColor(.red).eraseToAnyView(),
+                                                isActive: false,
+                                                onPress: { [weak self] in self?.executeEditorCommand("deleteSelection") })
         }
         
     }
@@ -370,8 +377,8 @@ class MemriTextEditor_UIKit: WKWebView {
         }
     }
     
-    func toggleFormat(_ format: String, info: [String: Any] = [:]) {
-        setFormatting(format: format, info: info)
+    func executeEditorCommand(_ format: String, info: [String: Any] = [:]) {
+        futureForEditorCommand(format: format, info: info)
             .receive(on: DispatchQueue.main)
             .sink {}
             .store(in: &cancellableBag)
@@ -463,7 +470,7 @@ extension MemriTextEditor_UIKit {
         }
     }
 
-    func setFormatting(format: String, info: [String: Any] = [:]) -> Future<Void, Never> {
+    func futureForEditorCommand(format: String, info: [String: Any] = [:]) -> Future<Void, Never> {
         let infoString = (try? String(data: JSONSerialization.data(withJSONObject: info), encoding: .utf8)) ?? ""
         let script = "window.editor.commands.\(format)(\(infoString));"
         return Future { (promise) in

@@ -32,6 +32,7 @@ import {
 
 import Document from "./Extensions/Document";
 import DocumentTitle from "./Extensions/DocumentTitle";
+import ExtraCommands from "./Extensions/ExtraCommands";
 import CodeBlock from "./Extensions/CodeBlock";
 import OrderedList from "./Extensions/OrderedList";
 import BulletList from "./Extensions/BulletList";
@@ -59,6 +60,7 @@ window.editor = new Editor({
   extensions: [
     new Document(),
     new DocumentTitle(),
+    new ExtraCommands(),
     new Blockquote(),
     new BulletList(),
     new CodeBlock({
