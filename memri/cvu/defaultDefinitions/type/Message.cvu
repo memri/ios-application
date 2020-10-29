@@ -111,7 +111,7 @@ Message[] {
                 Text {
                     /*                        show: {{previous.dateSent - .dateSent < 30000}}*/
                     show: {{ .messageChannel._receiver[].count > 1 AND .sender.owner != me }}
-                    text: "{.sender.displayName}"
+                    text: "{.sender.owner.fullName()}"
                     font: 12 bold
                     color: secondary
                     lineLimit: 1
@@ -127,7 +127,7 @@ Message[] {
                         padding: 6
                         
                         Text {
-                            text: "{.message.sender.displayName}"
+                            text: "{.message.sender.owner.fullName()}"
                             font: 12 bold
                             color: #743a4c
                             lineLimit: 1

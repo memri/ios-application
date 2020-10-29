@@ -531,6 +531,7 @@
 		86FFD0C424A4CE42001BF14B /* Other.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Other.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		B80E01A624C839250005D756 /* ProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBarView.swift; sourceTree = "<group>"; };
 		B80E01A824C8434F0005D756 /* Array+Segments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Segments.swift"; sourceTree = "<group>"; };
+		B81172FA254AB8A6001230FB /* DemoExample.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = DemoExample.cvu; sourceTree = "<group>"; };
 		B81237EC24A43E42003E8BCB /* MapHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapHelper.swift; sourceTree = "<group>"; };
 		B81B792E24D04A9E00C25CDF /* ConfigPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigPanel.swift; sourceTree = "<group>"; };
 		B81B793024D04AE700C25CDF /* RendererSelectionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererSelectionPanel.swift; sourceTree = "<group>"; };
@@ -967,6 +968,7 @@
 		5DAFB631247952DF00719160 /* user */ = {
 			isa = PBXGroup;
 			children = (
+				B81172FA254AB8A6001230FB /* DemoExample.cvu */,
 				5DAFB632247952F500719160 /* UserNote.cvu-disabled */,
 			);
 			path = user;

@@ -102,13 +102,20 @@ struct MessageRendererView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            ASTableView(editMode: controller.editMode, section: section)
-                .separatorsEnabled(false)
-                .scrollPositionSetter($scrollPosition)
-                .alwaysBounce()
-                .contentInsets(.init(top: controller.config.edgeInset.top, left: 0, bottom: controller.config.edgeInset.bottom, right: 0))
-                .edgesIgnoringSafeArea(.all)
-                .background(controller.config.backgroundColor?.color ?? Color(.systemBackground))
+            if controller.context.items.isEmpty {
+                Text("No messages yet")
+                    .foregroundColor(.secondary)
+                    .padding()
+                Spacer()
+            } else {
+                ASTableView(editMode: controller.editMode, section: section)
+                    .separatorsEnabled(false)
+                    .scrollPositionSetter($scrollPosition)
+                    .alwaysBounce()
+                    .contentInsets(.init(top: controller.config.edgeInset.top, left: 0, bottom: controller.config.edgeInset.bottom, right: 0))
+                    .edgesIgnoringSafeArea(.all)
+                    .background(controller.config.backgroundColor?.color ?? Color(.systemBackground))
+            }
             Divider()
             messageComposer
         }

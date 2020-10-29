@@ -45,7 +45,7 @@ class NoteEditorRendererController: RendererController, ObservableObject {
     
     @Published var showingImagePicker: Bool = false
     @Published var showingImagePicker_shouldUseCamera: Bool = false
-    var onImagePickerCompletion: ((URL?) -> Void)?
+    private var imagePickerPromise: ((Result<URL?, Never>) -> Void)?
     
     func getEditorModel() -> MemriTextEditorModel {
         MemriTextEditorModel(
@@ -61,16 +61,36 @@ class NoteEditorRendererController: RendererController, ObservableObject {
         }
     }
     
-    func attachImage(image: UIImage) {
+    func onImagePickerFinished(image: UIImage?) {
+        var url: URL? = nil
+        defer { imagePickerPromise?(.success(url)) }
         
+        guard let image = image, let note = note else { return }
+        let filename = UUID().uuidString
+        
+        guard let data = image.jpegData(compressionQuality: 0.8) else { return }
+        try? FileStorageController.writeData(data, toFileForUUID: filename)
+        
+        DatabaseController.sync(write: true) { realm in
+            let file = File()
+            file.uid.value = try Cache.incrementUID()
+            file.filename = filename
+            realm.add(file)
+            let _ = try note.link(file, type: "file", distinct: false, overwrite: true)
+        }
+        
+        // The value of url is passed to the completion promise (done by the defer statement)
+        url = URL(string: "memriFile://\(filename)")
     }
 }
 
 extension NoteEditorRendererController: MemriTextEditorImageSelectionHandler {
     func presentImageSelectionUI(useCamera: Bool) -> AnyPublisher<URL?, Never> {
-        self.showingImagePicker_shouldUseCamera = useCamera
-        self.showingImagePicker = true
-        return Just(nil).eraseToAnyPublisher()
+        Future<URL?, Never> { promise in
+            self.imagePickerPromise = promise
+            self.showingImagePicker_shouldUseCamera = useCamera
+            self.showingImagePicker = true
+        }.eraseToAnyPublisher()
     }
 }
 
@@ -109,9 +129,7 @@ struct NoteEditorRendererView: View {
                 ImagePickerView(
                     sourceType: controller.showingImagePicker_shouldUseCamera ? .camera : .photoLibrary,
                     onSelectedImage: { selectedImage in
-                        if let selectedImage = selectedImage {
-                            controller.attachImage(image: selectedImage)
-                        }
+                        controller.onImagePickerFinished(image: selectedImage)
                     })
             }
 

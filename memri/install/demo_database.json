@@ -3663,7 +3663,7 @@
     {
         "_type": "Account",
         "uid": 20000000000,
-        "displayName": "Myself (WA)",
+        "displayName": "Myself",
         "externalId": "101010101010@s.whatsapp.net",
         "nameQuality": 2,
         "enablePresence": true,
@@ -3672,7 +3672,7 @@
         "allEdges": [
             {
                 "targetType": "Person",
-                "uid": 3,
+                "uid": 1,
                 "_type": "owner"
             },
             {
@@ -3687,7 +3687,6 @@
         "uid": 20000000001,
         "displayName": "+123456789 (WA)",
         "externalId": "123456789@s.whatsapp.net",
-        "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
         "allEdges": [
@@ -3708,18 +3707,17 @@
         "uid": 20000000002,
         "displayName": "+987654321 (WA)",
         "externalId": "987654321@s.whatsapp.net",
-        "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
         "allEdges": [
             {
                 "targetType": "Person",
-                "uid": 1,
+                "uid": 4,
                 "_type": "owner"
             },
             {
                 "targetType": "Network",
-                "uid": 9997,
+                "uid": 9999,
                 "_type": "network"
             }
         ]
@@ -3727,36 +3725,20 @@
     {
         "_type": "Account",
         "uid": 20000000003,
-        "displayName": "John Doe (WA)",
+        "displayName": "John Doe",
         "externalId": "1357924680@s.whatsapp.net",
-        "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
         "allEdges": [
             {
                 "targetType": "Person",
-                "uid": 1,
+                "uid": 3,
                 "_type": "owner"
             },
             {
                 "targetType": "Network",
                 "uid": 9997,
                 "_type": "network"
-            }
-        ]
-    },
-    {
-        "_type": "MessageChannel",
-        "uid": 20000000004,
-        "externalId": "status@broadcast",
-        "name": "WhatsApp Status Broadcast",
-        "topic": "WhatsApp status updates from your contacts",
-        "encrypted": false,
-        "allEdges": [
-            {
-                "targetType": "Account",
-                "uid": 20000000001,
-                "_type": "receiver"
             }
         ]
     },
@@ -3916,6 +3898,178 @@
                 "targetType": "Account",
                 "uid": 20000000000,
                 "_type": "sender"
+            }
+        ]
+    },
+    
+    {
+        "_type": "MessageChannel",
+        "uid": 200000500010,
+        "externalId": "987654321@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "targetType": "Account",
+                "uid": 2000000000110,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 2000000000110,
+        "externalId": "987654321@s.whatsapp.net",
+        "enablePresence": true,
+        "enableReceipts": true,
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 5,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
+    },
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000011,
+        "externalId": "987654321@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "targetType": "Account",
+                "uid": 2000000000111,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 2000000000111,
+        "externalId": "987654321@s.whatsapp.net",
+        "enablePresence": true,
+        "enableReceipts": true,
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 6,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
+    },
+    
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000012,
+        "externalId": "987654321@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "targetType": "Account",
+                "uid": 2000000000112,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 2000000000112,
+        "externalId": "987654321@s.whatsapp.net",
+        "enablePresence": true,
+        "enableReceipts": true,
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 7,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
+    },
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000013,
+        "externalId": "987654321@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "targetType": "Account",
+                "uid": 2000000000113,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 2000000000113,
+        "externalId": "987654321@s.whatsapp.net",
+        "enablePresence": true,
+        "enableReceipts": true,
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 8,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
+    },
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000014,
+        "externalId": "987654321@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "targetType": "Account",
+                "uid": 2000000000114,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 2000000000114,
+        "externalId": "987654321@s.whatsapp.net",
+        "enablePresence": true,
+        "enableReceipts": true,
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 9,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
             }
         ]
     },

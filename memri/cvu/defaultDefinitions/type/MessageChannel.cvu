@@ -1,6 +1,6 @@
 [session = all-message-channels] {
     [view] {
-        title: "All Message Channels"
+        title: "Messages"
         [datasource = pod] {
             query: "MessageChannel"
         }
@@ -56,7 +56,7 @@ MessageChannel[] {
         press: openView {
             view: {
                 /* TODO: Here is a case for serializing dot. The first time it works, but not on reload */
-                title: {{channel.receiver.displayName or channel.name or channel.topic}}
+                title: {{channel.receiver.owner.firstName or channel.name or channel.topic}}
                 
                 titleActionButton: openView {
                     item: {{channel}}
@@ -95,7 +95,7 @@ MessageChannel[] {
                 alignment: leading
                 HStack {
                     Text {
-                        text: "{.receiver.displayName}"
+                        text: "{.receiver.owner.fullName()}"
                         font: 18 semibold
                         color: primary
                         padding: 0 0 3 0
@@ -110,12 +110,23 @@ MessageChannel[] {
                         padding: 4 0 3 0
                     }
                 }
-                Text {
-                    text: "{.~messageChannel[].last.photo ? '[Photo]' : .~messageChannel[].last.content.plainString or 'No messages yet'}"
-                    lineLimit: 2
-                    font: 14 regular
-                    color: secondary
-                    padding: 0 0 5 0
+                HStack {
+                    Text {
+                        text: "{.~messageChannel[].last.photo ? '[Photo]' : .~messageChannel[].last.content.plainString or 'No messages yet'}"
+                        lineLimit: 2
+                        font: 14 regular
+                        color: secondary
+                        padding: 0 0 5 0
+                    }
+                    Spacer
+                    
+                    Text {
+                        text: "{.receiver.network.name}"
+                        lineLimit: 1
+                        font: 12 semibold
+                        color: secondary
+                        padding: 0 0 5 0
+                    }
                 }
             }
         }
