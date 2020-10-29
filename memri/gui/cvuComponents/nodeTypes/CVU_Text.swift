@@ -40,6 +40,11 @@ struct CVU_TextField: View {
     var nodeResolver: UINodeResolver
     var editModeBinding: Binding<Bool>
     
+    // Secure mode hides the input (eg. for passwords)
+    var secureMode: Bool {
+        nodeResolver.bool(for: "secure", defaultValue: false)
+    }
+    
     var hint: String? {
         nodeResolver.string(for: "hint")?.nilIfBlank
     }
@@ -49,10 +54,13 @@ struct CVU_TextField: View {
     }
     
     var body: some View {
-        MemriTextField(value: contentBinding,
-                       placeholder: hint,
-                       textColor: nodeResolver.color()?.uiColor,
-                       isEditing: editModeBinding,
-                       isSharedEditingBinding: true)
+        MemriTextField(
+            value: contentBinding,
+            placeholder: hint,
+            textColor: nodeResolver.color()?.uiColor,
+            isEditing: editModeBinding,
+            isSharedEditingBinding: true,
+            secureMode: secureMode
+        )
     }
 }

@@ -14,7 +14,7 @@ struct MemriTextEditorModel {
     var title: String?
     var body: String
     
-    init(title: String? = nil, body: String) {
+    init(title: String? = nil, body: String = "") {
         self.title = title
         self.body = body
     }

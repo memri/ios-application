@@ -64,10 +64,8 @@ Address[] {
             }
             HStack {
                 show: {{!readOnly}}
-                EditorLabel {
-                    title: "{edge.label or edge.type}"
-                    edge: {{edge}}
-                    hierarchy: Address
+                Text {
+                    text: "{edge.label or edge.type}"
                 }
                 VStack {
                     Textfield { hint: Street, value: {{.street}}, rows: 2 }

@@ -276,9 +276,7 @@ class Sync {
                             self.schedule(long: true)
                         }
                         else {
-                            #warning(
-                                "Items/Edges could have changed in the mean time, check dateModified/AuditItem"
-                            )
+                            // TODO: Items/Edges could have changed in the mean time, check dateModified/AuditItem
                             markAsDone(safeItemQueue) { _ in // TODO ERror Handling
                                 markAsDone(safeEdgeQueue) { _ in // TODO Error Handling
                                     debugHistory.info("Syncing complete")

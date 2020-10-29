@@ -90,6 +90,8 @@ class MemriTextEditor_UIKit: WKWebView {
     private var toolbarHost: UIHostingControllerNoSafeArea<MemriTextEditor_Toolbar>?
     private var toolbarWrapperView: ToolbarWrapperView?
     
+    var imageSelectionHandler: MemriTextEditorImageSelectionHandler?
+    
     private var cancellableBag: Set<AnyCancellable> = []
     
     private var currentFormatting: [String: Any] = [:] {
@@ -250,7 +252,7 @@ class MemriTextEditor_UIKit: WKWebView {
                                                 onPress: { [weak self] in self?.toolbarState.toggleColor() })
             MemriTextEditor_Toolbar.Item.button(label: "Highlighter", icon: Image(systemName: "highlighter").eraseToAnyView(),
                                                 isActive: currentFormatting["highlight_color"] != nil,
-                                                onPress: { [weak self] in self?.executeEditorCommand("highlight_color", info: ["backColor": MemriTextEditorColor.yellow.cssVar]) })
+                                                onPress: { [weak self] in self?.executeEditorCommand("highlight_color", info: ["backColor": "var(--text-highlight)"]) })
             MemriTextEditor_Toolbar.Item.divider
             MemriTextEditor_Toolbar.Item.button(label: "Heading", icon: Text("H").font(toolbarIconFont).eraseToAnyView(),
                                                 isActive: isHeading,
@@ -260,9 +262,12 @@ class MemriTextEditor_UIKit: WKWebView {
 //                                                isActive: currentFormatting["blockquote"] as? Bool ?? false,
 //                                                onPress: { [weak self] in self?.toggleFormat("blockquote") })
             
+            MemriTextEditor_Toolbar.Item.button(label: "Take photo", icon: Image(systemName: "camera").eraseToAnyView(),
+                                                isActive: false,
+                                                onPress: { [weak self] in self?.attemptToSelectPhoto(useCamera: true) })
             MemriTextEditor_Toolbar.Item.button(label: "Image", icon: Image(systemName: "photo").eraseToAnyView(),
                                                 isActive: false,
-                                                onPress: { [weak self] in self?.executeEditorCommand("image", info: ["src": "memriFile://unsplash-image2"]) })
+                                                onPress: { [weak self] in self?.attemptToSelectPhoto(useCamera: false) })
             if !isHeading {
                 MemriTextEditor_Toolbar.Item.button(label: "Todo List", icon: Image(systemName: "checkmark.square").eraseToAnyView(),
                                                     isActive: currentFormatting["todo_list"] as? Bool ?? false,
@@ -422,6 +427,50 @@ class MemriTextEditor_UIKit: WKWebView {
             if bounds != oldValue {
                 self.evaluateJavaScript("window.scrollToSelection();")
             }
+        }
+    }
+}
+
+extension MemriTextEditor_UIKit {
+    func attemptToSelectPhoto(useCamera: Bool) {
+        imageSelectionHandler?.presentImageSelectionUI(useCamera: useCamera).sink { [weak self] url in
+            if let url = url {
+                self?.handlePhotoInsertion(url: url)
+            }
+        }.store(in: &cancellableBag)
+    }
+    
+    func handlePhotoInsertion(url: URL) {
+        executeEditorCommand("image", info: ["src": url.absoluteString])
+    }
+}
+
+extension MemriTextEditor_UIKit {
+    class FileHandler: NSObject, WKURLSchemeHandler {
+        var fileHandler: MemriTextEditorFileHandler?
+        
+        func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+            do {
+                guard let url = urlSchemeTask.request.url,
+                      let data = getFileData(forEditorURL: url) else {
+                    throw "Failed to get data"
+                }
+                
+                urlSchemeTask.didReceive(URLResponse(url: url, mimeType: "text/html", expectedContentLength: data.count, textEncodingName: nil))
+                urlSchemeTask.didReceive(data)
+                urlSchemeTask.didFinish()
+            } catch {
+                print("Unexpected error when get data from URL: \(urlSchemeTask.request.url?.absoluteString ?? "No url")")
+                urlSchemeTask.didFailWithError(error)
+            }
+        }
+        
+        func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
+            //
+        }
+        
+        func getFileData(forEditorURL url: URL) -> Data? {
+            fileHandler?.getFileData(forEditorURL: url)
         }
     }
 }

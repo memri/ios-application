@@ -214,7 +214,7 @@ class CVUValidator {
                 case "userState": return value is CVUParsedObjectDefinition
                 case "viewArguments": return value is CVUParsedObjectDefinition
                 case "contextPane":
-                    #warning("Add validation for contextPane")
+                    // TODO: Add validation for contextPane
                     return value is CVUParsedObjectDefinition
                 case "datasourceDefinition": return value is CVUParsedDatasourceDefinition
                 case "showLabels": return value is Bool

@@ -14,6 +14,7 @@ public class Renderers {
         Dictionary(uniqueKeysWithValues: [
             ListRendererController.rendererType,
             GridRendererController.rendererType,
+            NoteEditorRendererController.rendererType,
             GeneralEditorRendererController.rendererType,
             CustomRendererController.rendererType,
             MapRendererController.rendererType,

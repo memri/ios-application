@@ -10,16 +10,17 @@ import Foundation
 import SwiftUI
 
 struct MemriTextEditor: UIViewRepresentable {
-    var model: MemriTextEditorModel = MemriTextEditorModel(title: "Demo note",
-                                                 body: "<p><strong>Hi there,</strong></p><p>Let’s explore the <u>new</u> text editor.</p><p></p><ul> <li><p>This is a list</p></li> <li><p>You can press return to make a new item</p>  <ul>   <li><p>Indented item</p></li>   <li><p><s>Something else</s></p></li>  </ul></li></ul><p></p><p>Or an ordered list:</p><ol> <li><p>Milk</p></li> <li><p>Eggs</p></li> <li><p>Flour</p>  <ol>   <li><p>Self-raising</p></li>   <li><p>Plain</p></li>  </ol></li></ol><p></p><p>It also supports code blocks:</p><pre><code>def some_function(argument):    return \"Automatic code highlighting!\"</code></pre><p></p><p><strong>Memri:</strong> truly yours</p><p></p><p></p>")
+    var model: () -> MemriTextEditorModel
     var onModelUpdate: (MemriTextEditorModel) -> Void
+    var imageSelectionHandler: MemriTextEditorImageSelectionHandler?
     var fileHandler: MemriTextEditorFileHandler?
     var searchTerm: String?
     var isEditing: Binding<Bool>?
     
     func makeUIView(context: Context) -> MemriTextEditor_UIKitWrapper {
-        let view = MemriTextEditor_UIKit(initialModel: model)
+        let view = MemriTextEditor_UIKit(initialModel: model())
         view.onModelUpdate = onModelUpdate
+        view.imageSelectionHandler = imageSelectionHandler
         view.fileHandler.fileHandler = fileHandler
         view.searchTerm = searchTerm?.nilIfBlankOrSingleLine
         return MemriTextEditor_UIKitWrapper(view)

@@ -9,7 +9,7 @@
 
 Note {
     title: ""
-    defaultRenderer: custom
+    defaultRenderer: noteEditor
     editActionButton: toggleEditMode
     filterButtons: [
         openView {
@@ -73,12 +73,9 @@ Note {
         ]
     }
     
-    [renderer = custom] {
-        RichTextfield {
-            content: {{.content}}
-            title: {{.title}}
-            fontSize: 18
-        }
+    [renderer = noteEditor] {
+        content: {{.content}}
+        title: {{.title}}
     }
 }
 

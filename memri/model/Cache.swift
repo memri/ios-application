@@ -428,7 +428,7 @@ public class Cache {
             "_changedInSession",
         ]
 
-        #warning("Does not duplicate all edges")
+        // TODO: Does not duplicate all edges
 
         if let itemType = item.getType() {
             var dict = [String: Any?]()
@@ -516,7 +516,7 @@ public class Cache {
         return newerItem
     }
 
-    #warning("This doesnt trigger syncToPod()")
+    // TODO: This doesnt trigger syncToPod()
     public class func createItem<T: Item>(
         _ type: T.Type,
         values: [String: Any?] = [:],

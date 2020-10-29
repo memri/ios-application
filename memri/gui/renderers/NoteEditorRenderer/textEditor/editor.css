@@ -8,11 +8,13 @@
   --text-color-yellow:	#FFCC02;
   --text-color-green:	#32C759;
   --text-color-blue:	#0061FE;
+  --text-highlight:		#ffde58;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text-color: #fcfcfc;
+    --text-color: 		#fcfcfc;
+  	--text-highlight:	#7e670b;
   }
 }
 

@@ -139,7 +139,7 @@ class Authentication {
         
         authenticateOwner(callback)
         return
-        #endif
+        #else
         
         let query: NSDictionary = [
             kSecClass:  kSecClassGenericPassword,
@@ -157,6 +157,7 @@ class Authentication {
         default:
             callback("Authentication failed")
         }
+        #endif
     }
     
     static func authenticateOwner(_ callback: @escaping (Error?) -> Void) {

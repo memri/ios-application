@@ -4,6 +4,8 @@
 
 import CoreGraphics
 import Foundation
+import SwiftUI
+import Realm
 
 enum SelectorType {
     case singleItem
@@ -128,6 +130,7 @@ public class Cascadable: CustomStringConvertible {
 
         return nil
     }
+    
 
     func cascadeList(
         _ name: String,
