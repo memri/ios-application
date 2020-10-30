@@ -128,7 +128,7 @@ struct NoteEditorRendererView: View {
             .sheet(isPresented: $controller.showingImagePicker) {
                 ImagePickerView(
                     sourceType: controller.showingImagePicker_shouldUseCamera ? .camera : .photoLibrary,
-                    onSelectedImage: { selectedImage in
+                    onCompletion: { selectedImage in
                         controller.onImagePickerFinished(image: selectedImage)
                     })
             }

@@ -1655,11 +1655,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5D599BE123F2B77700F218A0 /* Build configuration list for PBXNativeTarget "memri" */;
 			buildPhases = (
-				B8E8BA7324A8227500A89F60 /* Swift Format */,
+				B8E8BA7324A8227500A89F60 /* Swift Format (disabled temporarily) */,
 				5D599BB323F2B77500F218A0 /* Sources */,
 				5D599BB423F2B77500F218A0 /* Frameworks */,
 				5D599BB523F2B77500F218A0 /* Resources */,
-				B809BC9124A16D27007E38CE /* TEMP DISABLED: Mapbox */,
 			);
 			buildRules = (
 			);
@@ -1894,7 +1893,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		B809BC9124A16D27007E38CE /* TEMP DISABLED: Mapbox */ = {
+		B8E8BA7324A8227500A89F60 /* Swift Format (disabled temporarily) */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1903,32 +1902,14 @@
 			);
 			inputPaths = (
 			);
-			name = "TEMP DISABLED: Mapbox";
+			name = "Swift Format (disabled temporarily)";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# if [ \"${TARGET_OS_MACCATALYST}\" = \"0\" ]; then\n# bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"\n# fi\n";
-		};
-		B8E8BA7324A8227500A89F60 /* Swift Format */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Swift Format";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "SCHEME_NAME=`cat \"${SCHEME_FILE}\"`\n\nif [ \"${SCHEME_NAME}\" = \"BUILDTOOLS\" ]; then\ncd BuildTools\nSDKROOT=macosx\n\n#swift package update\nswift run -c release swiftformat \"$SRCROOT\"\n\nfi\n";
+			shellScript = "SCHEME_NAME=`cat \"${SCHEME_FILE}\"`\n\nif [ \"${SCHEME_NAME}\" = \"BUILDTOOLS\" ]; then\ncd BuildTools\nSDKROOT=macosx\n\n#swift package update\n#swift run -c release swiftformat \"$SRCROOT\"\n\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
