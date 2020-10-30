@@ -10,8 +10,8 @@ Mixed[] {
     
     [renderer = list] {
         ItemCell {
-            dataItem: {.}
-            renderers: list, thumbnail
+            dataItem: {{.}}
+            renderers: list thumbnail
         }
     }
 }
@@ -27,11 +27,11 @@ Mixed[] {
     filterButtons: showStarred toggleFilterPanel
     
     [renderer = list] {
-        ZSTack {
+        ZStack {
             MemriButton { dataItem: {{.}} }
             ItemCell {
                 dataItem: {{.}}
-                renderers: list, thumbnail
+                renderers: list thumbnail
             }
         }
     }

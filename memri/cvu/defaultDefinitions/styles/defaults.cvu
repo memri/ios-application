@@ -1,5 +1,0 @@
-/* NOTE THAT CUSTOM NAMED COLORS ARE NOT YET SUPPORTED - See CVUColor.swift for supported names */
-[color = "customColor"] {
-    light: #330000
-    dark: #ff0000
-}

@@ -5,19 +5,6 @@
 import Combine
 import SwiftUI
 
-extension View {
-    func fullHeight(alignment: Alignment = .topLeading) -> some View {
-        frame(minWidth: 0,
-              maxWidth: .infinity,
-              minHeight: 0, maxHeight: .infinity,
-              alignment: alignment)
-    }
-
-    func fullWidth(alignment: Alignment = .topLeading) -> some View {
-        frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-    }
-}
-
 var memri_shouldUseLargeScreenLayout: Bool {
     #if targetEnvironment(macCatalyst)
         return true

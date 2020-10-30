@@ -6,6 +6,19 @@ import Foundation
 import SwiftUI
 
 extension View {
+    func fullHeight(alignment: Alignment = .topLeading) -> some View {
+        frame(minWidth: 0,
+              maxWidth: .infinity,
+              minHeight: 0, maxHeight: .infinity,
+              alignment: alignment)
+    }
+    
+    func fullWidth(alignment: Alignment = .topLeading) -> some View {
+        frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
+    }
+}
+
+extension View {
     func eraseToAnyView() -> AnyView {
         AnyView(self)
     }

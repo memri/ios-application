@@ -746,6 +746,17 @@ public class Views {
 }
 
 func getDefaultViewContents() -> String {
-    let urls = Bundle.main.urls(forResourcesWithExtension: "cvu", subdirectory: ".")
-    return (urls ?? []).compactMap { try? String(contentsOf: $0) }.joined(separator: "\n")
+    let resourceKeys : [URLResourceKey] = [.isDirectoryKey]
+    guard
+        let directory = Bundle.main.resourceURL?.appendingPathComponent("defaultCVU", isDirectory: true),
+        let enumerator = FileManager.default.enumerator(at: directory,
+                                                        includingPropertiesForKeys: resourceKeys,
+                                                        options: [.skipsHiddenFiles], errorHandler: { (url, error) -> Bool in
+                                                            return true
+                                                        })
+    else { return "" }
+    return enumerator.compactMap { $0 as? URL }.compactMap {
+        guard $0.pathExtension == "cvu" else { return nil }
+        return try? String(contentsOf: $0)
+    }.joined(separator: "\n")
 }

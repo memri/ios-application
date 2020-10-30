@@ -12,6 +12,7 @@
             ItemCell {
             rendererNames: timeline
             arguments: {{variables}}
+            }
         }
     }
 }
