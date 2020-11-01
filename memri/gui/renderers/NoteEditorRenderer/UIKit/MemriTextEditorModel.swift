@@ -1,36 +1,32 @@
 //
-//  MemriTextEditorModel.swift
-//  RichTextEditor
-//
-//  Created by Toby Brennan on 5/10/20.
-//  Copyright © 2020 ApptekStudios. All rights reserved.
-//
+// MemriTextEditorModel.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
 import SwiftSoup
 
 struct MemriTextEditorModel {
-    
     var title: String?
     var body: String
-    
+
     init(title: String? = nil, body: String = "") {
         self.title = title
         self.body = body
     }
-    
+
     init(html: String) {
-        (self.title, self.body) = MemriTextEditorModel.splitHTML(string: html)
+        (title, body) = MemriTextEditorModel.splitHTML(string: html)
     }
-    
+
     var html: String {
         MemriTextEditorModel.combineHTML(title: title, body: body)
     }
-    
+
     static func splitHTML(string: String) -> (title: String?, body: String) {
         do {
             let doc = try SwiftSoup.parseBodyFragment(string)
-            let titleElement = doc.body()?.children().first(where: { $0.tag().getName() == "h1" && $0.id() == "title" })
+            let titleElement = doc.body()?.children()
+                .first(where: { $0.tag().getName() == "h1" && $0.id() == "title" })
             let title = try titleElement?.html()
             try titleElement?.remove()
             let body = try doc.body()?.html() ?? ""
@@ -40,7 +36,7 @@ struct MemriTextEditorModel {
             return (title: nil, body: string)
         }
     }
-    
+
     static func combineHTML(title: String?, body: String) -> String {
         do {
             let doc = try SwiftSoup.parseBodyFragment(body)
@@ -65,11 +61,11 @@ enum MemriTextEditorColor: String, CaseIterable {
     case blue = "--text-color-blue"
     case purple = "--text-color-purple"
     case pink = "--text-color-pink"
-    
+
     var cssVar: String {
         "var(\(rawValue))"
     }
-    
+
     var swiftColor: Color? {
         switch self {
         case .blue: return .blue

@@ -1,10 +1,6 @@
 //
-//  CVUColor.swift
-//  memri
-//
-//  Created by Toby Brennan on 5/9/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// CVUColor.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
 import SwiftUI
@@ -13,7 +9,7 @@ public enum CVUColor {
     case hex(String)
     case system(UIColor)
     case named(String)
-    
+
     var color: Color {
         switch self {
         case let .hex(hex):
@@ -24,7 +20,7 @@ public enum CVUColor {
             return CVUDefaultNamedColor(rawValue: name)?.color ?? Color.primary
         }
     }
-    
+
     var uiColor: UIColor {
         switch self {
         case let .hex(hex):
@@ -35,12 +31,11 @@ public enum CVUColor {
             return CVUDefaultNamedColor(rawValue: name)?.uiColor ?? UIColor.label
         }
     }
-    
+
     static func hasNamed(_ name: String) -> Bool {
         CVUDefaultNamedColor(rawValue: name) != nil
     }
 }
-
 
 enum CVUDefaultNamedColor: String {
     case primary
@@ -54,7 +49,7 @@ enum CVUDefaultNamedColor: String {
     case yellow
     case green
     case blue
-    
+
     var uiColor: UIColor {
         switch self {
         case .primary:
@@ -81,7 +76,7 @@ enum CVUDefaultNamedColor: String {
             return UIColor.systemBlue
         }
     }
-    
+
     var color: Color {
         Color(uiColor)
     }

@@ -1,13 +1,9 @@
 //
-//  SyncTests.swift
-//  memriTests
-//
-//  Created by Ruben Daniels on 7/30/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// SyncTests.swift
+// Copyright © 2020 memri. All rights reserved.
 
-import XCTest
 @testable import memri
+import XCTest
 
 class SyncTests: XCTestCase {
     var installer = Installer()
@@ -23,14 +19,12 @@ class SyncTests: XCTestCase {
     func testExample() throws {
 //        installer.installForTesting { error, context in
 //            guard let _ = context else { throw "Failed to initialize: \(error!)" }
-
     }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
-        self.measure {
+        measure {
             // Put the code you want to measure the time of here.
         }
     }
-
 }

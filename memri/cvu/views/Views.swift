@@ -62,7 +62,10 @@ public class Views {
 
     // TODO: Refactor: distinguish between views and sessions
     // Load the default views from the package
-    public func install(overrideCodeForTesting:String? = nil, _ callback: @escaping (Error?) -> Void) {
+    public func install(
+        overrideCodeForTesting: String? = nil,
+        _ callback: @escaping (Error?) -> Void
+    ) {
         guard let context = context else {
             callback("Context is not set")
             return
@@ -94,13 +97,15 @@ public class Views {
             }
             if validator.errors.count > 0 {
                 for message in validator.errors { debugHistory.error(message) }
-                callback("Exception: Errors in default view set:    \n\(validator.errors.joined(separator: "\n    "))")
+                callback(
+                    "Exception: Errors in default view set:    \n\(validator.errors.joined(separator: "\n    "))"
+                )
                 return
             }
         }
 
         // Start write transaction outside loop for performance reasons
-        DatabaseController.asyncOnBackgroundThread(write:true, error:callback) { _ in
+        DatabaseController.asyncOnBackgroundThread(write: true, error: callback) { _ in
             // Loop over lookup table with named views
             for def in parsedDefinitions {
                 var values: [String: Any?] = [
@@ -134,7 +139,7 @@ public class Views {
                 _ = try Cache.createItem(CVUStoredDefinition.self, values: values,
                                          unique: "selector = '\(selector)' and domain = 'defaults'")
             }
-            
+
             callback(nil)
         }
     }
@@ -146,14 +151,15 @@ public class Views {
         if let date = date {
             // Compare against 36 hours ago
             if dateFormat != nil || showAgoDate == false || date
-                .timeIntervalSince(Date(timeIntervalSinceNow: -129_600)) < 0 {
+                .timeIntervalSince(Date(timeIntervalSinceNow: -129_600)) < 0
+            {
                 let dateFormatter = DateFormatter()
-                
+
                 dateFormatter.dateFormat = dateFormat == "time"
                     ? Settings.shared.get("user/formatting/time")
                     : dateFormat
-                        ?? Settings.shared.get("user/formatting/date")
-                        ?? "yyyy/MM/dd HH:mm"
+                    ?? Settings.shared.get("user/formatting/date")
+                    ?? "yyyy/MM/dd HH:mm"
 
                 dateFormatter.locale = Locale(identifier: "en_US")
                 dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
@@ -230,7 +236,7 @@ public class Views {
                     debugHistory.info("nil")
                     return nil
                 }
-                debugHistory.info(args?.map{"\($0 ?? "")"}.joined(separator: " ") ?? "")
+                debugHistory.info(args?.map { "\($0 ?? "")" }.joined(separator: " ") ?? "")
                 return nil
             }
             return f
@@ -280,7 +286,7 @@ public class Views {
             }
         default:
             if let value: Any = viewArguments?.get(name) { return value }
-            
+
             debugHistory.warn("Undefined variable \(name)")
             return nil
             //			throw "Exception: Unknown object for property getter: \(name)"
@@ -498,7 +504,8 @@ public class Views {
                 for item in list {
                     args.set(".", item)
                     if let hasFound = try interpret.execSingle(expr, args),
-                       ExprInterpreter.evaluateBoolean(hasFound) ?? false {
+                       ExprInterpreter.evaluateBoolean(hasFound) ?? false
+                    {
                         value = item
                         break
                     }
@@ -528,7 +535,8 @@ public class Views {
             if let f = f as? ([Any?]?) -> Any? {
                 return f(args) as Any?
             }
-            else if "\(f)" != "nil" { // TODO: Temporary hack to detect nil that is not nil — .dateAccessed.format where .dateAccessed is nil")
+            else if "\(f)" != "nil" {
+                // TODO: Temporary hack to detect nil that is not nil — .dateAccessed.format where .dateAccessed is nil")
                 throw "Could not find function to execute: \(lookup.toExprString())"
             }
         }
@@ -574,7 +582,7 @@ public class Views {
             throw "Exception: Missing Context"
         }
 
-            if let definition = viewDef.definition {
+        if let definition = viewDef.definition {
             let viewDefParser = CVU(definition, context,
                                     lookup: lookupValueOfVariables,
                                     execFunc: executeFunction)
@@ -617,7 +625,8 @@ public class Views {
 
             if
                 let list = parsed["views"] as? [CVUParsedViewDefinition],
-                let p = list[safe: parsed["currentViewIndex"] as? Int ?? 0] {
+                let p = list[safe: parsed["currentViewIndex"] as? Int ?? 0]
+            {
                 view = try CVUStateDefinition.fromCVUParsedDefinition(p)
             }
             else {
@@ -669,10 +678,12 @@ public class Views {
             // If there is a view override, find it, otherwise
             if let viewOverride = viewOverride {
                 if let viewDefinition = context.views.fetchDefinitions(selector: viewOverride)
-                    .first {
+                    .first
+                {
                     if viewDefinition.itemType == "renderer" {
                         if let parsed = try context.views
-                            .parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
+                            .parseDefinition(viewDefinition) as? CVUParsedRendererDefinition
+                        {
                             if parsed["children"] != nil { cascadeStack.append(parsed) }
                             else {
                                 throw "Exception: Specified view does not contain any UI elements: \(viewOverride)"
@@ -698,7 +709,8 @@ public class Views {
                 outerLoop: for needle in ["\(item.genericType)[]", "*[]"] {
                     for key in ["user", "defaults"] {
                         if let viewDefinition = context.views
-                            .fetchDefinitions(selector: needle, domain: key).first {
+                            .fetchDefinitions(selector: needle, domain: key).first
+                        {
                             if try searchForRenderer(in: viewDefinition) { break outerLoop }
                         }
                     }
@@ -711,9 +723,11 @@ public class Views {
                 for name in rendererNames {
                     for key in ["user", "defaults"] {
                         if let viewDefinition = context.views
-                            .fetchDefinitions(name: name, type: "renderer", domain: key).first {
+                            .fetchDefinitions(name: name, type: "renderer", domain: key).first
+                        {
                             if let parsed = try context.views
-                                .parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
+                                .parseDefinition(viewDefinition) as? CVUParsedRendererDefinition
+                            {
                                 if parsed["children"] != nil { cascadeStack.append(parsed) }
                             }
                         }
@@ -734,7 +748,8 @@ public class Views {
             )
 
             // Return the rendered UIElements in a UIElementView
-            return cascadingRendererConfig.render(item: item, arguments: viewArguments).eraseToAnyView()
+            return cascadingRendererConfig.render(item: item, arguments: viewArguments)
+                .eraseToAnyView()
         }
         catch {
             debugHistory.error("Unable to render ItemCell: \(error)")
@@ -746,13 +761,17 @@ public class Views {
 }
 
 func getDefaultViewContents() -> String {
-    let resourceKeys : [URLResourceKey] = [.isDirectoryKey]
+    let resourceKeys: [URLResourceKey] = [.isDirectoryKey]
     guard
-        let directory = Bundle.main.resourceURL?.appendingPathComponent("defaultCVU", isDirectory: true),
+        let directory = Bundle.main.resourceURL?.appendingPathComponent(
+            "defaultCVU",
+            isDirectory: true
+        ),
         let enumerator = FileManager.default.enumerator(at: directory,
                                                         includingPropertiesForKeys: resourceKeys,
-                                                        options: [.skipsHiddenFiles], errorHandler: { (url, error) -> Bool in
-                                                            return true
+                                                        options: [.skipsHiddenFiles],
+                                                        errorHandler: { (_, _) -> Bool in
+                                                            true
                                                         })
     else { return "" }
     return enumerator.compactMap { $0 as? URL }.compactMap {

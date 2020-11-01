@@ -57,12 +57,12 @@ class FileStorageController {
 
         return getFileStorageURL().appendingPathComponent(uuid, isDirectory: false)
     }
-    
+
     static func exists(withUUID uuid: String) -> Bool {
         let fileURL = getURLForFile(withUUID: uuid)
         return FileManager.default.fileExists(atPath: fileURL.path)
     }
-    
+
     static func getData(fromFileForUUID uuid: String) -> Data? {
         let fileURL = getURLForFile(withUUID: uuid)
         return try? Data(contentsOf: fileURL)
@@ -82,30 +82,41 @@ class FileStorageController {
         let fileURL = getURLForFile(withUUID: uuid)
         return UIImage(contentsOfFile: fileURL.path)
     }
-    
-    static func getDownsampledImage(fromFileForUUID uuid: String, maxDimension: CGFloat) -> UIImage? {
+
+    static func getDownsampledImage(
+        fromFileForUUID uuid: String,
+        maxDimension: CGFloat
+    ) -> UIImage? {
         let fileURL = getURLForFile(withUUID: uuid)
-        let sourceOptions = [kCGImageSourceShouldCache:false] as CFDictionary
-        guard let source = CGImageSourceCreateWithURL(fileURL as CFURL, sourceOptions) else { return nil }
+        let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        guard let source = CGImageSourceCreateWithURL(fileURL as CFURL, sourceOptions)
+        else { return nil }
         let downsampleOptions = [
-            kCGImageSourceCreateThumbnailFromImageAlways:true,
-            kCGImageSourceThumbnailMaxPixelSize:maxDimension,
-            kCGImageSourceShouldCacheImmediately:true,
-            kCGImageSourceCreateThumbnailWithTransform:true,
-            ] as CFDictionary
-        
-        guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(source, 0, downsampleOptions) else { return nil }
-        
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxDimension,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+        ] as CFDictionary
+
+        guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(
+            source,
+            0,
+            downsampleOptions
+        ) else { return nil }
+
         return UIImage(cgImage: downsampledImage)
     }
-    
+
     // Requires `ZipFoundation` package
 //    static func unzipFile(from sourceURL: URL, to folder: String? = nil, progress: Progress? = nil) throws {
 //        try FileManager().unzipItem(at: sourceURL, to: folder.map { getFileStorageURL().appendingPathComponent($0, isDirectory: true) } ?? getFileStorageURL(), progress: progress)
 //    }
     static func deleteFolder(named folderName: String) throws {
-        try FileManager.default.removeItem(at: getFileStorageURL().appendingPathComponent(folderName, isDirectory: true))
+        try FileManager.default
+            .removeItem(at: getFileStorageURL()
+                .appendingPathComponent(folderName, isDirectory: true))
     }
+
     static func deleteFile(at url: URL) throws {
         try FileManager.default.removeItem(at: url)
     }

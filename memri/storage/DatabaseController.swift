@@ -14,7 +14,7 @@ class ItemReference {
             print("Trying to get a reference to an item that is not in realm or has no uid")
             return nil
         }
-        
+
         self.uid = uid
         self.type = type
     }
@@ -45,7 +45,7 @@ class EdgeReference {
         else {
             fatalError("Trying to get a reference to an edge that is not in realm or has no uid")
         }
-        
+
         self.type = type
         self.sourceItemID = sourceItemID
         self.targetItemID = targetItemID
@@ -71,17 +71,17 @@ class DatabaseController {
     private init() {}
 
     #if targetEnvironment(simulator)
-    static var realmTesting = false
-    static var reportedKey = false
+        static var realmTesting = false
+        static var reportedKey = false
     #else
-    static let realmTesting = false
+        static let realmTesting = false
     #endif
-    
+
     private static var realmConfig: Realm.Configuration {
         Realm.Configuration(
             // Set the file url
             fileURL: try! getRealmURL(),
-            
+
             // Set the new schema version. This must be greater than the previously used
             // version (if you've never set a schema version before, the version is 0).
             schemaVersion: 110,
@@ -100,9 +100,9 @@ class DatabaseController {
     }
 
     #if targetEnvironment(simulator)
-    static var hasPrintedURL: Bool = false
+        static var hasPrintedURL: Bool = false
     #endif
-    
+
     /// Computes the Realm database path at /home/<user>/realm.memri/memri.realm and creates the directory (realm.memri) if it does not exist.
     /// - Returns: the computed database file path
     static func getRealmURL() throws -> URL {
@@ -139,67 +139,67 @@ class DatabaseController {
             return documentsDirectory.appendingPathComponent("memri.realm")
         #endif
     }
-    
+
     /// This function returns a Realm for the current thread
-    static func getRealmAsync(_ receiveRealm: @escaping (Error?, Realm?) -> Void) -> Void {
+    static func getRealmAsync(_ receiveRealm: @escaping (Error?, Realm?) -> Void) {
         Authentication.getPublicRootKey { error, data in
             guard let data = data else {
                 receiveRealm(error, nil)
                 return
             }
-            
+
             var config = realmConfig
-            
+
             if !realmTesting {
                 #if targetEnvironment(simulator)
-                if !reportedKey {
-                    reportedKey = true
-                    print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
-                }
+                    if !reportedKey {
+                        reportedKey = true
+                        print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
+                    }
                 #endif
-                
+
                 config.encryptionKey = data
             }
-            
+
             do {
                 let realm = try Realm(configuration: config)
                 receiveRealm(nil, realm)
             }
             catch {
-                // TODO error handling
+                // TODO: error handling
                 // Notify the user
                 debugHistory.error("\(error)")
                 receiveRealm(error, nil)
             }
         }
     }
-    
+
     /// This function returns a Realm for the current thread
     static func getRealmSync() throws -> Realm {
         let data = try Authentication.getPublicRootKeySync()
         var config = realmConfig
         if !realmTesting {
             #if targetEnvironment(simulator)
-            if !reportedKey {
-                reportedKey = true
-                print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
-                Authentication.getOwnerAndDBKey { err, owner, db in
-                    if let err = err {
-                        print("AUTH ERROR: \(err)")
-                        return
+                if !reportedKey {
+                    reportedKey = true
+                    print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
+                    Authentication.getOwnerAndDBKey { err, owner, db in
+                        if let err = err {
+                            print("AUTH ERROR: \(err)")
+                            return
+                        }
+
+                        print("OWNER KEY: \(owner ?? "")")
+                        print("DB KEY: \(db ?? "")")
                     }
-                    
-                    print("OWNER KEY: \(owner ?? "")")
-                    print("DB KEY: \(db ?? "")")
                 }
-            }
             #endif
-            
+
             config.encryptionKey = data
         }
         return try Realm(configuration: config)
     }
-    
+
     private static var realmQueue: DispatchQueue = {
         let queue = DispatchQueue(label: "memri.realmQueue", qos: .utility)
         return queue
@@ -213,31 +213,31 @@ class DatabaseController {
     //	static var isOnRealmQueue: Bool {
     //		DispatchQueue.getSpecific(key: realmQueueSpecificKey) ?? false
     //	}
-    
+
     /// Execute a realm based function on the current thread
     static func asyncOnCurrentThread(
-        write:Bool = false,
-        error:(@escaping (Error) -> Void) = globalErrorHandler,
-        _ exec:@escaping (Realm) throws -> Void
+        write: Bool = false,
+        error: (@escaping (Error) -> Void) = globalErrorHandler,
+        _ exec: @escaping (Realm) throws -> Void
     ) {
         getRealmAsync { err, realm in
             if let err = err {
                 error(err)
                 return
             }
-            
+
             guard let realm = realm else {
                 error("Unable to initialize realm")
                 return
             }
-            
+
             do {
                 if write {
                     guard !realm.isInWriteTransaction else {
                         try exec(realm)
                         return
                     }
-                    
+
                     try realm.write {
                         try exec(realm)
                     }
@@ -251,10 +251,10 @@ class DatabaseController {
             }
         }
     }
-    
+
     /// Execute a realm based function that returns a value on the main thread
     static func sync<T>(
-        write:Bool = false,
+        write: Bool = false,
         _ exec: (Realm) throws -> T?
     ) -> T? {
         do {
@@ -265,19 +265,19 @@ class DatabaseController {
             return nil
         }
     }
-    
+
     /// Execute a realm based function that throws and returns a value on the main thread
     static func trySync<T>(
-        write:Bool = false,
+        write: Bool = false,
         _ exec: (Realm) throws -> T?
     ) throws -> T? {
         let realm = try getRealmSync()
-        
+
         if write {
             guard !realm.isInWriteTransaction else {
                 return try exec(realm)
             }
-            
+
             return try realm.write {
                 try exec(realm)
             }
@@ -286,12 +286,12 @@ class DatabaseController {
             return try exec(realm)
         }
     }
-    
+
     /// Execute a realm based function on a background thread
     static func asyncOnBackgroundThread(
-        write:Bool = false,
-        error:(@escaping (Error) -> Void) = globalErrorHandler,
-        _ exec:@escaping (Realm) throws -> Void
+        write: Bool = false,
+        error: (@escaping (Error) -> Void) = globalErrorHandler,
+        _ exec: @escaping (Realm) throws -> Void
     ) {
         realmQueue.async {
             autoreleasepool {
@@ -299,12 +299,12 @@ class DatabaseController {
             }
         }
     }
-    
+
     /// Execute a realm based function on the main thread (warning this blocks the UI)
     static func asyncOnMainThread(
-        write:Bool = false,
-        error:(@escaping (Error) -> Void) = globalErrorHandler,
-        _ exec:@escaping (Realm) throws -> Void
+        write: Bool = false,
+        error: (@escaping (Error) -> Void) = globalErrorHandler,
+        _ exec: @escaping (Realm) throws -> Void
     ) {
         DispatchQueue.main.async {
             autoreleasepool {
@@ -312,15 +312,15 @@ class DatabaseController {
             }
         }
     }
-    
-    static func write(_ rlm:Realm?, _ exec: () throws -> Void) {
+
+    static func write(_ rlm: Realm?, _ exec: () throws -> Void) {
         do {
-            let realm:Realm = rlm == nil ? try getRealmSync() : rlm!
-            
+            let realm: Realm = rlm == nil ? try getRealmSync() : rlm!
+
             guard !realm.isInWriteTransaction else {
                 return try exec()
             }
-            
+
             return try realm.write {
                 try exec()
             }
@@ -329,21 +329,21 @@ class DatabaseController {
             debugHistory.warn("\(error)")
         }
     }
-    
-    static func globalErrorHandler(error:Error) {
+
+    static func globalErrorHandler(error: Error) {
         debugHistory.error("\(error)")
     }
-    
-    static func deleteDatabase(_ callback:@escaping (Error?) -> Void) {
+
+    static func deleteDatabase(_ callback: @escaping (Error?) -> Void) {
         do {
             let fileManager = FileManager.default
             let realmUrl = try getRealmURL()
-            
+
             // Check if realm database exists
             if fileManager.fileExists(atPath: realmUrl.path) {
                 try fileManager.removeItem(at: realmUrl)
             }
-            
+
             callback(nil)
         }
         catch {
@@ -351,10 +351,9 @@ class DatabaseController {
         }
     }
 
-    static func clean(_ callback:@escaping (Error?) -> Void) {
+    static func clean(_ callback: @escaping (Error?) -> Void) {
         DatabaseController.asyncOnBackgroundThread(write: true, error: callback) { realm in
             for itemType in ItemFamily.allCases {
-
                 if let type = itemType.getType() as? Item.Type {
                     let items = realm.objects(type).filter("_action == nil and deleted = true")
                     for item in items {
@@ -365,13 +364,13 @@ class DatabaseController {
                         realm.delete(item)
                     }
                 }
-                
+
                 let edges = realm.objects(Edge.self).filter("_action == nil and deleted = true")
                 for edge in edges {
                     realm.delete(edge)
                 }
             }
-            
+
             callback(nil)
         }
     }

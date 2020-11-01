@@ -1,14 +1,10 @@
 //
-//  MemriTextEditorFileHandler.swift
-//  memri
-//
-//  Created by Toby Brennan on 15/10/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// MemriTextEditorHandlers.swift
+// Copyright © 2020 memri. All rights reserved.
 
+import Combine
 import Foundation
 import WebKit
-import Combine
 
 protocol MemriTextEditorFileHandler {
     func getFileData(forEditorURL url: URL) -> Data?

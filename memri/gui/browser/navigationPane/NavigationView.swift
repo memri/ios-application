@@ -110,7 +110,8 @@ struct NavigationWrapper<Content: View>: View {
                 if
                     self.isVisible ? value.predictedEndTranslation.width < -140 : value.translation
                     .width > 50,
-                    abs(value.predictedEndTranslation.width) > 20 {
+                    abs(value.predictedEndTranslation.width) > 20
+                {
                     withAnimation {
                         self.isVisible.toggle()
                     }

@@ -6,34 +6,42 @@ import ASCollectionView
 import SwiftUI
 
 class TimelineRendererController: RendererController, ObservableObject {
-    static let rendererType = RendererType(name: "timeline", icon: "hourglass.bottomhalf.fill", makeController: TimelineRendererController.init, makeConfig: TimelineRendererController.makeConfig)
-    
+    static let rendererType = RendererType(
+        name: "timeline",
+        icon: "hourglass.bottomhalf.fill",
+        makeController: TimelineRendererController.init,
+        makeConfig: TimelineRendererController.makeConfig
+    )
+
     required init(context: MemriContext, config: CascadingRendererConfig?) {
         self.context = context
         self.config = (config as? TimelineRendererConfig) ?? TimelineRendererConfig()
     }
-    
+
     let context: MemriContext
     let config: TimelineRendererConfig
-    
+
     func makeView() -> AnyView {
         TimelineRendererView(controller: self).eraseToAnyView()
     }
-    
+
     func update() {
         objectWillChange.send()
     }
-    
-    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig {
+
+    static func makeConfig(
+        head: CVUParsedDefinition?,
+        tail: [CVUParsedDefinition]?,
+        host: Cascadable?
+    ) -> CascadingRendererConfig {
         TimelineRendererConfig(head, tail, host)
     }
-    
-    
+
     func view(for item: Item) -> some View {
         config.render(item: item)
             .environmentObject(context)
     }
-    
+
     func resolveExpression<T>(
         _ expression: Expression?,
         toType _: T.Type = T.self,
@@ -42,11 +50,11 @@ class TimelineRendererController: RendererController, ObservableObject {
         let args = ViewArguments(context.currentView?.viewArguments, dataItem)
         return try? expression?.execForReturnType(T.self, args: args)
     }
-    
+
     func resolveItemDateTime(_ item: Item) -> Date? {
         resolveExpression(config.dateTimeExpression, toType: Date.self, forItem: item)
     }
-    
+
     var model: TimelineModel {
         TimelineModel(
             dataItems: context.items,
@@ -65,12 +73,16 @@ class TimelineRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig 
     var detailLevelString: String? { cascadeProperty("detailLevel") }
     var detailLevel: TimelineModel
         .DetailLevel { detailLevelString.flatMap(TimelineModel.DetailLevel.init) ?? .day }
-    
-    
+
     var showSortInConfig: Bool = false
-    func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {[
-        ConfigPanelModel.ConfigItem(displayName: "Time level", propertyName: "detailLevel", type: .special(.timeLevel), isItemSpecific: false)
-    ]}
+    func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] { [
+        ConfigPanelModel.ConfigItem(
+            displayName: "Time level",
+            propertyName: "detailLevel",
+            type: .special(.timeLevel),
+            isItemSpecific: false
+        ),
+    ] }
     var showContextualBarInEditMode: Bool = false
 }
 
@@ -86,17 +98,18 @@ struct TimelineRendererView: View {
                             selectionMode: .selectSingle { index in
                                 guard let element = group.items[safe: index] else { return }
                                 if element.isGroup {
-                                    let uids = element.items.compactMap { $0.uid }
+                                    let uids = element.items.map(\.uid)
                                     try? ActionOpenViewWithUIDs(self.controller.context)
                                         .exec(["itemType": element.itemType, "uids": uids])
                                 }
                                 else {
-                                    if let press = self.controller.config.press, let item = element.items.first {
+                                    if let press = self.controller.config.press,
+                                       let item = element.items.first
+                                    {
                                         self.controller.context.executeAction(press, with: item)
                                     }
                                 }
-                            }
-            ) { element, _ in
+                            }) { element, _ in
                 self.renderElement(element)
                     .if(group.items.count < 2) { $0.frame(minHeight: self.minSectionHeight) }
             }
@@ -137,7 +150,7 @@ struct TimelineRendererView: View {
     }
 
     var body: some View {
-        return ASCollectionView(sections: sections(withModel: controller.model))
+        ASCollectionView(sections: sections(withModel: controller.model))
             .layout(layout)
             .alwaysBounceVertical()
     }

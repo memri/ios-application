@@ -9,14 +9,12 @@ import SwiftUI
 public struct MemriFittedTextEditor: View {
     var contentBinding: Binding<String?>
     var placeholder: String?
-    
+
     var fontSize: CGFloat = 18
     var backgroundColor: CVUColor?
     var isEditing: Binding<Bool>?
-    
-    
-    @State private var preferredHeight: CGFloat = 0
 
+    @State private var preferredHeight: CGFloat = 0
 
     var displayHeight: CGFloat {
         let minHeight: CGFloat = 30
@@ -34,13 +32,13 @@ public struct MemriFittedTextEditor: View {
                                         DispatchQueue.main.async {
                                             self.contentBinding.wrappedValue = newText
                                         }
-        })
+                                    })
             .background(placeholderView)
             .background(backgroundColor?.color ?? Color(.systemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 5))
             .frame(height: displayHeight)
     }
-    
+
     @ViewBuilder
     var placeholderView: some View {
         if contentBinding.wrappedValue?.nilIfBlankOrSingleLine == nil {
@@ -53,7 +51,6 @@ public struct MemriFittedTextEditor: View {
         }
     }
 }
-
 
 public struct MemriFittedTextEditor_Inner: UIViewRepresentable {
     init(
@@ -69,21 +66,21 @@ public struct MemriFittedTextEditor_Inner: UIViewRepresentable {
         self.preferredHeight = preferredHeight
         self.onTextChanged = onTextChanged
     }
-    
+
     var textContent: String?
     var fontSize: CGFloat
     var isEditing: Binding<Bool>?
     var preferredHeight: Binding<CGFloat>?
     var onTextChanged: ((String) -> Void)?
-    
+
     public func makeUIView(context _: Context) -> MemriFittedTextEditorWrapper_UIKit {
         MemriFittedTextEditorWrapper_UIKit(
             MemriFittedTextEditor_UIKit(textContent: textContent,
-                                  fontSize: fontSize,
-                                  backgroundColor: CVUColor.system(.clear))
+                                        fontSize: fontSize,
+                                        backgroundColor: CVUColor.system(.clear))
         )
     }
-    
+
     public func updateUIView(_ wrapper: MemriFittedTextEditorWrapper_UIKit, context _: Context) {
         wrapper.textEditor.updateTextIfNotEditing(textContent)
         wrapper.textEditor.preferredHeightBinding = preferredHeight

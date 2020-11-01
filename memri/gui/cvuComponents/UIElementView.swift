@@ -6,7 +6,6 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
-
 public enum UIElementFamily: String, CaseIterable {
     // Implemented
     case VStack, HStack, ZStack, FlowStack
@@ -28,31 +27,29 @@ public struct UIElementView: SwiftUI.View {
     @EnvironmentObject var context: MemriContext
 
     var nodeResolver: UINodeResolver
-    
-    
-    var editModeBinding: Binding<Bool> {  Binding<Bool>(
+
+    var editModeBinding: Binding<Bool> { Binding<Bool>(
         get: { self.context.editMode },
         set: { self.context.editMode = $0 }
-    )}
-    
-    
+    ) }
+
     @ViewBuilder
     var resolvedComponent: some View {
         switch nodeResolver.node.type {
         case .HStack:
-             CVU_HStack(nodeResolver: nodeResolver)
+            CVU_HStack(nodeResolver: nodeResolver)
         case .VStack:
-             CVU_VStack(nodeResolver: nodeResolver)
+            CVU_VStack(nodeResolver: nodeResolver)
         case .ZStack:
-             CVU_ZStack(nodeResolver: nodeResolver)
+            CVU_ZStack(nodeResolver: nodeResolver)
         case .Text:
-             CVU_Text(nodeResolver: nodeResolver)
+            CVU_Text(nodeResolver: nodeResolver)
         case .SmartText:
-             CVU_SmartText(nodeResolver: nodeResolver)
+            CVU_SmartText(nodeResolver: nodeResolver)
         case .Image:
-             CVU_Image(nodeResolver: nodeResolver)
+            CVU_Image(nodeResolver: nodeResolver)
         case .Map:
-             CVU_Map(nodeResolver: nodeResolver)
+            CVU_Map(nodeResolver: nodeResolver)
         case .Textfield:
             CVU_TextField(nodeResolver: nodeResolver, editModeBinding: editModeBinding)
         case .EditorSection:
@@ -64,7 +61,10 @@ public struct UIElementView: SwiftUI.View {
         case .MemriButton:
             CVU_MemriButton(nodeResolver: nodeResolver)
         case .ActionButton:
-            ActionButton(action: nodeResolver.resolve("press") ?? Action(context, "noop"), item: nodeResolver.item)
+            ActionButton(
+                action: nodeResolver.resolve("press") ?? Action(context, "noop"),
+                item: nodeResolver.item
+            )
         case .Button:
             CVU_Button(nodeResolver: nodeResolver, context: context)
         case .Divider:
@@ -78,7 +78,7 @@ public struct UIElementView: SwiftUI.View {
         case .HTMLView:
             CVU_HTMLView(nodeResolver: nodeResolver)
         case .Spacer:
-             Spacer()
+            Spacer()
         case .Empty:
             EmptyView()
         case .SubView:
@@ -89,13 +89,14 @@ public struct UIElementView: SwiftUI.View {
             picker
         case .ItemCell:
             ItemCell(item: nodeResolver.item,
-                     rendererNames: nodeResolver.resolve("rendererNames", type: [String].self) ?? [],
+                     rendererNames: nodeResolver
+                         .resolve("rendererNames", type: [String].self) ?? [],
                      arguments: nodeResolver.viewArguments)
         case .TimelineItem:
             CVU_TimelineItem(nodeResolver: nodeResolver)
         }
     }
-    
+
     var needsModifier: Bool {
         guard nodeResolver.showNode else { return false }
         switch nodeResolver.node.type {
@@ -103,30 +104,35 @@ public struct UIElementView: SwiftUI.View {
         default: return true
         }
     }
-    
+
     @ViewBuilder
     public var body: some View {
         if nodeResolver.showNode {
             resolvedComponent
-                .if(needsModifier) { $0.modifier(CVU_AppearanceModifier(nodeResolver: nodeResolver)) }
+                .if(needsModifier) {
+                    $0.modifier(CVU_AppearanceModifier(nodeResolver: nodeResolver))
+                }
         }
     }
-    
+
     var flowstack: some View {
-        FlowStack(data: nodeResolver.resolve("list", type: [Item].self) ?? [], spacing: nodeResolver.spacing) { listItem in
+        FlowStack(
+            data: nodeResolver.resolve("list", type: [Item].self) ?? [],
+            spacing: nodeResolver.spacing
+        ) { listItem in
             nodeResolver.childrenInForEach(usingItem: listItem)
         }
     }
-    
-    
+
     @ViewBuilder
     var picker: some View {
         let (_, propItem, propName) = nodeResolver.getType(for: "value")
-        let selected = nodeResolver.resolve("value", type: Item.self) ?? nodeResolver.resolve("defaultValue", type: Item.self)
+        let selected = nodeResolver.resolve("value", type: Item.self) ?? nodeResolver
+            .resolve("defaultValue", type: Item.self)
         let emptyValue = nodeResolver.resolve("hint") ?? "Pick a value"
         let query = nodeResolver.resolve("query", type: String.self)
         let renderer = nodeResolver.resolve("renderer", type: String.self)
-        
+
         if let item = nodeResolver.item, let propItem = propItem {
             Picker(
                 item: item,
@@ -140,11 +146,11 @@ public struct UIElementView: SwiftUI.View {
             )
         }
     }
-    
-    
+
     @ViewBuilder
     var subview: some View {
-        let subviewArguments = ViewArguments(nodeResolver.resolve("arguments", type: [String: Any?].self))
+        let subviewArguments = ViewArguments(nodeResolver
+            .resolve("arguments", type: [String: Any?].self))
         if let viewName = nodeResolver.string(for: "viewName") {
             SubView(
                 context: self.context,
@@ -152,7 +158,8 @@ public struct UIElementView: SwiftUI.View {
                 item: nodeResolver.item,
                 viewArguments: subviewArguments
             )
-        } else {
+        }
+        else {
             // TODO: Carried over from the old UIElementView - this has potential to cause performance issues.
             // It is creating a new CVU at every redraw.
             // Instead architect this to only create the CVU once and have that one reload
@@ -181,7 +188,8 @@ public struct UIElementView: SwiftUI.View {
                     return CVUStateDefinition()
                 }(),
                 item: nodeResolver.item,
-                viewArguments: subviewArguments)
+                viewArguments: subviewArguments
+            )
         }
     }
 }

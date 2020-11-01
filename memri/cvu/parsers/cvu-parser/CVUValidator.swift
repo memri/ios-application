@@ -5,18 +5,16 @@
 import Foundation
 import SwiftUI
 
-
-
 public enum UIElementProperties: String, CaseIterable {
     case resizable, show, alignment, align, textAlign, spacing, title, text, image, nopadding,
-    press, bold, italic, underline, strikethrough, list, viewName, view, arguments, location,
-    address, systemName, cornerRadius, hint, value, datasource, defaultValue, empty, style,
-    frame, color, font, padding, background, rowbackground, cornerborder, border, margin,
-    shadow, offset, blur, opacity, zindex, minWidth, maxWidth, minHeight, maxHeight
-    
+         press, bold, italic, underline, strikethrough, list, viewName, view, arguments, location,
+         address, systemName, cornerRadius, hint, value, datasource, defaultValue, empty, style,
+         frame, color, font, padding, background, rowbackground, cornerborder, border, margin,
+         shadow, offset, blur, opacity, zindex, minWidth, maxWidth, minHeight, maxHeight
+
     func validate(_ key: String, _ value: Any?) -> Bool {
         if value is Expression { return true }
-        
+
         let prop = UIElementProperties(rawValue: key)
         switch prop {
         case .resizable, .title, .text, .viewName, .systemName, .hint, .empty, .style,
@@ -72,7 +70,6 @@ public enum UIElementProperties: String, CaseIterable {
         }
     }
 }
-
 
 class CVUValidator {
     // Based on keyword when its added to the dict
@@ -131,7 +128,8 @@ class CVUValidator {
         for (key, value) in element.properties {
             if let prop = UIElementProperties(rawValue: key) {
                 value.map { validate(prop, key, $0) }
-            } else {
+            }
+            else {
                 warnings.append("Unknown property '\(key)' for element \(element.type).")
             }
         }

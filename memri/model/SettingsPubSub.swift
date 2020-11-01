@@ -7,7 +7,8 @@ import Foundation
 import RealmSwift
 
 final class SettingSubscription<SubscriberType: Subscriber, T: Decodable>: Subscription
-    where SubscriberType.Input == Any? {
+    where SubscriberType.Input == Any?
+{
     private var id = UUID()
     private var subscriber: SubscriberType?
     private let path: String
@@ -54,7 +55,8 @@ struct SettingPublisher<T: Decodable>: Publisher {
     }
 
     func receive<S>(subscriber: S) where S: Subscriber,
-        S.Failure == SettingPublisher.Failure, S.Input == SettingPublisher.Output {
+        S.Failure == SettingPublisher.Failure, S.Input == SettingPublisher.Output
+    {
         // TODO:
         let subscription = SettingSubscription(
             settings: settings,

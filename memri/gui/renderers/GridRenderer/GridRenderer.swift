@@ -1,36 +1,46 @@
 //
-// ThumbnailRendererView.swift
+// GridRenderer.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import ASCollectionView
 import SwiftUI
 
 class GridRendererController: RendererController, ObservableObject {
-    static let rendererType = RendererType(name: "grid", icon: "square.grid.3x2.fill", makeController: GridRendererController.init, makeConfig: GridRendererController.makeConfig)
-    
+    static let rendererType = RendererType(
+        name: "grid",
+        icon: "square.grid.3x2.fill",
+        makeController: GridRendererController.init,
+        makeConfig: GridRendererController.makeConfig
+    )
+
     required init(context: MemriContext, config: CascadingRendererConfig?) {
         self.context = context
         self.config = (config as? GridRendererConfig) ?? GridRendererConfig()
     }
-    
+
     let context: MemriContext
     let config: GridRendererConfig
-    
+
     func makeView() -> AnyView {
         GridRendererView(controller: self).eraseToAnyView()
     }
-    
+
     func update() {
         objectWillChange.send()
     }
-    
-    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig {
+
+    static func makeConfig(
+        head: CVUParsedDefinition?,
+        tail: [CVUParsedDefinition]?,
+        host: Cascadable?
+    ) -> CascadingRendererConfig {
         GridRendererConfig(head, tail, host)
     }
-    
+
     var hasItems: Bool {
         !context.items.isEmpty
     }
+
     var items: [Item] {
         context.items
     }
@@ -39,27 +49,27 @@ class GridRendererController: RendererController, ObservableObject {
         config.render(item: item)
             .environmentObject(context)
     }
-    
+
     var isEditing: Bool {
         context.editMode
     }
-    
+
     func contextMenuProvider(index: Int, item: Item) -> UIContextMenuConfiguration? {
         let children: [UIMenuElement] = config.contextMenuActions.map { [weak context] action in
             UIAction(title: action.getString("title"),
-                     image: nil) { [weak context] (_) in
-                        context?.executeAction(action, with: item)
+                     image: nil) { [weak context] _ in
+                context?.executeAction(action, with: item)
             }
         }
         guard !children.isEmpty else { return nil }
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { (suggested) -> UIMenu? in
-            return UIMenu(title: "", children: children)
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { (_) -> UIMenu? in
+            UIMenu(title: "", children: children)
         }
     }
-    
+
     func onSelectSingleItem(index: Int) {
         if let press = config.press {
-            self.context.executeAction(press, with: self.context.items[safe: index])
+            context.executeAction(press, with: context.items[safe: index])
         }
     }
 }
@@ -81,7 +91,7 @@ class GridRendererConfig: CascadingRendererConfig {
         get { Int(cascadeProperty("columns") as Double? ?? 3) }
         set(value) { setState("columns", value) }
     }
-    
+
     var scrollDirection: UICollectionView.ScrollDirection {
         switch cascadeProperty("scrollDirection", type: String.self) {
         case "horizontal": return .horizontal
@@ -89,7 +99,6 @@ class GridRendererConfig: CascadingRendererConfig {
         default: return .vertical
         }
     }
-    
 }
 
 struct GridRendererView: View {
@@ -98,27 +107,29 @@ struct GridRendererView: View {
     var scrollDirection: UICollectionView.ScrollDirection {
         controller.config.scrollDirection
     }
+
     var layout: ASCollectionLayout<Int> {
         ASCollectionLayout(scrollDirection: scrollDirection, interSectionSpacing: 0) {
             ASCollectionLayoutSection { environment in
                 let contentInsets = self.controller.config.nsEdgeInset
                 let numberOfColumns = self.controller.config.columns
-                
+
                 switch scrollDirection {
                 case .horizontal:
                     let ySpacing = self.controller.config.spacing.height
                     let estimatedGridBlockSize = (environment.container.effectiveContentSize
-                                                    .height - contentInsets.top - contentInsets
-                                                    .bottom - ySpacing * (CGFloat(numberOfColumns) - 1)) /
+                        .height - contentInsets.top - contentInsets
+                        .bottom - ySpacing *
+                        (CGFloat(numberOfColumns) - 1)) /
                         CGFloat(numberOfColumns)
-                    
+
                     let item = NSCollectionLayoutItem(
                         layoutSize: NSCollectionLayoutSize(
                             widthDimension: .estimated(estimatedGridBlockSize),
                             heightDimension: .fractionalHeight(1.0)
                         )
                     )
-                    
+
                     let itemsGroup = NSCollectionLayoutGroup.vertical(
                         layoutSize: NSCollectionLayoutSize(
                             widthDimension: .estimated(estimatedGridBlockSize),
@@ -127,7 +138,7 @@ struct GridRendererView: View {
                         subitem: item, count: numberOfColumns
                     )
                     itemsGroup.interItemSpacing = .fixed(ySpacing)
-                    
+
                     let section = NSCollectionLayoutSection(group: itemsGroup)
                     section.interGroupSpacing = self.controller.config.spacing.width
                     section.contentInsets = contentInsets
@@ -135,17 +146,18 @@ struct GridRendererView: View {
                 default:
                     let xSpacing = self.controller.config.spacing.width
                     let estimatedGridBlockSize = (environment.container.effectiveContentSize
-                                                    .width - contentInsets.leading - contentInsets
-                                                    .trailing - xSpacing * (CGFloat(numberOfColumns) - 1)) /
+                        .width - contentInsets.leading - contentInsets
+                        .trailing - xSpacing *
+                        (CGFloat(numberOfColumns) - 1)) /
                         CGFloat(numberOfColumns)
-                    
+
                     let item = NSCollectionLayoutItem(
                         layoutSize: NSCollectionLayoutSize(
                             widthDimension: .fractionalWidth(1.0),
                             heightDimension: .estimated(estimatedGridBlockSize)
                         )
                     )
-                    
+
                     let itemsGroup = NSCollectionLayoutGroup.horizontal(
                         layoutSize: NSCollectionLayoutSize(
                             widthDimension: .fractionalWidth(1.0),
@@ -154,15 +166,12 @@ struct GridRendererView: View {
                         subitem: item, count: numberOfColumns
                     )
                     itemsGroup.interItemSpacing = .fixed(xSpacing)
-                    
+
                     let section = NSCollectionLayoutSection(group: itemsGroup)
                     section.interGroupSpacing = self.controller.config.spacing.height
                     section.contentInsets = contentInsets
                     return section
                 }
-                
-                
-               
             }
         }
     }
@@ -193,11 +202,12 @@ struct GridRendererView: View {
             }
         }
     }
-    
+
     var selectionMode: ASSectionSelectionMode {
         if controller.isEditing {
             return .selectMultiple(controller.context.selectedIndicesBinding)
-        } else {
+        }
+        else {
             return .selectSingle(controller.onSelectSingleItem)
         }
     }
@@ -209,8 +219,10 @@ struct GridRendererView: View {
                     .layout(self.layout)
                     .alwaysBounceHorizontal(scrollDirection == .horizontal)
                     .alwaysBounceVertical(scrollDirection == .vertical)
-                    .background(controller.config.backgroundColor?.color ?? Color(.systemBackground))
-            } else {
+                    .background(controller.config.backgroundColor?
+                        .color ?? Color(.systemBackground))
+            }
+            else {
                 HStack(alignment: .top) {
                     Spacer()
                     Text(controller.context.currentView?.emptyResultText ?? "No results")
@@ -224,6 +236,6 @@ struct GridRendererView: View {
                 Spacer()
             }
         }
-            .id(controller.config.ui_UUID) // Fix swiftUI wrongly animating between different lists
+        .id(controller.config.ui_UUID) // Fix swiftUI wrongly animating between different lists
     }
 }

@@ -39,15 +39,17 @@ class MapHelper {
     }
 
     func getLocationForAddress(address: Address)
-        -> (currentResult: CLLocation?, lookupPublisher: AnyPublisher<CLLocation?, Never>?) {
+        -> (currentResult: CLLocation?, lookupPublisher: AnyPublisher<CLLocation?, Never>?)
+    {
         // Make new lookup
         let addressString = address.computedTitle
         let lookupHash = addressString.hashValue
 
         // Check if the address holds a valid location
         if let location = address.location,
-            let latitude = location.latitude.value,
-            let longitude = location.longitude.value {
+           let latitude = location.latitude.value,
+           let longitude = location.longitude.value
+        {
             let clLocation = CLLocation(latitude: latitude, longitude: longitude)
             if let oldLookupHash = address.locationAutoLookupHash {
                 // This was an automatic lookup - check it's still current
@@ -86,7 +88,7 @@ class MapHelper {
             if let location = location {
                 // Update the address with the location (avoid future lookups)
                 let safeRef = ItemReference(to: address)
-                DatabaseController.asyncOnBackgroundThread(write:true) { _ in
+                DatabaseController.asyncOnBackgroundThread(write: true) { _ in
                     guard let address = safeRef?.resolve() as? Address else { return }
 
                     let newLocation = try Cache.createItem(Location.self, values: [

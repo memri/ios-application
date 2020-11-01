@@ -606,7 +606,8 @@ class CVUParserTests: XCTestCase {
         XCTAssertEqual(toCVUString([parsed!]), snippet)
 
         guard let us = parsed!["userState"] as? CVUParsedDefinition,
-            us["selection"] is [Any?] else {
+              us["selection"] is [Any?]
+        else {
             XCTFail()
             throw "Error"
         }

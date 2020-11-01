@@ -45,7 +45,7 @@ extension JSONDecoder {
     ///     - data: The data to decode.
     /// - Returns: The list of decoded objects.
     func decode<T: ClassFamily, U: Decodable>(family _: T.Type, from data: Data) throws -> [U] {
-        try decode([ClassWrapper<T, U>].self, from: data).compactMap { $0.object }
+        try decode([ClassWrapper<T, U>].self, from: data).compactMap(\.object)
     }
 }
 

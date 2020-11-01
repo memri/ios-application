@@ -15,7 +15,7 @@ var memri_shouldUseLargeScreenLayout: Bool {
 
 struct Application: View {
     @EnvironmentObject var context: MemriContext
-    
+
     var body: some View {
         VStack(spacing: 0) {
             if self.context.installer.isInstalled && !self.context.installer.debugMode {

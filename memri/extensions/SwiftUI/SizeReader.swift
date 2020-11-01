@@ -1,9 +1,6 @@
 //
-//  SizeReader.swift
-//  memri
-//
-//  Copyright © 2020 memri. All rights reserved.
-//
+// SizeReader.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import SwiftUI
 

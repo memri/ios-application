@@ -169,7 +169,7 @@ extension PhotoViewerController: UIPageViewControllerDelegate, UIPageViewControl
         viewControllerBefore viewController: UIViewController
     ) -> UIViewController? {
         guard let oldIndex = (viewController as? PhotoViewerPhotoController)?.photoItem.index,
-            let newItem = photoItemProvider(oldIndex - 1)
+              let newItem = photoItemProvider(oldIndex - 1)
         else { return nil }
         return PhotoViewerPhotoController(photoItem: newItem)
     }
@@ -179,7 +179,7 @@ extension PhotoViewerController: UIPageViewControllerDelegate, UIPageViewControl
         viewControllerAfter viewController: UIViewController
     ) -> UIViewController? {
         guard let oldIndex = (viewController as? PhotoViewerPhotoController)?.photoItem.index,
-            let newItem = photoItemProvider(oldIndex + 1)
+              let newItem = photoItemProvider(oldIndex + 1)
         else { return nil }
         return PhotoViewerPhotoController(photoItem: newItem)
     }
@@ -204,6 +204,7 @@ class PhotoViewerPhotoController: UIViewController {
         onSetPhotoItem()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -276,6 +277,7 @@ class PhotoScalingView: UIScrollView {
         bouncesZoom = true
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

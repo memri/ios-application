@@ -20,8 +20,8 @@ public class IndexerAPI {
     }
 }
 
-extension IndexerAPI {
-    public func executeNoteLabelIndexer(_ indexerInstance: IndexerRun, _ items: [Note]) throws {
+public extension IndexerAPI {
+    func executeNoteLabelIndexer(_ indexerInstance: IndexerRun, _ items: [Note]) throws {
         try context?.cache.query(Datasource(query: "Label")) { error, labels in
             guard let labels = labels else {
                 if let error = error {
@@ -31,7 +31,7 @@ extension IndexerAPI {
             }
 
             for (i, label) in labels.enumerated() {
-                let progress: Int = Int(((i + 1) / labels.count) * 100)
+                let progress = Int(((i + 1) / labels.count) * 100)
                 indexerInstance.set("progress", progress)
                 let name: String? = label.get("name")
                 let aliases: [String] = label.get("aliases") ?? []

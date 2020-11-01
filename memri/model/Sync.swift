@@ -26,7 +26,7 @@ class Sync {
     init(_ api: PodAPI) {
         podAPI = api
     }
-    
+
     public func load() {
         // Periodically sync data from the pod
         // TODO:
@@ -54,7 +54,7 @@ class Sync {
             ] as? [String: String])
 
             // Add to realm
-            DatabaseController.asyncOnBackgroundThread(write:true) { realm in
+            DatabaseController.asyncOnBackgroundThread(write: true) { realm in
 
                 var safeRef: ItemReference?
                 if auditable {
@@ -78,7 +78,7 @@ class Sync {
                 self.prioritySync(datasource) {
                     if auditable {
                         // We no longer need to process this log item
-                        DatabaseController.asyncOnBackgroundThread(write:true) { _ in
+                        DatabaseController.asyncOnBackgroundThread(write: true) { _ in
                             safeRef?.resolve()?._action = nil
                         }
                     }
@@ -190,7 +190,7 @@ class Sync {
 
     private func syncToPod() {
         func markAsDone(_ list: [String: Any], _ callback: @escaping (Error?) -> Void) {
-            DatabaseController.asyncOnBackgroundThread(write:true, error:callback) { realm in
+            DatabaseController.asyncOnBackgroundThread(write: true, error: callback) { _ in
                 for (_, sublist) in list {
                     for item in sublist as? [Any] ?? [] {
                         if let item = item as? ItemReference, let resolvedItem = item.resolve() {
@@ -198,7 +198,7 @@ class Sync {
                                 if let file = resolvedItem as? File {
                                     try file.clearCache()
                                 }
-                                
+
                                 resolvedItem._action = nil
                             }
                             else {
@@ -206,7 +206,9 @@ class Sync {
                                 resolvedItem._updated.removeAll()
                             }
                         }
-                        else if let item = item as? EdgeReference, let resolvedItem = item.resolve() {
+                        else if let item = item as? EdgeReference,
+                                let resolvedItem = item.resolve()
+                        {
                             if resolvedItem._action == "delete" {
                                 resolvedItem._action = nil
                             }
@@ -229,12 +231,12 @@ class Sync {
 
             // Items
             for itemType in ItemFamily.allCases {
-
                 if let type = itemType.getType() as? Item.Type {
                     let items = realm.objects(type).filter("_action != nil")
                     for item in items {
                         if let action = item._action, itemQueue[action] != nil,
-                            item.uid.value ?? 0 > 0 {
+                           item.uid.value ?? 0 > 0
+                        {
                             itemQueue[action]?.append(item)
                             found += 1
                         }
@@ -277,12 +279,12 @@ class Sync {
                         }
                         else {
                             // TODO: Items/Edges could have changed in the mean time, check dateModified/AuditItem
-                            markAsDone(safeItemQueue) { _ in // TODO ERror Handling
-                                markAsDone(safeEdgeQueue) { _ in // TODO Error Handling
+                            markAsDone(safeItemQueue) { _ in // TODO: ERror Handling
+                                markAsDone(safeEdgeQueue) { _ in // TODO: Error Handling
                                     debugHistory.info("Syncing complete")
 
                                     // TODO: Should this hold up further syncing?")
-                                    self.syncFilesToPod() { _ in
+                                    self.syncFilesToPod { _ in
                                         self.syncing = false
                                         self.schedule(long: true)
                                     }
@@ -296,15 +298,15 @@ class Sync {
                 }
             }
             else {
-                self.syncFilesToPod() { _ in
+                self.syncFilesToPod { _ in
                     self.syncing = false
                     self.schedule(long: true)
                 }
             }
         }
     }
-    
-    public func syncFilesFromPod(_ callback: @escaping (Error?) -> Void ) {
+
+    public func syncFilesFromPod(_ callback: @escaping (Error?) -> Void) {
         DatabaseController.asyncOnBackgroundThread { realm in
             var list = [String]()
             let items = realm.objects(LocalFileSyncQueue.self).filter("task = 'upload'")
@@ -313,14 +315,14 @@ class Sync {
                     list.append(s)
                 }
             }
-            
+
             guard list.count > 0 else {
                 callback(nil) // done
                 return
             }
-            
-            func validate(_ sha256:String) -> Bool {
-                return DatabaseController.sync { realm -> Bool? in
+
+            func validate(_ sha256: String) -> Bool {
+                DatabaseController.sync { realm -> Bool? in
                     guard
                         let file = realm.objects(File.self).filter("sha256 = '\(sha256)'").first,
                         file._action != "create",
@@ -331,19 +333,19 @@ class Sync {
                     return true
                 } ?? true
             }
-            
+
             var i = -1
             func next() {
                 i += 1
-                guard let sha256 = list[safe:i] else {
+                guard let sha256 = list[safe: i] else {
                     callback(nil) // done
                     return
                 }
-                
+
                 if validate(sha256) {
                     self.podAPI.downloadFile(sha256) { error, progress, response in
                         if let error = error {
-                            debugHistory.warn("\(error)") // TODO ERror handling
+                            debugHistory.warn("\(error)") // TODO: ERror handling
                             callback(error)
                         }
                         else if let progress = progress {
@@ -354,7 +356,7 @@ class Sync {
                             next()
                         }
                         else {
-                            debugHistory.warn("Unknown error") // TODO ERror handling
+                            debugHistory.warn("Unknown error") // TODO: ERror handling
                             callback(error)
                         }
                     }
@@ -368,8 +370,8 @@ class Sync {
             next()
         }
     }
-    
-    public func syncFilesToPod(_ callback: @escaping (Error?) -> Void ) {
+
+    public func syncFilesToPod(_ callback: @escaping (Error?) -> Void) {
         DatabaseController.asyncOnBackgroundThread { realm in
             var list = [String]()
             let items = realm.objects(LocalFileSyncQueue.self).filter("task = 'upload'")
@@ -378,14 +380,14 @@ class Sync {
                     list.append(s)
                 }
             }
-            
+
             guard list.count > 0 else {
                 callback(nil) // done
                 return
             }
-            
-            func validate(_ sha256:String) -> Bool {
-                return DatabaseController.sync { realm -> Bool? in
+
+            func validate(_ sha256: String) -> Bool {
+                DatabaseController.sync { realm -> Bool? in
                     guard
                         let file = realm.objects(File.self).filter("sha256 = '\(sha256)'").first,
                         file._action != "create",
@@ -396,19 +398,19 @@ class Sync {
                     return true
                 } ?? true
             }
-            
+
             var i = -1
             func next() {
                 i += 1
-                guard let sha256 = list[safe:i] else {
+                guard let sha256 = list[safe: i] else {
                     callback(nil) // done
                     return
                 }
-                
+
                 if validate(sha256) {
                     self.podAPI.uploadFile(sha256) { error, progress, response in
                         if let error = error {
-                            debugHistory.warn("\(error)") // TODO ERror handling
+                            debugHistory.warn("\(error)") // TODO: ERror handling
                             callback(error)
                         }
                         else if let progress = progress {
@@ -419,7 +421,7 @@ class Sync {
                             next()
                         }
                         else {
-                            debugHistory.warn("Unknown error") // TODO ERror handling
+                            debugHistory.warn("Unknown error") // TODO: ERror handling
                             callback(error)
                         }
                     }

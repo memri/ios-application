@@ -27,7 +27,7 @@ public class InMemoryObjectCache {
     public func get(_ key: String) -> Any? {
         cache[key] as Any?
     }
-    
+
     public func clear(_ key: String) {
         cache[key] = nil
     }

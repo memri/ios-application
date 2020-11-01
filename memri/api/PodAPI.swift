@@ -1,17 +1,18 @@
 //
-// api.swift
+// PodAPI.swift
 // Copyright © 2020 memri. All rights reserved.
 
+import Alamofire
+import AnyCodable
 import Combine
 import Foundation
 import RealmSwift
-import Alamofire
 
 /// Provides functions to communicate asynchronously with a Pod (Personal Online Datastore) for storage of data and/or for
 /// executing actions
 public class PodAPI {
-    var host: String? = nil
-    
+    var host: String?
+
     /// Specifies used http methods
     enum HTTPMethod: String {
         case GET
@@ -28,7 +29,7 @@ public class PodAPI {
         (host ?? Settings.shared.getString("user/pod/host")) != ""
     }
 
-    private func http (
+    private func http(
         method: HTTPMethod = .POST,
         path: String = "",
         payload: Any? = nil,
@@ -36,12 +37,12 @@ public class PodAPI {
     ) {
         Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
             guard let ownerKey = ownerKey, let dbKey = dbKey else {
-                // TODO
+                // TODO:
                 callback(error, nil)
                 return
             }
-            
-            self.httpWithKeys (
+
+            self.httpWithKeys(
                 method: method,
                 path: path,
                 payload: payload,
@@ -51,8 +52,8 @@ public class PodAPI {
             )
         }
     }
-    
-    private func httpWithKeys (
+
+    private func httpWithKeys(
         method: HTTPMethod = .POST,
         path: String = "",
         payload: Any? = nil,
@@ -93,15 +94,15 @@ public class PodAPI {
         )
         urlRequest.httpMethod = method.rawValue
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let body:[String:Any] = [
+
+        let body: [String: Any] = [
             "databaseKey": databaseKey,
-            "payload": payload as Any
+            "payload": payload as Any,
         ]
-        
+
         do { urlRequest.httpBody = try toJSON(body) }
         catch { callback(error, nil) }
-        
+
         urlRequest.allowsCellularAccess = true
         urlRequest.allowsExpensiveNetworkAccess = true
         urlRequest.allowsConstrainedNetworkAccess = true
@@ -368,7 +369,7 @@ public class PodAPI {
             result["updateItems"] = updateItems?.compactMap { simplify($0) }
         }
         if deleteItems?.count ?? 0 > 0 {
-            result["deleteItems"] = deleteItems?.map { $0.uid.value }
+            result["deleteItems"] = deleteItems?.map(\.uid.value)
         }
         if createEdges?.count ?? 0 > 0 {
             result["createEdges"] = createEdges?.compactMap { simplify($0, create: true) }
@@ -384,16 +385,18 @@ public class PodAPI {
             callback(error)
         }
     }
-    
-    public func downloadFile(_ uuid:String,
-                             _ callback: @escaping (Error?, Double?, HTTPURLResponse?) -> Void) {
+
+    public func downloadFile(
+        _ uuid: String,
+        _ callback: @escaping (Error?, Double?, HTTPURLResponse?) -> Void
+    ) {
         Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
             guard let ownerKey = ownerKey, let dbKey = dbKey else {
-                // TODO
+                // TODO:
                 callback(error, nil, nil)
                 return
             }
-            
+
             let settings = Settings()
             let podhost = self.host ?? settings.getString("user/pod/host")
             guard var baseUrl = URL(string: podhost) else {
@@ -405,9 +408,9 @@ public class PodAPI {
                 .appendingPathComponent("v2")
                 .appendingPathComponent(ownerKey)
                 .appendingPathComponent("get_file")
-            
+
             let destination: DownloadRequest.Destination = { _, _ in
-                return (FileStorageController.getURLForFile(withUUID: uuid), [])
+                (FileStorageController.getURLForFile(withUUID: uuid), [])
             }
 
             AF.download(baseUrl, method: .post, requestModifier: {
@@ -418,47 +421,48 @@ public class PodAPI {
                 $0.allowsConstrainedNetworkAccess = false
                 $0.cachePolicy = .reloadIgnoringCacheData
                 $0.timeoutInterval = .greatestFiniteMagnitude
-                
-                let body:[String:Any] = [
+
+                let body: [String: Any] = [
                     "databaseKey": dbKey,
-                    "payload": ["sha256": uuid]
+                    "payload": ["sha256": uuid],
                 ]
-                
+
                 $0.httpBody = try self.toJSON(body)
             }, to: destination)
-            .downloadProgress { progress in
-                callback(nil, progress.fractionCompleted, nil)
-            }
-            .response { response in
-                guard let httpResponse = response.response else {
-                    callback(response.error ?? "Unknown error", nil, nil)
-                    return
+                .downloadProgress { progress in
+                    callback(nil, progress.fractionCompleted, nil)
                 }
-                
-                guard httpResponse.statusCode < 400 else {
-                    let httpError = HTTPError.ClientError(
-                        httpResponse.statusCode,
-                        "URL: \(baseUrl.absoluteString)"
-                    )
-                    callback(httpError, nil, response.response)
-                    return
+                .response { response in
+                    guard let httpResponse = response.response else {
+                        callback(response.error ?? "Unknown error", nil, nil)
+                        return
+                    }
+
+                    guard httpResponse.statusCode < 400 else {
+                        let httpError = HTTPError.ClientError(
+                            httpResponse.statusCode,
+                            "URL: \(baseUrl.absoluteString)"
+                        )
+                        callback(httpError, nil, response.response)
+                        return
+                    }
+
+                    callback(nil, nil, httpResponse)
                 }
-                
-                callback(nil, nil, httpResponse)
-            }
         }
     }
-    
-    public func uploadFile(_ uuid:String,
-                           _ callback: @escaping (Error?, Double?, HTTPURLResponse?) -> Void) {
-        
+
+    public func uploadFile(
+        _ uuid: String,
+        _ callback: @escaping (Error?, Double?, HTTPURLResponse?) -> Void
+    ) {
         Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
             guard let ownerKey = ownerKey, let dbKey = dbKey else {
-                // TODO
+                // TODO:
                 callback(error, nil, nil)
                 return
             }
-            
+
             let settings = Settings()
             let podhost = self.host ?? settings.getString("user/pod/host")
             guard var baseUrl = URL(string: podhost) else {
@@ -472,11 +476,11 @@ public class PodAPI {
                 .appendingPathComponent("upload_file")
                 .appendingPathComponent(dbKey)
                 .appendingPathComponent(uuid)
-            
+
             let fileURL = FileStorageController.getURLForFile(withUUID: uuid)
-            
+
             print("Uploading \(uuid)")
-            
+
             AF.upload(fileURL, to: baseUrl, method: .post, requestModifier: {
                 $0.timeoutInterval = 5
                 $0.addValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
@@ -486,35 +490,35 @@ public class PodAPI {
                 $0.cachePolicy = .reloadIgnoringCacheData
                 $0.timeoutInterval = .greatestFiniteMagnitude
             })
-            .uploadProgress { progress in
-                callback(nil, progress.fractionCompleted, nil)
-            }
-            .response { response in
-                guard let httpResponse = response.response else {
-                    callback(response.error ?? "Unknown error", nil, nil)
-                    return
+                .uploadProgress { progress in
+                    callback(nil, progress.fractionCompleted, nil)
                 }
-                
-                if httpResponse.statusCode == 409 {
-                    print("File was already uploaded")
+                .response { response in
+                    guard let httpResponse = response.response else {
+                        callback(response.error ?? "Unknown error", nil, nil)
+                        return
+                    }
+
+                    if httpResponse.statusCode == 409 {
+                        print("File was already uploaded")
+                        callback(nil, nil, httpResponse)
+                        return
+                    }
+
+                    guard httpResponse.statusCode < 400 else {
+                        let httpError = HTTPError.ClientError(
+                            httpResponse.statusCode,
+                            "URL: \(baseUrl.absoluteString)\nBody:"
+                                + (String(data: response.data ?? Data(), encoding: .utf8) ?? "")
+                        )
+                        callback(httpError, nil, response.response)
+                        return
+                    }
+
+                    print("Upload success")
+
                     callback(nil, nil, httpResponse)
-                    return
                 }
-                
-                guard httpResponse.statusCode < 400 else {
-                    let httpError = HTTPError.ClientError(
-                        httpResponse.statusCode,
-                        "URL: \(baseUrl.absoluteString)\nBody:"
-                            + (String(data: response.data ?? Data(), encoding: .utf8) ?? "")
-                    )
-                    callback(httpError, nil, response.response)
-                    return
-                }
-                
-                print("Upload success")
-                
-                callback(nil, nil, httpResponse)
-            }
         }
     }
 
@@ -551,8 +555,7 @@ public class PodAPI {
     //			callback(error, error == nil)
     //		}
     //	}
-    
-    
+
     /// Queries the database for a subset of Items and returns a list of Items
     /// - Parameters:
     ///   - queryOptions: Object describing what to query and how to return the results
@@ -569,7 +572,7 @@ public class PodAPI {
         //            return
         //        }
 
-        var payload = [String:Any]()
+        var payload = [String: Any]()
 
         let query = queryOptions.query ?? ""
         let matches = query.match(#"^(\w+) AND uid = (.+)$"#)
@@ -605,28 +608,31 @@ public class PodAPI {
 
                     if let items_ = items {
                         if withEdges {
-                            let payload = items_.compactMap { $0.uid.value }
-                            self.http(path: "get_items_with_edges", payload: payload) { error, data in
-                                do {
-                                    if let error = error {
+                            let payload = items_.compactMap(\.uid.value)
+                            self
+                                .http(path: "get_items_with_edges",
+                                      payload: payload) { error, data in
+                                    do {
+                                        if let error = error {
+                                            debugHistory
+                                                .error("Could not connect to pod: \n\(error)")
+                                            callback(error, nil)
+                                        }
+                                        else if let data = data {
+                                            var items2: [Item]?
+                                            try JSONErrorReporter {
+                                                items2 = try MemriJSONDecoder
+                                                    .decode(family: ItemFamily.self, from: data)
+                                            }
+
+                                            callback(nil, items2)
+                                        }
+                                    }
+                                    catch {
                                         debugHistory.error("Could not connect to pod: \n\(error)")
                                         callback(error, nil)
                                     }
-                                    else if let data = data {
-                                        var items2: [Item]?
-                                        try JSONErrorReporter {
-                                            items2 = try MemriJSONDecoder
-                                                .decode(family: ItemFamily.self, from: data)
-                                        }
-
-                                        callback(nil, items2)
-                                    }
                                 }
-                                catch {
-                                    debugHistory.error("Could not connect to pod: \n\(error)")
-                                    callback(error, nil)
-                                }
-                            }
                         }
                         else {
                             callback(nil, items)
@@ -659,22 +665,21 @@ public class PodAPI {
         _ uid: Int,
         _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void
     ) {
-
         Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
             guard let ownerKey = ownerKey, let dbKey = dbKey else {
-                // TODO
+                // TODO:
                 callback(error, false)
                 return
             }
-            var payload = [String:Any]()
-            
+            var payload = [String: Any]()
+
             payload["uid"] = uid
             payload["servicePayload"] = [
                 "databaseKey": dbKey,
-                "ownerKey": ownerKey
+                "ownerKey": ownerKey,
             ]
 
-            self.http(path: "run_importer", payload:payload) { error, result in
+            self.http(path: "run_importer", payload: payload) { error, _ in
                 callback(error, error == nil)
             }
         }
@@ -690,18 +695,18 @@ public class PodAPI {
     ) {
         Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
             guard let ownerKey = ownerKey, let dbKey = dbKey else {
-                // TODO
+                // TODO:
                 callback(error, false)
                 return
             }
-            var payload = [String:Any]()
+            var payload = [String: Any]()
             payload["uid"] = uid
 
             payload["servicePayload"] = [
                 "databaseKey": dbKey,
-                "ownerKey": ownerKey
+                "ownerKey": ownerKey,
             ]
-            self.http(path: "run_indexer", payload:payload) { error, _ in
+            self.http(path: "run_indexer", payload: payload) { error, _ in
                 callback(error, error == nil)
             }
         }

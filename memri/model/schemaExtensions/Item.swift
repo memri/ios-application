@@ -2,6 +2,7 @@
 // Item.swift
 // Copyright © 2020 memri. All rights reserved.
 
+import AnyCodable
 import Combine
 import Foundation
 import RealmSwift
@@ -14,7 +15,7 @@ public class Item: SchemaItem {
 
     // Used by the filter panel to know what computed variables to show
     var computedVars: [ComputedPropertyLink] { [] }
-    
+
     var functions: [String: (_ args: [Any?]?) -> Any?] = [:]
 
     /// Primary key used in the realm database of this Item
@@ -48,7 +49,7 @@ public class Item: SchemaItem {
 
         str += (allEdges.count > 0 ? "\n\n    " : "")
             + allEdges
-            .map { $0.description }
+            .map(\.description)
             .joined(separator: "\n    ")
             + "\n}"
 
@@ -171,7 +172,7 @@ public class Item: SchemaItem {
     ///   - name: property name
     ///   - value: value
     public func set(_ name: String, _ value: Any?) {
-        DatabaseController.write(self.realm) {
+        DatabaseController.write(realm) {
             if let schema = self.objectSchema[name] {
                 guard !isEqualValue(self[name], value) else { return }
 
@@ -230,13 +231,12 @@ public class Item: SchemaItem {
         // TODO: collection support
         // TODO: Reverse EdgeCollection support not implemented yet")
 
-        
         return realm?.objects(Edge.self)
             .filter("deleted = false AND targetItemID = \(uid) AND type = '\(edgeType)'")
     }
 
     public func reverseEdge(_ edgeType: String) -> Edge? {
-        return reverseEdges(edgeType)?.first
+        reverseEdges(edgeType)?.first
     }
 
     public func edges(_ edgeType: String) -> Results<Edge>? {
@@ -390,7 +390,7 @@ public class Item: SchemaItem {
         var edge = allEdges.filter(query).first
         let sequenceNumber: Int? = try determineSequenceNumber(edgeType, sequence)
 
-        DatabaseController.write(self.realm) {
+        DatabaseController.write(realm) {
             if item.realm == nil, let item = item as? Item {
                 item._action = "create"
                 realm?.add(item, update: .modified)
@@ -442,7 +442,7 @@ public class Item: SchemaItem {
 
     public func unlink(_ edge: Edge) throws {
         if edge.sourceItemID.value == uid.value, edge.sourceItemType == genericType {
-            DatabaseController.write(self.realm) {
+            DatabaseController.write(realm) {
                 edge.deleted = true
                 edge._action = "delete"
                 realm?.delete(edge)
@@ -467,7 +467,7 @@ public class Item: SchemaItem {
         let results = allEdges.filter(query)
 
         if results.count > 0 {
-            DatabaseController.write(self.realm) {
+            DatabaseController.write(realm) {
                 if all {
                     for edge in results {
                         edge.deleted = true
@@ -584,7 +584,8 @@ public class Item: SchemaItem {
             // Exclude SyncState
             if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
                 || prop.name == "deleted" || prop.name == "_changedInSession" || prop
-                .name == "uid" {
+                .name == "uid"
+            {
                 continue
             }
 
@@ -612,7 +613,7 @@ public class Item: SchemaItem {
     /// update the dateAccessed property to the current date
     public func accessed() {
         let safeSelf = ItemReference(to: self)
-        DatabaseController.asyncOnBackgroundThread(write:true) { _ in
+        DatabaseController.asyncOnBackgroundThread(write: true) { _ in
             guard let item = safeSelf?.resolve() else { return }
 
             item.dateAccessed = Date()
@@ -624,9 +625,9 @@ public class Item: SchemaItem {
 
     /// update the dateAccessed property to the current date
     public func modified(_ updatedFields: [String]) {
-        if self._action != "create" {
+        if _action != "create" {
             // Make sure that in between updates to this item are processed correctly
-            DatabaseController.write(self.realm) {
+            DatabaseController.write(realm) {
                 for field in updatedFields {
                     if !self._updated.contains(field) {
                         self._updated.append(field)
@@ -635,20 +636,21 @@ public class Item: SchemaItem {
                 self._action = "update"
             }
         }
-        
+
         let safeSelf = ItemReference(to: self)
-        DatabaseController.asyncOnBackgroundThread(write:true) { _ in
+        DatabaseController.asyncOnBackgroundThread(write: true) { _ in
             guard let item = safeSelf?.resolve() else { return }
 
             let previousModified = item.dateModified
             item.dateModified = Date()
-            
+
             if previousModified?.distance(to: Date()) ?? 0 < 300 /* 5 minutes */ {
                 // TODO: Test that .last gives the last added audit item")
                 if
                     let auditItem = item.edges("changelog")?.last?.target(type: AuditItem.self),
                     let content = auditItem.content,
-                    var dict = try unserialize(content, type: [String: AnyCodable?].self) {
+                    var dict = try unserialize(content, type: [String: AnyCodable?].self)
+                {
                     for field in updatedFields {
                         guard item.objectSchema[field] != nil else { throw "Invalid update call" }
                         dict[field] = AnyCodable(item[field])
@@ -739,7 +741,8 @@ extension RealmSwift.Results where Element == Edge {
                 let filter = "uid = "
                     + self.compactMap {
                         if let value = (dir == .target ? $0.targetItemID.value : $0.sourceItemID
-                            .value) {
+                            .value)
+                        {
                             return String(value)
                         }
                         return nil
@@ -819,7 +822,8 @@ extension memri.Edge {
             return try DatabaseController.trySync {
                 if let itemType = self.targetType {
                     let object = $0.object(ofType: itemType, forPrimaryKey: self.targetItemID) as? T
-                    guard (object as Item?)?.deleted == false else { return nil } // Check the edge doesn't point to a deleted item
+                    guard (object as Item?)?.deleted == false
+                    else { return nil } // Check the edge doesn't point to a deleted item
                     return object
                 }
                 else {
@@ -839,7 +843,8 @@ extension memri.Edge {
             return try DatabaseController.trySync {
                 if let itemType = self.sourceType {
                     let object = $0.object(ofType: itemType, forPrimaryKey: self.sourceItemID) as? T
-                    guard (object as Item?)?.deleted == false else { return nil }  // Check the edge doesn't come from a deleted item
+                    guard (object as Item?)?.deleted == false
+                    else { return nil } // Check the edge doesn't come from a deleted item
                     return object
                 }
                 else {

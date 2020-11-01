@@ -2,23 +2,23 @@
 // File.swift
 // Copyright © 2020 memri. All rights reserved.
 
+import CryptoKit
 import Foundation
 import RealmSwift
 import SwiftUI
-import CryptoKit
 
-class LocalFileSyncQueue : Object {
-    @objc var sha256: String? = nil
-    @objc var task: String? = nil
-    
+class LocalFileSyncQueue: Object {
+    @objc var sha256: String?
+    @objc var task: String?
+
     /// Primary key used in the realm database of this Item
     override public static func primaryKey() -> String? {
         "sha256"
     }
-    
-    public class func add(_ sha256:String, task:String) {
+
+    public class func add(_ sha256: String, task: String) {
         do {
-            try DatabaseController.trySync(write:true) { realm in
+            try DatabaseController.trySync(write: true) { realm in
                 if let _ = realm.object(ofType: LocalFileSyncQueue.self, forPrimaryKey: sha256) {
                     return
                 }
@@ -29,11 +29,14 @@ class LocalFileSyncQueue : Object {
         }
         catch { print("\(error)") }
     }
-    
-    public class func remove(_ sha256:String) {
+
+    public class func remove(_ sha256: String) {
         do {
-            try DatabaseController.trySync(write:true) { realm in
-                if let fileToUpload = realm.object(ofType: LocalFileSyncQueue.self, forPrimaryKey: sha256) {
+            try DatabaseController.trySync(write: true) { realm in
+                if let fileToUpload = realm.object(
+                    ofType: LocalFileSyncQueue.self,
+                    forPrimaryKey: sha256
+                ) {
                     fileToUpload["task"] = ""
                     realm.delete(fileToUpload)
                 }
@@ -43,8 +46,8 @@ class LocalFileSyncQueue : Object {
     }
 }
 
-extension File {
-    func getFilename() -> String {
+public extension File {
+    internal func getFilename() -> String {
         guard let filename = filename else {
             let newFilename = UUID().uuidString
             DatabaseController.sync(write: true) { _ in
@@ -54,12 +57,12 @@ extension File {
         }
         return filename
     }
-    
-    public var url: URL {
+
+    var url: URL {
         FileStorageController.getURLForFile(withUUID: getFilename())
     }
 
-    public var asString: String? {
+    var asString: String? {
         do { if let x: String = try read() { return x } }
         catch {
             // TODO: User error handling
@@ -68,10 +71,10 @@ extension File {
         return nil
     }
 
-    public var asData: Data? {
+    var asData: Data? {
         FileStorageController.getData(fromFileForUUID: getFilename())
     }
-    
+
     private func createSHA256() throws -> String {
         let bufferSize = 1024 * 1024
         let file = try FileHandle(forReadingFrom: url)
@@ -80,41 +83,42 @@ extension File {
         }
 
         var sha256er = SHA512()
-        
+
         while autoreleasepool(invoking: {
             let data = file.readData(ofLength: bufferSize)
             if data.count > 0 {
                 sha256er.update(data: data)
                 return true
-            } else {
+            }
+            else {
                 return false
             }
-        }) { }
+        }) {}
 
         let digest = sha256er.finalize()
         return digest.compactMap { String(format: "%02x", $0) }.joined()
     }
-    
-    private func createSHA256(_ data:Data) throws -> String {
+
+    private func createSHA256(_ data: Data) throws -> String {
         let digest = SHA256.hash(data: data)
         return digest.compactMap { String(format: "%02x", $0) }.joined()
     }
-    
-    public func queueForDownload() {
+
+    func queueForDownload() {
         if let sha256 = sha256, !FileStorageController.exists(withUUID: sha256) {
             LocalFileSyncQueue.add(sha256, task: "download")
         }
     }
 
-    public func clearCache() throws {
+    func clearCache() throws {
         guard let sha256 = sha256 else { return }
-        
+
         try FileStorageController.deleteFile(withUUID: sha256)
         InMemoryObjectCache.global.clear(sha256)
         LocalFileSyncQueue.remove(sha256)
     }
 
-    public func read<T>() throws -> T? {
+    func read<T>() throws -> T? {
         guard let sha256 = sha256 else { throw "SHA256 Not set" }
 
         let cachedData: T? = InMemoryObjectCache.global.get(sha256) as? T
@@ -140,7 +144,7 @@ extension File {
         return result
     }
 
-    public func read<T: Decodable>() throws -> T? {
+    func read<T: Decodable>() throws -> T? {
         guard let sha256 = sha256 else { throw "SHA256 Not set" }
 
         let cachedData: T? = InMemoryObjectCache.global.get(sha256) as? T
@@ -154,7 +158,7 @@ extension File {
         return decoded
     }
 
-    public func write<T>(_ value: T) throws {
+    func write<T>(_ value: T) throws {
         do {
             var data: Data
 
@@ -176,17 +180,17 @@ extension File {
             else {
                 throw "Exception: Could not parse data to write"
             }
-            
+
             let lastSHA256 = self["sha256"] as? String
-            
+
             // Update hash
             let sha256 = try createSHA256(data)
-            self.set("sha256", sha256)
+            set("sha256", sha256)
 
             try FileStorageController.writeData(data, toFileForUUID: getFilename())
             try InMemoryObjectCache.global.set(getFilename(), value)
-            LocalFileSyncQueue.add(sha256, task:"upload")
-            
+            LocalFileSyncQueue.add(sha256, task: "upload")
+
             // Cleanup
             if let lastSHA256 = lastSHA256, lastSHA256 != sha256 {
                 LocalFileSyncQueue.remove(lastSHA256)
@@ -197,19 +201,19 @@ extension File {
         }
     }
 
-    public func write<T: Encodable>(_ value: T) throws {
+    func write<T: Encodable>(_ value: T) throws {
         do {
             let jsonData = try JSONEncoder().encode(value)
             let lastSHA256 = self["sha256"] as? String
-            
+
             // Update hash
             let sha256 = try createSHA256(jsonData)
-            self.set("sha256", sha256)
+            set("sha256", sha256)
 
             try FileStorageController.writeData(jsonData, toFileForUUID: getFilename())
             try InMemoryObjectCache.global.set(getFilename(), value)
-            LocalFileSyncQueue.add(sha256, task:"upload")
-            
+            LocalFileSyncQueue.add(sha256, task: "upload")
+
             // Cleanup
             if let lastSHA256 = lastSHA256, lastSHA256 != sha256 {
                 LocalFileSyncQueue.remove(lastSHA256)

@@ -2,9 +2,9 @@
 // Expression.swift
 // Copyright © 2020 memri. All rights reserved.
 
+import CoreGraphics
 import Foundation
 import RealmSwift
-import CoreGraphics
 
 public class Expression: CVUToString {
     let code: String
@@ -87,7 +87,8 @@ public class Expression: CVUToString {
     }
 
     public func getTypeOfItem(_ viewArguments: ViewArguments) throws
-        -> (PropertyType, Item, String) {
+        -> (PropertyType, Item, String)
+    {
         if !parsed { try parse() }
 
         if let node = ast as? ExprLookupNode {
@@ -154,7 +155,7 @@ public class Expression: CVUToString {
         if !parsed { try parse() }
 
         let value = try interpreter?.execute(args)
-        
+
         if T.self == Bool.self {
             return ExprInterpreter.evaluateBoolean(value, nilValue: false) as? T
         }

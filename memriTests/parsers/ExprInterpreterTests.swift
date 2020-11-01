@@ -94,7 +94,7 @@ class ExprInterpreterTests: XCTestCase {
 
         XCTAssertEqual(result as! String, "yes")
     }
-    
+
     func testConditionEquals() throws {
         let snippet = "true = false"
 
@@ -102,7 +102,7 @@ class ExprInterpreterTests: XCTestCase {
 
         XCTAssertEqual(result as! Bool, false)
     }
-    
+
     func testConditionNotEquals() throws {
         let snippet = "true != false"
 
@@ -110,7 +110,7 @@ class ExprInterpreterTests: XCTestCase {
 
         XCTAssertEqual(result as! Bool, true)
     }
-    
+
     func testConditionGreaterThan() throws {
         let snippet = "5 > 10"
 
@@ -118,7 +118,7 @@ class ExprInterpreterTests: XCTestCase {
 
         XCTAssertEqual(result as! Bool, false)
     }
-    
+
     func testConditionGreaterThanOrEqual() throws {
         let snippet = "5 >= 5"
 
@@ -126,7 +126,7 @@ class ExprInterpreterTests: XCTestCase {
 
         XCTAssertEqual(result as! Bool, true)
     }
-    
+
     func testConditionLessThan() throws {
         let snippet = "5 < 10"
 
@@ -134,7 +134,7 @@ class ExprInterpreterTests: XCTestCase {
 
         XCTAssertEqual(result as! Bool, true)
     }
-    
+
     func testConditionLessThanOrEqual() throws {
         let snippet = "5 <= 5"
 
@@ -158,7 +158,7 @@ class ExprInterpreterTests: XCTestCase {
                                               results.append(lookup)
                                               XCTAssertEqual(args[0] as! Double, 10)
                                               return true
-            })
+                                          })
         let result = try interpreter.execute()
 
         XCTAssertEqual(results.count, 3)
@@ -244,7 +244,7 @@ class ExprInterpreterTests: XCTestCase {
 
         XCTAssertEqual(result as! String, "yes")
     }
-    
+
     func testTypeConversionStringToBool() throws {
         let snippet = "''"
 

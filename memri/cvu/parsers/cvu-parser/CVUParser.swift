@@ -204,7 +204,7 @@ class CVUParser {
                    lookup: lookup, execFunc: execFunc)
     }
 
-    func parseDict(_ uiElementName: String? = nil) throws -> [String: Any?] {
+    func parseDict(_: String? = nil) throws -> [String: Any?] {
         var dict = [String: Any?]()
         var stack = [Any?]()
 
@@ -213,8 +213,8 @@ class CVUParser {
 
         func setPropertyValue() {
             if !stack.isEmpty {
-                    if !isArrayMode && stack.count == 1 { dict[lastKey!] = stack[0] }
-                    else if isArrayMode || stack.count > 0 { dict[lastKey!] = stack }
+                if !isArrayMode && stack.count == 1 { dict[lastKey!] = stack[0] }
+                else if isArrayMode || stack.count > 0 { dict[lastKey!] = stack }
 
                 stack = []
             }
@@ -224,8 +224,8 @@ class CVUParser {
             var children = dict["children"] as? [UINode] ?? []
             let subChildren = properties.removeValue(forKey: "children") as? [UINode] ?? []
             children.append(UINode(type: type,
-                                      children: subChildren,
-                                      properties: properties))
+                                   children: subChildren,
+                                   properties: properties))
             dict["children"] = children
         }
 
@@ -329,7 +329,8 @@ class CVUParser {
                         continue
                     }
                     else if lvalue == "userstate" || lvalue == "viewarguments" || lvalue ==
-                        "contextpane" {
+                        "contextpane"
+                    {
                         var properties: [String: Any?] = [:]
                         if case CVUToken.CurlyBracketOpen = nextToken {
                             _ = popCurrentToken()
@@ -388,7 +389,8 @@ class CVUParser {
                 stack.append(value)
             case let .String(value, _, _):
                 if !isArrayMode,
-                    case CVUToken.Colon = peekCurrentToken() {
+                   case CVUToken.Colon = peekCurrentToken()
+                {
                     setPropertyValue() // TODO: Is this every necessary?
                     _ = popCurrentToken()
                     lastKey = value

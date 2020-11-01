@@ -1,12 +1,16 @@
+//
+// ThumbGridRendererView.swift
+// Copyright © 2020 memri. All rights reserved.
+
 ////
 //// ThumbGridRendererView.swift
 //// Copyright © 2020 memri. All rights reserved.
 //
-//import ASCollectionView
-//import SwiftUI
+// import ASCollectionView
+// import SwiftUI
 //
 //
-//struct ThumbGridRendererView: View {
+// struct ThumbGridRendererView: View {
 //    @EnvironmentObject var context: MemriContext
 //
 //    var name: String = "thumbnail_grid"
@@ -139,7 +143,7 @@
 //            }
 //        }
 //    }
-//    
+//
 //    func contextMenuProvider(index: Int, item: Item) -> UIContextMenuConfiguration? {
 //        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak context] (suggested) -> UIMenu? in
 //            let children: [UIMenuElement] = self.renderConfig.contextMenuActions.map { [weak context] action in
@@ -176,11 +180,11 @@
 //        }
 //            .id(renderConfig.ui_UUID) // Fix swiftUI wrongly animating between different lists
 //    }
-//}
+// }
 //
-//struct ThumbHorizontalGridRendererView_Previews: PreviewProvider {
+// struct ThumbHorizontalGridRendererView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        ThumbHorizontalGridRendererView()
 //            .environmentObject(try! RootContext(name: "").mockBoot())
 //    }
-//}
+// }

@@ -122,14 +122,14 @@ public class ExprLexer {
             if token != nil { tokens.append(token!) }
         }
 
-        var i = -1, startChar: Character?, lastChar: Character? = nil
+        var i = -1, startChar: Character?, lastChar: Character?
         try input.forEach { c in
             i += 1
-            
+
             if lastChar != nil {
                 let l = lastChar
                 lastChar = nil
-            
+
                 switch l {
                 case "!":
                     if c == "=" {
@@ -162,7 +162,8 @@ public class ExprLexer {
 
             if isMode.rawValue >= Mode.string.rawValue {
                 if isMode == .string,
-                    c == startChar || startChar == nil && startInStringMode && c == "{" {
+                   c == startChar || startChar == nil && startInStringMode && c == "{"
+                {
                     if keyword.count > 0 || i > 0 || c != "{" {
                         addToken(.String(keyword.joined(), i))
                     }
@@ -229,7 +230,7 @@ public class ExprLexer {
                 isMode = .keyword
                 keyword.append(String(c))
             }
-            
+
             lastChar = nil
         }
 

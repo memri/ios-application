@@ -59,11 +59,11 @@ class CrashObserver {
 
     private init() {
         #if DEBUG
-        // Don't handle crashes because everytime you press stop in Xcode this is considered a crash
-        didCrashLastTime = false
+            // Don't handle crashes because everytime you press stop in Xcode this is considered a crash
+            didCrashLastTime = false
         #else
-        didCrashLastTime = (UserDefaults.standard
-            .value(forKey: CrashObserver.defaultsKey) as? Bool) ?? false
+            didCrashLastTime = (UserDefaults.standard
+                .value(forKey: CrashObserver.defaultsKey) as? Bool) ?? false
         #endif
     }
 

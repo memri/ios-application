@@ -59,7 +59,7 @@ class InfoState: Hashable {
         hasher.combine(date)
     }
 
-    var date: Date = Date()
+    var date = Date()
     var displayMessage: String = ""
     var messageCount: Int = 1
     var type: InfoType = .info
@@ -246,7 +246,7 @@ struct DebugConsole: View {
                             .padding(.horizontal)
                             .padding(.vertical, 4)
                             .fullWidth()
-                    })
+                        })
                         .scrollPositionSetter($scrollPosition)
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)

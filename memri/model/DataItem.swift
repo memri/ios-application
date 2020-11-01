@@ -55,7 +55,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
 
     private enum CodingKeys: String, CodingKey {
         case uid, memriID, deleted, starred, dateCreated, dateModified, dateAccessed, changelog,
-            labels, syncState
+             labels, syncState
     }
 
     enum DataItemError: Error {
@@ -196,15 +196,16 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
 
     public func addEdge(_ propertyName: String, _ item: DataItem) throws {
         guard let subjectID: String = get("memriID"),
-            let objectID: String = item.get("memriID") else {
+              let objectID: String = item.get("memriID")
+        else {
             return
         }
 
         let edges: [Edge] = get(propertyName) ?? []
-        if !edges.map { $0.objectMemriID }.contains(objectID) {
+        if !edges.map(\.objectMemriID).contains(objectID) {
             let newEdge = Edge(subjectID, objectID, "Label", "Note")
             let newEdges = edges + [newEdge]
-            self.set("appliesTo", newEdges)
+            set("appliesTo", newEdges)
         }
         else {
             throw "Could note create Edge, already exists"

@@ -10,22 +10,22 @@ struct SessionSwitcher: View {
 
     @State private var _globalOffset: CGFloat = 0
     @State private var dragOffset: CGFloat = 0
-    
+
     @Environment(\.colorScheme) var colorScheme
-    
+
     var count: Int {
-        min(10, self.context.sessions.count)
+        min(10, context.sessions.count)
     }
-    
+
     var countIndexOffset: Int {
-        self.context.sessions.count - count
+        context.sessions.count - count
     }
-    
+
     private var globalOffset: CGFloat {
         min(
-            CGFloat(count) * self
-                .height / 2,
-            max(0, _globalOffset + dragOffset))
+            CGFloat(count) * height / 2,
+            max(0, _globalOffset + dragOffset)
+        )
     }
 
     let height: CGFloat = 738
@@ -42,7 +42,7 @@ struct SessionSwitcher: View {
     private func getWidth(_: CGFloat) -> CGFloat {
         360
     }
-    
+
     private func getAnchorZ(_ i: CGFloat, _ geometry: GeometryProxy) -> CGFloat {
         let speeds: [CGFloat] = [0, -2000, -4000, 0, 1000, 0, 0] // [0, -1000, -2000, 1000, 0, 0, 0]
 
@@ -144,19 +144,22 @@ struct SessionSwitcher: View {
 
             GeometryReader { geometry in
                 Color(.systemBackground)
-                
+
                 Image("session-switcher-tile")
                     .resizable(resizingMode: .tile)
                     .opacity(colorScheme == .dark ? 0.3 : 1)
                     .edgesIgnoringSafeArea(.all)
-                
+
                 ForEach(0 ..< self.count, id: \.self) { i in
                     { () -> AnyView in
                         if let session = self.context.sessions[i + self.countIndexOffset],
-                            let screenShot = session.screenshot,
-                            let uiImage = FileStorageController.getImage(fromFileForUUID: screenShot.getFilename()) {
+                           let screenShot = session.screenshot,
+                           let uiImage = FileStorageController
+                           .getImage(fromFileForUUID: screenShot.getFilename())
+                        {
                             return Image(uiImage: uiImage).resizable().eraseToAnyView()
-                        } else {
+                        }
+                        else {
                             return Color(.secondarySystemBackground).eraseToAnyView()
                         }
                     }()
@@ -172,7 +175,7 @@ struct SessionSwitcher: View {
                             radius: 15,
                             x: 10,
                             y: 10
-                    )
+                        )
                         .rotation3DEffect(.degrees(self.getRotation(CGFloat(i), geometry)),
                                           axis: (x: 1, y: 0, z: 0),
                                           anchor: .center,
@@ -188,7 +191,7 @@ struct SessionSwitcher: View {
                                 catch {}
                             }
                             self.hide()
-                    }
+                        }
                 }
             }
             .edgesIgnoringSafeArea(.vertical)
@@ -203,9 +206,10 @@ struct SessionSwitcher: View {
                     self.dragOffset = .zero
                     let origOffset = self._globalOffset
                     self._globalOffset = origOffset + gestureState.translation.height
-                    //Add inertia
+                    // Add inertia
                     withAnimation(.easeOut(duration: 0.5)) {
-                        self._globalOffset = origOffset + gestureState.predictedEndTranslation.height
+                        self._globalOffset = origOffset + gestureState.predictedEndTranslation
+                            .height
                     }
                 }
         )

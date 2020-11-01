@@ -1,5 +1,5 @@
 //
-// Renderers.swift
+// CascadingRendererConfig.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import Combine
@@ -25,10 +25,10 @@ public class CascadingRendererConfig: Cascadable {
     ) {
         super.init(head, tail, host)
     }
-    
+
     // Used for ui purposes. Random value that doesn't need to be persisted
     let ui_UUID = UUID()
-    
+
     // Defaults (intended for renderers to override if they desire a different default)
     var defaultEdgeInset: UIEdgeInsets { .zero }
     var defaultSpacing: CGSize { .zero }
@@ -74,7 +74,8 @@ public class CascadingRendererConfig: Cascadable {
         if let item = item, let body = getRenderGroup(group)?.body {
             let nodeResolver = UINodeResolver(node: body, viewArguments: arguments.copy(item))
             return UIElementView(nodeResolver: nodeResolver).eraseToAnyView()
-        } else {
+        }
+        else {
             return EmptyView().eraseToAnyView()
         }
     }

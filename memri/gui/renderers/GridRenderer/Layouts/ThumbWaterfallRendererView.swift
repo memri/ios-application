@@ -1,11 +1,15 @@
+//
+// ThumbWaterfallRendererView.swift
+// Copyright © 2020 memri. All rights reserved.
+
 ////
 //// ThumbWaterfallRendererView.swift
 //// Copyright © 2020 memri. All rights reserved.
 //
-//import ASCollectionView
-//import SwiftUI
+// import ASCollectionView
+// import SwiftUI
 //
-//struct ThumbWaterfallRendererView: View {
+// struct ThumbWaterfallRendererView: View {
 //    @EnvironmentObject var context: MemriContext
 //
 //    var name: String = "thumbnail_waterfall"
@@ -84,7 +88,7 @@
 //            return UIMenu(title: "", children: children)
 //        }
 //    }
-//    
+//
 //    var body: some View {
 //        VStack {
 //            if context.currentView?.resultSet.count == 0 {
@@ -111,15 +115,15 @@
 //        }
 //            .id(renderConfig.ui_UUID) // Fix swiftUI wrongly animating between different lists
 //    }
-//}
+// }
 //
-//struct ThumbWaterfallRendererView_Previews: PreviewProvider {
+// struct ThumbWaterfallRendererView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        ThumbnailRendererView().environmentObject(try! RootContext(name: "").mockBoot())
 //    }
-//}
+// }
 //
-//class WaterfallScreenLayoutDelegate: ASCollectionViewDelegate, ASWaterfallLayoutDelegate {
+// class WaterfallScreenLayoutDelegate: ASCollectionViewDelegate, ASWaterfallLayoutDelegate {
 //    func heightForHeader(sectionIndex _: Int) -> CGFloat? {
 //        0
 //    }
@@ -134,4 +138,4 @@
 //        let rand = indexPath.item % heights.count
 //        return context.width * (heights[safe: rand] ?? 1)
 //    }
-//}
+// }

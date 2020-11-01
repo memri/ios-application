@@ -71,7 +71,7 @@ class ExprParserTests: XCTestCase {
             "ConditionNode(condition: BoolNode(true), trueExp: ConditionNode(condition: BinaryOpNode(ConditionAND, lhs: BoolNode(false), rhs: BoolNode(true)), trueExp: BinaryOpNode(Multiplication, lhs: NumberNode(-1.0), rhs: NumberNode(1.0)), falseExp: ConditionNode(condition: BinaryOpNode(ConditionOR, lhs: BoolNode(false), rhs: BoolNode(true)), trueExp: StringNode(yes), falseExp: StringNode(no))), falseExp: BinaryOpNode(Multiplication, lhs: NumberNode(-1.0), rhs: NumberNode(1.0)))"
         )
     }
-    
+
     func testConditionEquals() throws {
         let snippet = "true = false"
 
@@ -82,7 +82,7 @@ class ExprParserTests: XCTestCase {
             "BinaryOpNode(ConditionEquals, lhs: BoolNode(true), rhs: BoolNode(false))"
         )
     }
-    
+
     func testConditionNotEquals() throws {
         let snippet = "true != false"
 
@@ -93,7 +93,7 @@ class ExprParserTests: XCTestCase {
             "BinaryOpNode(ConditionNotEquals, lhs: BoolNode(true), rhs: BoolNode(false))"
         )
     }
-    
+
     func testConditionGreaterThan() throws {
         let snippet = "5 > 10"
 
@@ -104,7 +104,7 @@ class ExprParserTests: XCTestCase {
             "BinaryOpNode(ConditionGreaterThan, lhs: NumberNode(5.0), rhs: NumberNode(10.0))"
         )
     }
-    
+
     func testConditionGreaterThanOrEqual() throws {
         let snippet = "5 >= 10"
 
@@ -115,7 +115,7 @@ class ExprParserTests: XCTestCase {
             "BinaryOpNode(ConditionGreaterThanOrEqual, lhs: NumberNode(5.0), rhs: NumberNode(10.0))"
         )
     }
-    
+
     func testConditionLessThan() throws {
         let snippet = "5 < 10"
 
@@ -126,7 +126,7 @@ class ExprParserTests: XCTestCase {
             "BinaryOpNode(ConditionLessThan, lhs: NumberNode(5.0), rhs: NumberNode(10.0))"
         )
     }
-    
+
     func testConditionLessThanOrEqual() throws {
         let snippet = "5 <= 10"
 

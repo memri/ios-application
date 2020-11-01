@@ -1,10 +1,6 @@
 //
-//  ImagePickerView.swift
-//  memri
-//
-//  Created by Toby Brennan on 29/10/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// ImagePickerView.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import SwiftUI
 
@@ -12,7 +8,7 @@ struct ImagePickerView: UIViewControllerRepresentable {
     @Environment(\.presentationMode) var presentationMode
     var sourceType: UIImagePickerController.SourceType
     var onCompletion: (UIImage?) -> Void
-    
+
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
         picker.delegate = context.coordinator
@@ -20,7 +16,8 @@ struct ImagePickerView: UIViewControllerRepresentable {
         case .camera:
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 picker.sourceType = .camera
-            } else {
+            }
+            else {
                 picker.sourceType = .photoLibrary
             }
         default:
@@ -28,27 +25,28 @@ struct ImagePickerView: UIViewControllerRepresentable {
         }
         return picker
     }
-    
-    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
-        
-    }
-    
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-    
+
     class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
         let parent: ImagePickerView
-        
+
         init(_ parent: ImagePickerView) {
             self.parent = parent
         }
-        
-        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+
+        func imagePickerController(
+            _ picker: UIImagePickerController,
+            didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+        ) {
             let uiImage = (info[.editedImage] as? UIImage) ?? (info[.originalImage] as? UIImage)
-            
+
             parent.onCompletion(uiImage)
-            
+
             parent.presentationMode.wrappedValue.dismiss()
         }
     }

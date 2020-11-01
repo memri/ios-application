@@ -6,7 +6,7 @@ import Foundation
 import SwiftUI
 
 public class ComputedView: ObservableObject {
-    var queryOptions: QueryOptions = QueryOptions()
+    var queryOptions = QueryOptions()
     var resultSet: ResultSet
 
     var name: String = ""
@@ -31,7 +31,7 @@ public class ComputedView: ObservableObject {
     var renderer: Renderer? // TODO:
     var rendererView: AnyView? // TODO:
     var sessionView: SessionView?
-    var renderConfigs: RenderConfigs = RenderConfigs()
+    var renderConfigs = RenderConfigs()
     var actionButton: ActionDescription?
     var editActionButton: ActionDescription?
 
@@ -217,7 +217,7 @@ public class ComputedView: ObservableObject {
     }
 
     public func getPropertyValue(_ name: String) -> Any {
-        let type: Mirror = Mirror(reflecting: self)
+        let type = Mirror(reflecting: self)
 
         for child in type.children {
             if child.label! == name || child.label! == "_" + name {

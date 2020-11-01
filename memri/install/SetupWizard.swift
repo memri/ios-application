@@ -1,10 +1,6 @@
 //
-//  SetupWizard.swift
-//  memri
-//
-//  Created by Ruben Daniels on 7/26/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// SetupWizard.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
 import SwiftUI
@@ -22,7 +18,6 @@ struct SetupWizard: View {
         NavigationView {
             Form {
                 if !context.installer.isInstalled && !context.installer.debugMode {
-
                     Section(
                         header: Text("Connect to a pod")
                     ) {
@@ -45,22 +40,25 @@ struct SetupWizard: View {
                             }) {
                                 Text("Authenticate")
                             }
-                            .alert(isPresented:$showingAlert) {
-                                Alert (
+                            .alert(isPresented: $showingAlert) {
+                                Alert(
                                     title: Text("Clear Database"),
-                                    message: Text("This will delete access to all previous data on this device and load the default database to connect to a new pod. Are you sure? There is no undo!"),
-                                    primaryButton: .destructive(Text("Delete")
-                                    ) {
+                                    message: Text(
+                                        "This will delete access to all previous data on this device and load the default database to connect to a new pod. Are you sure? There is no undo!"
+                                    ),
+                                    primaryButton: .destructive(Text("Delete")) {
                                         self.context.installer.installLocalAuthForNewPod(
                                             self.context,
                                             areYouSure: true,
                                             host: self.host
                                         ) { error in
                                             if let error = error {
-                                                debugHistory.error("\(error)") // TODO: show this to the user
+                                                debugHistory
+                                                    .error("\(error)") // TODO: show this to the user
                                             }
                                         }
-                                    }, secondaryButton: .cancel())
+                                    }, secondaryButton: .cancel()
+                                )
                             }
                         }) {
                             Text("Connect to a new pod")
@@ -99,12 +97,13 @@ struct SetupWizard: View {
                             }) {
                                 Text("Authenticate")
                             }
-                            .alert(isPresented:$showingAlert) {
-                                Alert (
+                            .alert(isPresented: $showingAlert) {
+                                Alert(
                                     title: Text("Clear Database"),
-                                    message: Text("This will delete access to all previous data on this device and load a fresh copy of your data from your pod. Are you sure? There is no undo!"),
-                                    primaryButton: .destructive(Text("Delete")
-                                    ) {
+                                    message: Text(
+                                        "This will delete access to all previous data on this device and load a fresh copy of your data from your pod. Are you sure? There is no undo!"
+                                    ),
+                                    primaryButton: .destructive(Text("Delete")) {
                                         self.context.installer.installLocalAuthForExistingPod(
                                             self.context,
                                             areYouSure: true,
@@ -113,9 +112,12 @@ struct SetupWizard: View {
                                             publicKey: self.publicKey,
                                             dbKey: self.databaseKey
                                         ) { error in
-                                            error.map { debugHistory.error("\($0)") } // TODO: show this to the user
+                                            error
+                                                .map { debugHistory.error("\($0)")
+                                                } // TODO: show this to the user
                                         }
-                                    }, secondaryButton: .cancel())
+                                    }, secondaryButton: .cancel()
+                                )
                             }
                         }) {
                             Text("Connect to an existing pod")
@@ -125,8 +127,13 @@ struct SetupWizard: View {
                         header: Text("Or use Memri locally")
                     ) {
                         Button(action: {
-                            self.context.installer.installLocalAuthForLocalInstallation(self.context, areYouSure: true) { error in
-                                error.map { debugHistory.error("\($0)") } // TODO: show this to the user
+                            self.context.installer.installLocalAuthForLocalInstallation(
+                                self.context,
+                                areYouSure: true
+                            ) { error in
+                                error
+                                    .map { debugHistory.error("\($0)")
+                                    } // TODO: show this to the user
                             }
                         }) {
                             Text("Use a local demo database (no pod)")
@@ -160,7 +167,8 @@ struct SetupWizard: View {
                         if context.installer.isInstalled {
                             Button(action: {
                                 self.context.installer.clearSessions(self.context) { error in
-                                    debugHistory.error("\(error ?? "")") // TODO: show this to the user
+                                    debugHistory
+                                        .error("\(error ?? "")") // TODO: show this to the user
                                 }
                             }) {
                                 Text("Clear the session history (to recover from an issue)")

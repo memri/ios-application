@@ -7,7 +7,8 @@ import Foundation
 import RealmSwift
 
 final class ItemSubscription<SubscriberType: Subscriber, Data: Item>: Subscription
-    where SubscriberType.Input == Data {
+    where SubscriberType.Input == Data
+{
     private var subscriber: SubscriberType?
     private let item: Data
     private let cache: Cache
@@ -125,7 +126,8 @@ struct ItemPublisher<Data: Item>: Publisher {
     }
 
     func receive<S>(subscriber: S) where S: Subscriber,
-        S.Failure == ItemPublisher.Failure, S.Input == ItemPublisher.Output {
+        S.Failure == ItemPublisher.Failure, S.Input == ItemPublisher.Output
+    {
         // TODO:
         let subscription = ItemSubscription(
             cache: cache,
@@ -139,7 +141,8 @@ struct ItemPublisher<Data: Item>: Publisher {
 }
 
 final class QuerySubscription<SubscriberType: Subscriber>: Subscription
-    where SubscriberType.Input == [Item] {
+    where SubscriberType.Input == [Item]
+{
     private var subscriber: SubscriberType?
     private let query: String
     private let cache: Cache
@@ -257,7 +260,8 @@ struct QueryPublisher: Publisher {
     }
 
     func receive<S>(subscriber: S) where S: Subscriber,
-        S.Failure == QueryPublisher.Failure, S.Input == QueryPublisher.Output {
+        S.Failure == QueryPublisher.Failure, S.Input == QueryPublisher.Output
+    {
         // TODO:
         let subscription = QuerySubscription(
             cache: cache,

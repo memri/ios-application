@@ -2,6 +2,7 @@
 // Cache.swift
 // Copyright © 2020 memri. All rights reserved.
 
+import AnyCodable
 import Combine
 import Foundation
 import RealmSwift
@@ -30,14 +31,14 @@ public class Cache {
     }
 
     /// gets default item from database, and adds them to realm
-    public func install(_ dbName: String, _ callback:@escaping (Error?) -> Void) throws {
-        DatabaseController.asyncOnBackgroundThread(write:true, error:callback) { realm in
+    public func install(_ dbName: String, _ callback: @escaping (Error?) -> Void) throws {
+        DatabaseController.asyncOnBackgroundThread(write: true, error: callback) { realm in
             try self._install(realm, dbName)
             callback(nil)
         }
     }
-    
-    private func _install(_ realm:Realm, _ dbName: String) throws {
+
+    private func _install(_ realm: Realm, _ dbName: String) throws {
         // Load default database from disk
         do {
             let jsonData = try jsonDataFromFile(dbName)
@@ -49,8 +50,11 @@ public class Cache {
                 var values = [String: Any?]()
 
                 guard let type = dict["_type"] as? String,
-                    let itemType = ItemFamily(rawValue: type)?.getType() as? Item.Type else {
-                        print("DEMO DATABASE ERROR: Type does not exist: \(dict["_type"] ?? "No type")")
+                      let itemType = ItemFamily(rawValue: type)?.getType() as? Item.Type
+                else {
+                    print(
+                        "DEMO DATABASE ERROR: Type does not exist: \(dict["_type"] ?? "No type")"
+                    )
                     return nil
                 }
 
@@ -104,7 +108,8 @@ public class Cache {
 
                     var edge: Edge
                     if let targetDict = edgeDict["_target"] as? [String: Any],
-                        let target = try recur(targetDict) {
+                       let target = try recur(targetDict)
+                    {
                         edge = try Cache.createEdge(
                             source: item,
                             target: target,
@@ -116,10 +121,11 @@ public class Cache {
                     else {
                         guard
                             let targetType = edgeDict["targetType"] as? String,
-                            let _itemUID = edgeDict["uid"] as? Int else {
+                            let _itemUID = edgeDict["uid"] as? Int
+                        else {
                             throw "Exception: Ill defined edge: \(edgeDict)"
                         }
-                        
+
                         guard let itemUID = lut[_itemUID] else {
                             print("DEMO DATABASE ERROR: Pointing to non-existing UID: \(_itemUID)")
                             return
@@ -134,7 +140,7 @@ public class Cache {
                         )
                     }
 
-                    DatabaseController.asyncOnCurrentThread(write:true) { _ in
+                    DatabaseController.asyncOnCurrentThread(write: true) { _ in
                         item.allEdges.append(edge)
                     }
                 }
@@ -194,7 +200,7 @@ public class Cache {
                         // NOTE: Allowed forced cast
                         guard let type = dtype.getType() as? Object.Type else { continue }
                         realm.objects(type).filter("deleted = false " + (filter ?? ""))
-                            .forEach { (item) in
+                            .forEach { item in
                                 if let item = item as? Item {
                                     returnValue.append(item)
                                 }
@@ -301,7 +307,7 @@ public class Cache {
             }
 
             // Add item to realm
-            try DatabaseController.trySync(write:true) { $0.add(item, update: .modified) }
+            try DatabaseController.trySync(write: true) { $0.add(item, update: .modified) }
         }
         catch {
             throw "Could not add item to cache: \(error)"
@@ -372,7 +378,7 @@ public class Cache {
     /// - Remark: All methods and properties must throw when deleted = true;
     public func delete(_ item: Item) throws {
         if !item.deleted {
-            try DatabaseController.trySync(write:true) { _ in
+            try DatabaseController.trySync(write: true) { _ in
                 item.deleted = true
                 item._action = "delete"
                 item.allEdges.forEach {
@@ -390,7 +396,7 @@ public class Cache {
     /// marks a set of items to be deleted
     /// - Parameter items: items to be deleted
     public func delete(_ items: [Item]) throws {
-        try DatabaseController.trySync(write:true) { _ in
+        try DatabaseController.trySync(write: true) { _ in
             for item in items {
                 if !item.deleted {
                     item.deleted = true
@@ -450,16 +456,17 @@ public class Cache {
     }
 
     static var cacheUIDCounter: Int = -1
-    
+
     public class func incrementUID() throws -> Int {
-        try DatabaseController.trySync(write:true) { realm in
+        try DatabaseController.trySync(write: true) { realm in
             if cacheUIDCounter == -1 {
                 if
                     let setting = realm.objects(Setting.self)
                     .filter("key = '\(try getDeviceID())/uid-counter'")
                     .first,
                     let str = setting.json,
-                    let counter = Int(str) {
+                    let counter = Int(str)
+                {
                     cacheUIDCounter = counter
                 }
                 else {
@@ -481,7 +488,8 @@ public class Cache {
 
             if let setting = realm.objects(Setting.self)
                 .filter("key = '\(try getDeviceID())/uid-counter'")
-                .first {
+                .first
+            {
                 setting.json = String(cacheUIDCounter)
                 if setting._action == nil {
                     setting._action = "update"
@@ -523,7 +531,7 @@ public class Cache {
         unique: String? = nil
     ) throws -> T {
         var item: T?
-        try DatabaseController.trySync(write:true) { realm in
+        try DatabaseController.trySync(write: true) { realm in
             var dict = values
 
             // TODO:
@@ -579,7 +587,7 @@ public class Cache {
             }
 
             #if DEBUG
-            print("\(type) - \(String(describing: dict["uid"]))")
+                print("\(type) - \(String(describing: dict["uid"]))")
             #endif
 
             item = realm.create(type, value: dict)
@@ -620,7 +628,7 @@ public class Cache {
         sequence: Int? = nil
     ) throws -> Edge {
         var edge: Edge?
-        try DatabaseController.trySync(write:true) { realm in
+        try DatabaseController.trySync(write: true) { realm in
             // TODO:
             // Always overwrite (see also link())
 

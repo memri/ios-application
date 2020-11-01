@@ -1,10 +1,6 @@
 //
-//  CVUTests.swift
-//  memriTests
-//
-//  Created by Ruben Daniels on 7/24/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// CVUTests.swift
+// Copyright © 2020 memri. All rights reserved.
 
 @testable import memri
 import XCTest
@@ -23,8 +19,7 @@ class CVUTests: XCTestCase {
     func testLineNumbersOfParseErrors() throws {
         installer.installForTesting { error, context in
             guard let context = context else { throw "Failed to initialize: \(error!)" }
-            
-            
+
             let code = """
             /* multi
                 line
@@ -34,9 +29,9 @@ class CVUTests: XCTestCase {
                 name: all-locations
                 defaultRenderer: list
                 filterButtons: showStarred toggleFilterPanel
-                
+
                 editActionButton: toggleEditMode
-                
+
                 [renderer = list] {
                     HStack {
                         Spacer
@@ -49,12 +44,12 @@ class CVUTests: XCTestCase {
                     }
                 }
             """
-            
+
             do {
                 let cvu = CVU(code, context,
                               lookup: context.views.lookupValueOfVariables,
                               execFunc: context.views.executeFunction)
-                let _ = try cvu.parse() // TODO: this could be optimized
+                _ = try cvu.parse() // TODO: this could be optimized
             }
             catch {
                 if let error = error as? CVUParseErrors {
@@ -65,9 +60,9 @@ class CVUTests: XCTestCase {
                         name: all-locations
                         defaultRenderer: list
                         filterButtons: showStarred toggleFilterPanel
-                        
+
                         editActionButton: toggleEditMode
-                        
+
                         [renderer = list] {
                             HStack {
                                 Spacer
@@ -81,19 +76,18 @@ class CVUTests: XCTestCase {
                             }
                         }
                     """)
-                    
+
                     XCTAssertEqual("\(error)",
-                        #"ExpectedKey(memri.CVUToken.Identifier("we", 14, 13))"#)
+                                   #"ExpectedKey(memri.CVUToken.Identifier("we", 14, 13))"#)
                 }
             }
         }
     }
-    
+
     func testParseErrorOnLastLine() throws {
         installer.installForTesting { error, context in
             guard let context = context else { throw "Failed to initialize: \(error!)" }
-            
-            
+
             let code = """
             /* multi
                 line
@@ -102,12 +96,12 @@ class CVUTests: XCTestCase {
             Example[] {
                 trigger parse error
             """
-            
+
             do {
                 let cvu = CVU(code, context,
                               lookup: context.views.lookupValueOfVariables,
                               execFunc: context.views.executeFunction)
-                let _ = try cvu.parse() // TODO: this could be optimized
+                _ = try cvu.parse() // TODO: this could be optimized
             }
             catch {
                 if let error = error as? CVUParseErrors {
@@ -121,11 +115,11 @@ class CVUTests: XCTestCase {
                     Example[] {
                         trigger parse error
                     ----^
-                    
+
                     """)
-                    
+
                     XCTAssertEqual("\(error)",
-                        #"ExpectedKey(memri.CVUToken.Identifier("trigger", 5, 5))"#)
+                                   #"ExpectedKey(memri.CVUToken.Identifier("trigger", 5, 5))"#)
                 }
             }
         }
@@ -137,5 +131,4 @@ class CVUTests: XCTestCase {
 //            // Put the code you want to measure the time of here.
 //        }
 //    }
-
 }

@@ -1,5 +1,5 @@
 //
-// MemriTextEditor_UIKit.swift
+// MemriFittedTextEditor_UIKit.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import Foundation
@@ -23,6 +23,7 @@ public class MemriFittedTextEditorWrapper_UIKit: UIView {
         ])
     }
 
+    @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -54,7 +55,8 @@ public class MemriFittedTextEditor_UIKit: UITextView, UITextViewDelegate {
     var isEditingBinding: Binding<Bool>? {
         didSet {
             if let bindingIsEditing = isEditingBinding?.wrappedValue,
-                bindingIsEditing != isEditing {
+               bindingIsEditing != isEditing
+            {
                 if bindingIsEditing {
                     becomeFirstResponder()
                 }
@@ -64,7 +66,7 @@ public class MemriFittedTextEditor_UIKit: UITextView, UITextViewDelegate {
             }
         }
     }
-    
+
     func updateTextIfNotEditing(_ newText: String?) {
         if text != newText {
             text = newText
@@ -81,16 +83,16 @@ public class MemriFittedTextEditor_UIKit: UITextView, UITextViewDelegate {
         self.fontSize = fontSize
 
         super.init(frame: .zero, textContainer: nil)
-        
-        self.text = textContent
+
+        text = textContent
 
         // Allow editing attributes
         allowsEditingTextAttributes = false
 
         // Scroll to dismiss keyboard
         keyboardDismissMode = .none
-        
-        //Set background color
+
+        // Set background color
         backgroundColor.map { self.backgroundColor = $0.uiColor }
 
         // Set up toolbar
@@ -101,6 +103,7 @@ public class MemriFittedTextEditor_UIKit: UITextView, UITextViewDelegate {
         delegate = self
     }
 
+    @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -109,7 +112,7 @@ public class MemriFittedTextEditor_UIKit: UITextView, UITextViewDelegate {
 //        #if targetEnvironment(macCatalyst)
 //            return 50
 //        #else
-            return 0
+        0
 //        #endif
     }
 
@@ -123,7 +126,7 @@ public class MemriFittedTextEditor_UIKit: UITextView, UITextViewDelegate {
     override public func layoutSubviews() {
         textContainerInset = preferredContentInset
         super.layoutSubviews()
-        
+
         if let heightBinding = preferredHeightBinding {
             let desiredHeight = getTextContentSize().height
             if heightBinding.wrappedValue != desiredHeight {
@@ -210,7 +213,7 @@ public class MemriFittedTextEditor_UIKit: UITextView, UITextViewDelegate {
     }
 
     public func getTextContentSize() -> CGSize {
-        let size = sizeThatFits(CGSize(width: self.bounds.width, height: CGFloat.infinity))
+        let size = sizeThatFits(CGSize(width: bounds.width, height: CGFloat.infinity))
         return .init(width: size.width, height: max(size.height, 30))
     }
 }

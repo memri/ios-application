@@ -1,5 +1,5 @@
 //
-// HorizonalLine.swift
+// HorizontalLine.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import SwiftUI

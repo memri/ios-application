@@ -11,9 +11,9 @@ struct LineChartModel {
     var lineWidth: CGFloat = 0
     var hideGridLines: Bool = false
     var forceMinYOfZero: Bool = true
-	var primaryColor: CVUColor = CVUColor.system(.systemBlue)
-	var showValueLabels: Bool = true
-	var valueLabelFont: UIFont = UIFont.systemFont(ofSize: 14)
+    var primaryColor = CVUColor.system(.systemBlue)
+    var showValueLabels: Bool = true
+    var valueLabelFont = UIFont.systemFont(ofSize: 14)
 
     func generateData() -> LineChartData {
         let dataSets: [LineChartDataSet] = sets.map { set in
@@ -29,12 +29,12 @@ struct LineChartModel {
                             label: indexedPoint.label
                         )
                     )
-      })
+                })
             dataSet.drawValuesEnabled = showValueLabels
             dataSet.lineWidth = lineWidth
             dataSet.valueFormatter = ChartLabelFormatter()
             dataSet.valueFont = valueLabelFont
-			dataSet.setColor(primaryColor.uiColor)
+            dataSet.setColor(primaryColor.uiColor)
             return dataSet
         }
         return LineChartData(dataSets: dataSets)

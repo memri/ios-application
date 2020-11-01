@@ -11,9 +11,9 @@ struct BarChartSwiftUIView: UIViewRepresentable {
     var onPress: ((Int) -> Void)?
 
     func makeUIView(context: Context) -> BarChartView {
-        let chartView: BarChartView = BarChartView()
+        let chartView = BarChartView()
         chartView.delegate = context.coordinator
-        
+
         chartView.xAxis.labelPosition = .bottom
         chartView.xAxis.granularity = 1
         chartView.xAxis.drawGridLinesEnabled = false
@@ -32,8 +32,7 @@ struct BarChartSwiftUIView: UIViewRepresentable {
         chartView.xAxis.labelFont = model.barLabelFont
         chartView.leftAxis.drawGridLinesEnabled = !model.hideGridLines
         if model.forceMinYOfZero { chartView.leftAxis.axisMinimum = 0 }
-        
-        
+
         chartView.data = model.generateData()
 
         let labels = model.getLabels()

@@ -1,10 +1,6 @@
 //
-//  CVU_Shape.swift
-//  memri
-//
-//  Created by Toby Brennan on 30/9/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// CVU_Shape.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import SwiftUI
 
@@ -15,10 +11,12 @@ enum CVU_Shape {
             SwiftUI.Circle().fill(nodeResolver.color()?.color ?? .clear)
         }
     }
+
     struct Rectangle: View {
         var nodeResolver: UINodeResolver
         var body: some View {
-            SwiftUI.RoundedRectangle(cornerRadius: nodeResolver.cornerRadius).fill(nodeResolver.color()?.color ?? .clear)
+            SwiftUI.RoundedRectangle(cornerRadius: nodeResolver.cornerRadius)
+                .fill(nodeResolver.color()?.color ?? .clear)
         }
     }
 }

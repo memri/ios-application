@@ -1,5 +1,5 @@
 //
-// KeyboardToolbar.swift
+// MemriFittedTextEditorToolbar.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import Foundation
@@ -15,9 +15,9 @@ struct MemriFittedTextEditorToolbar: View {
             self.button(icon:
                 Image(systemName: "keyboard.chevron.compact.down")
                     .foregroundColor(Color(.label)),
-                        action: {
+                action: {
                     self.owner?.resignFirstResponder()
-        })
+                })
         }
         .padding(.horizontal, 4)
         .frame(minHeight: 40, idealHeight: 40, maxHeight: 60)
