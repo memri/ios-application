@@ -39,7 +39,7 @@ public enum UIElementProperties: String, CaseIterable {
         case .address: return value is Address
         case .value: return true
         case .datasource: return value is Datasource
-        case .color, .background, .rowbackground: return value is CVUColor
+        case .color, .background, .rowbackground: return value is CVUColor || value is String
         case .font:
             if let list = value as? [Any?] {
                 return list[0] is CGFloat || list[0] is CGFloat && list[1] is Font.Weight
@@ -53,12 +53,12 @@ public enum UIElementProperties: String, CaseIterable {
             else { return value is CGFloat }
         case .border:
             if let list = value as? [Any?] {
-                return list[0] is CVUColor && list[1] is CGFloat
+                return (list[0] is CVUColor || list[0] is String) && list[1] is CGFloat
             }
             else { return false }
         case .shadow:
             if let list = value as? [Any?] {
-                return list[0] is CVUColor && list[1] is CGFloat
+                return (list[0] is CVUColor || list[0] is String) && list[1] is CGFloat
                     && list[2] is CGFloat && list[3] is CGFloat
             }
             else { return false }
@@ -213,8 +213,9 @@ class CVUValidator {
                     return value is String
                 case "userState": return value is CVUParsedObjectDefinition
                 case "viewArguments": return value is CVUParsedObjectDefinition
-                    #warning("Add validation for contextPane")
-                case "contextPane": return value is CVUParsedObjectDefinition
+                case "contextPane":
+                    // TODO: Add validation for contextPane
+                    return value is CVUParsedObjectDefinition
                 case "datasourceDefinition": return value is CVUParsedDatasourceDefinition
                 case "showLabels": return value is Bool
                 case "actionButton", "editActionButton":

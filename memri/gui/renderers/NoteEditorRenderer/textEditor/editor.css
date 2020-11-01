@@ -1,0 +1,389 @@
+:root {
+  color-scheme: light dark;
+  --text-color:		 #101010;
+  --text-color-red: 	#FF3A30;
+  --text-color-purple: 	#BE38F3;
+  --text-color-pink:	#e63b7a;
+  --text-color-orange:	#FF8648;
+  --text-color-yellow:	#FFCC02;
+  --text-color-green:	#32C759;
+  --text-color-blue:	#0061FE;
+  --text-highlight:		#ffde58;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-color: 		#fcfcfc;
+  	--text-highlight:	#7e670b;
+  }
+}
+
+html {
+	margin: 0;
+	height: 100%;
+}
+
+body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	display: block;
+}
+
+#container {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+textarea:focus, input:focus{
+    outline: none;
+}
+
+[data-type=drag_item] {
+  display: flex;
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.05);
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+}
+[data-type=drag_item] > :first-child {
+  flex: 1 1 auto;
+}
+[data-type=drag_item] > :last-child {
+  flex: 0 0 auto;
+  margin-left: auto;
+  cursor: move;
+}
+
+
+.ProseMirror {
+	box-sizing: border-box;
+	line-height: 1.42;
+	outline: none;
+	overflow-y: auto;
+	padding: 12px 15px;
+	tab-size: 4;
+	-moz-tab-size: 4;
+	text-align: left;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	height: 100%;
+	overflow-y: auto;
+	color: var(--text-color);
+}
+
+
+.ProseMirror:first-child h1 {
+  border-bottom: 2px solid #80808030;
+  min-width: 60px;
+  width: auto;
+  padding: 0;
+  margin: 5px 0;
+}
+
+.ProseMirror:first-child h1.is-empty:first-child::before {
+  color: #52525275;
+  content: attr(data-empty-text);
+  float: left;
+  pointer-events: none;
+  height: 0;
+}
+
+.ProseMirror p.is-empty:only-of-type:nth-child(2)::before {
+  content: attr(data-empty-text);
+  float: left;
+  color: #525252d1;
+  pointer-events: none;
+  height: 0;
+}
+
+.ProseMirror .find {
+	background-color:rgba(255,213,0,.5);
+}
+
+.ProseMirror>* {
+	cursor: text
+}
+
+.ProseMirror p,
+.ProseMirror ol,
+.ProseMirror ul,
+.ProseMirror pre,
+.ProseMirror blockquote,
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6 {
+	margin: 0;
+	padding: 0;
+	counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9
+}
+
+.ProseMirror ol,
+.ProseMirror ul {
+	padding-left: 0.5em
+}
+
+.ProseMirror li>ol,
+.ProseMirror li>ul {
+	padding-left: 1em
+}
+
+.ProseMirror li>p {
+	display: block;
+}
+
+.ProseMirror ol>li,
+.ProseMirror ul>li {
+	list-style-type: none;
+}
+
+.ProseMirror ul>li::before {
+	content: '\2022'
+}
+
+.ProseMirror ul[data-checked=true],
+.ProseMirror ul[data-checked=false] {
+	pointer-events: none
+}
+
+.ProseMirror ul[data-checked=true]>li *,
+.ProseMirror ul[data-checked=false]>li * {
+	pointer-events: all
+}
+
+.ProseMirror ul[data-checked=true]>li::before,
+.ProseMirror ul[data-checked=false]>li::before {
+	color: #777;
+	cursor: pointer;
+	pointer-events: all
+}
+
+.ProseMirror ul[data-checked=true]>li::before {
+	content: '\2611'
+}
+
+.ProseMirror ul[data-checked=false]>li::before {
+	content: '\2610'
+}
+
+.ProseMirror li::before {
+	white-space: nowrap;
+	display: block;
+	float: left;
+	min-width: 0.6em;
+	padding-right: 0.4em;
+}
+
+.ProseMirror ol li {
+	counter-reset: list-1 list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9;
+	counter-increment: list-0
+}
+
+.ProseMirror ol li:before {
+	content: counter(list-0, decimal) '. '
+}
+
+.ProseMirror ol li > ol > li {
+	counter-increment: list-1
+}
+
+.ProseMirror ol li > ol > li:before {
+	content: counter(list-1, lower-alpha) '. '
+}
+
+.ProseMirror ol li > ol > li {
+	counter-reset: list-2 list-3 list-4 list-5 list-6 list-7 list-8 list-9
+}
+
+.ProseMirror ol li > ol > li > ol > li {
+	counter-increment: list-2
+}
+
+.ProseMirror ol li > ol > li > ol > li:before {
+	content: counter(list-2, lower-roman) '. '
+}
+
+.ProseMirror ol li > ol > li > ol > li {
+	counter-reset: list-3 list-4 list-5 list-6 list-7 list-8 list-9
+}
+
+.ProseMirror ol li > ol > li > ol > li > ol > li {
+	counter-increment: list-3
+}
+
+.ProseMirror ol li > ol > li > ol > li > ol > li:before {
+	content: counter(list-3, decimal) '. '
+}
+
+.ProseMirror ol li > ol > li > ol > li > ol > li {
+	counter-reset: list-4 list-5 list-6 list-7 list-8 list-9
+}
+
+.ProseMirror ol li > ol > li > ol > li > ol > li > ol > li {
+	counter-increment: list-4
+}
+
+.ProseMirror ol li > ol > li > ol > li > ol > li > ol > li:before {
+	content: counter(list-4, lower-alpha) '. '
+}
+
+.ProseMirror ol li > ol > li > ol > li > ol > li > ol > li {
+	counter-reset: list-5 list-6 list-7 list-8 list-9
+}
+
+.ProseMirror ol li > ol > li > ol > li > ol > li > ol > li > ol > li {
+	counter-increment: list-5
+}
+
+.ProseMirror ol li > ol > li > ol > li > ol > li > ol > li > ol > li:before {
+	content: counter(list-5, lower-roman) '. '
+}
+
+.ProseMirror ol li > ol > li > ol > li > ol > li > ol > li > ol > li {
+	counter-reset: list-6 list-7 list-8 list-9
+}
+
+.ProseMirror {
+	box-sizing: border-box
+}
+
+.ProseMirror * {
+	box-sizing: border-box
+}
+
+
+.ProseMirror h1 {
+	font-size: 2em
+}
+
+.ProseMirror h2 {
+	font-size: 1.5em
+}
+
+.ProseMirror h3 {
+	font-size: 1.17em
+}
+
+.ProseMirror h4 {
+	font-size: 1em
+}
+
+.ProseMirror h5 {
+	font-size: .83em
+}
+
+.ProseMirror h6 {
+	font-size: .67em
+}
+
+.ProseMirror a {
+	text-decoration: underline;
+	color: #06c
+}
+
+.ProseMirror blockquote {
+	border-left: 4px solid #ccc;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	padding-left: 16px
+}
+
+.ProseMirror code,
+.ProseMirror pre {
+	border-radius: 3px;
+}
+
+
+
+.ProseMirror pre>code {
+  display: block;
+  overflow-x: auto;
+  overflow-y: auto;
+  padding: 0.5em;
+  background: #232323;
+  color: #e6e1dc;
+  caret-color: rgb(149, 149, 255);
+  max-height: 80vh;
+}
+
+.ProseMirror pre>code::-webkit-input-placeholder{
+  color: rgb(149, 149, 255);
+  -webkit-text-fill-color: initial;
+}
+
+.ProseMirror pre {
+	white-space: pre-wrap;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	padding: 5px 10px
+}
+
+.ProseMirror code {
+	font-size: 0.95em;
+	padding: 2px 4px;
+	background-color: #aaaaaa47;
+}
+
+.ProseMirror img {
+	max-width: 100%;
+	max-height: 100vh;
+	margin-left: auto;
+	  margin-right: auto;
+	  -webkit-user-select: none;
+	  caret-color: transparent;
+}
+
+.ProseMirror img.ProseMirror-selectednode {
+	box-shadow: 0px 0px 10px 1px #3335;
+	outline: 2px solid var(--text-color);
+}
+
+.ProseMirror ul[data-type="todo_list"] {
+	 padding-left: 0;
+}
+ .ProseMirror li[data-type="todo_item"] {
+	 display: flex;
+	 flex-direction: row;
+}
+.ProseMirror li[data-type="todo_item"]:before {
+	 content: none
+}
+ .ProseMirror .todo-checkbox {
+	 border: 2px solid #444;
+	 height: 0.9em;
+	 width: 0.9em;
+	 box-sizing: border-box;
+	 margin-right: 10px;
+	 margin-top: 0.3rem;
+	 user-select: none;
+	 -webkit-user-select: none;
+	 -webkit-touch-callout: none;
+	 cursor: pointer;
+	 border-radius: 0.2em;
+	 background-color: transparent;
+	 transition: 0.4s background;
+}
+ .ProseMirror .todo-content {
+	 flex: 1;
+}
+ .ProseMirror .todo-content > p:last-of-type {
+	 margin-bottom: 0;
+}
+ .ProseMirror .todo-content > ul[data-type="todo_list"] {
+	 margin: 0.5rem 0;
+}
+ .ProseMirror li[data-done="true"] > .todo-content > p {
+	 text-decoration: line-through;
+}
+ .ProseMirror li[data-done="true"] > .todo-checkbox {
+	 background-color: gray;
+}
+ .ProseMirror li[data-done="false"] {
+	 text-decoration: none;
+}
+ 

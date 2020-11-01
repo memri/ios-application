@@ -20,15 +20,6 @@
         }
       },
       {
-        "package": "ASCollectionView",
-        "repositoryURL": "https://gitlab.memri.io/memri/ascollectionview",
-        "state": {
-          "branch": "master",
-          "revision": "b038490c5ec4fd1a67f17ac7777905c8c5c82d92",
-          "version": null
-        }
-      },
-      {
         "package": "Charts",
         "repositoryURL": "https://gitlab.memri.io/memri/ios-dependencies/charts",
         "state": {
@@ -65,30 +56,12 @@
         }
       },
       {
-        "package": "Sodium",
-        "repositoryURL": "https://github.com/jedisct1/swift-sodium",
-        "state": {
-          "branch": null,
-          "revision": "176745ddc4991b27f80c3c2637652eb33b5782eb",
-          "version": "0.9.0"
-        }
-      },
-      {
         "package": "SwiftSoup",
         "repositoryURL": "https://github.com/scinfu/SwiftSoup",
         "state": {
           "branch": null,
           "revision": "774dc9c7213085db8aa59595e27c1cd22e428904",
           "version": "2.3.2"
-        }
-      },
-      {
-        "package": "ZIPFoundation",
-        "repositoryURL": "https://github.com/weichsel/ZIPFoundation",
-        "state": {
-          "branch": null,
-          "revision": "ec32d62d412578542c0ffb7a6ce34d3e64b43b94",
-          "version": "0.9.11"
         }
       }
     ]

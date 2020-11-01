@@ -132,7 +132,6 @@ class Authentication {
     static func authenticateOwnerByPasscode(_ callback: @escaping (Error?) -> Void) {
         #if targetEnvironment(simulator) || (targetEnvironment(macCatalyst) && DEBUG)
         if DatabaseController.realmTesting || autologin {
-//        #warning("AUTHENTICATION DISABLED!!")
             isOwnerAuthenticated = true
             callback(nil)
             return
@@ -140,7 +139,7 @@ class Authentication {
         
         authenticateOwner(callback)
         return
-        #endif
+        #else
         
         let query: NSDictionary = [
             kSecClass:  kSecClassGenericPassword,
@@ -158,6 +157,7 @@ class Authentication {
         default:
             callback("Authentication failed")
         }
+        #endif
     }
     
     static func authenticateOwner(_ callback: @escaping (Error?) -> Void) {
@@ -192,7 +192,7 @@ class Authentication {
                     
                     callback(nil)
                 } else {
-                    #warning("Log all errors in the database — how?? At next successful login")
+                    // TODO: Log all errors in the database — how?? At next successful login")
 //                    if let errorObj = evaluationError {
 //                        let messageToDisplay = self.getErrorDescription(errorCode: errorObj._code)
 //                        print(messageToDisplay)
@@ -213,7 +213,7 @@ class Authentication {
                     
                     callback(nil)
                 } else {
-                    #warning("Log all errors in the database — how?? At next successful login")
+                    // TODO: Log all errors in the database — how?? At next successful login")
 //                    if let errorObj = evaluationError {
 //                        let messageToDisplay = self.getErrorDescription(errorCode: errorObj._code)
 //                        print(messageToDisplay)
@@ -293,7 +293,7 @@ class Authentication {
     private static var lastRootPublicKey: Data? = nil /*Data(hexString: "04F9A873A771CE81E3A4941236131B95DCF4C42761251892D207AF58EF0C821D29E8AA9DD5200265941E69290687C46AE1E89BFEB14C32749AB37A188CF9B6C5")*/
     
     static func getPublicRootKey(_ callback: @escaping (Error?, Data?) -> Void) {
-        #warning("Possibly cache the result in memory for X time (5 mins?)")
+        // TODO: Possibly cache the result in memory for X time (5 mins?)")
         do {
             guard isOwnerAuthenticated else {
                 throw "Not yet authenticated"

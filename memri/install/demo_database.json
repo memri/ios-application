@@ -226,6 +226,7 @@
     {
         "_type": "Note",
         "title": "A demo note",
+        "starred": true,
         "content": "<p><strong>Hi there,<\/strong><\/p><p>Let's explore the <u>new<\/u> text editor.<\/p><p><\/p><ul> <li><p>This is a list<\/p><\/li> <li><p>You can press return to make a new item<\/p>  <ul>   <li><p>Indented item<\/p><\/li>   <li><p><s>Something else<\/s><\/p><\/li>  <\/ul><\/li><\/ul><p><\/p><p>Or an ordered list:<\/p><ol> <li><p>Milk<\/p><\/li> <li><p>Eggs<\/p><\/li> <li><p>Flour<\/p>  <ol>   <li><p>Self-raising<\/p><\/li>   <li><p>Plain<\/p><\/li>  <\/ol><\/li><\/ol><p><\/p><p><strong>Todo list<\/strong><\/p><ul data-type=\"todo_list\"> <li data-type=\"todo_item\" data-done=\"true\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span>  <div class=\"todo-content\">   <p>Try out new editor<\/p>  <\/div><\/li> <li data-type=\"todo_item\" data-done=\"false\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span>  <div class=\"todo-content\">   <p>Finish writing blog post <\/p> <ul data-type=\"todo_list\"><li data-type=\"todo_item\" data-done=\"false\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span><div class=\"todo-content\"><p>Improve the second paragraph<\/p><\/div><\/li><\/ul><\/div><\/li> <li data-type=\"todo_item\" data-done=\"false\"><span class=\"todo-checkbox\" contenteditable=\"false\"><\/span>  <div class=\"todo-content\">   <p>Prepare presentation<\/p>  <\/div><\/li><\/ul><p><\/p><p>It also supports both <code>inline code<\/code> and code blocks:<\/p><pre><code>def some_function(argument):\n    return \"Automatic code highlighting!\"<\/code><\/pre><p><\/p><p><\/p>"
     },
     {
@@ -2497,6 +2498,21 @@
         "version": 1
     },
     {
+        "_type": "File",
+        "uid": 219603712098,
+        "filename": "unsplash-image2"
+    },
+    {
+        "_type": "File",
+        "uid": 219603712099,
+        "filename": "karen-penroz-06ZTGDcAQFs-unsplash"
+    },
+    {
+        "_type": "File",
+        "uid": 219603712100,
+        "filename": "szabo-viktor-tarTTEaiIx4-unsplash"
+    },
+    {
         "name": "Afghanistan",
         "_type": "Country"
     },
@@ -3531,8 +3547,8 @@
     },
     {
         "_type": "Note",
-        "title": "Shopping list",
-        "content": "<ul><li>potatoes</li><li>mayonaise</li></ul>",
+        "title": "Add photos to your notes",
+        "content": "<p><strong><u>Hiking trip last month:</u></strong></p><img src=\"memriFile://unsplash-image2\">\n<ul>\n <li><p>Once we got to the trailhead the first 2km was steep as can be!</p></li>\n <li><p>The next section was a gentle slope up the ridge with amazing views over the valley</p></li>\n</ul>\n<p></p>\n<h2>Latte art goals:</h2>\n<img src=\"memriFile://szabo-viktor-tarTTEaiIx4-unsplash\"><p><br></p>\n<h2><span style=\"color: var(--text-color-blue);\">Color</span> <span style=\"color: var(--text-color-yellow);\">scheme</span> <span style=\"color: var(--text-color-pink);\">idea!</span></h2>\n<img src=\"memriFile://karen-penroz-06ZTGDcAQFs-unsplash\">",
         "starred": true,
         "dateModified": 1593710745298,
         "allEdges": [
@@ -3545,6 +3561,21 @@
                 "_type": "label",
                 "targetType": "Label",
                 "uid": 1016
+            },
+            {
+                "_type": "file",
+                "targetType": "File",
+                "uid": 219603712098
+            },
+            {
+                "_type": "file",
+                "targetType": "File",
+                "uid": 219603712099
+            },
+            {
+                "_type": "file",
+                "targetType": "File",
+                "uid": 219603712100
             }
         ],
         "_partial": true,
@@ -3553,7 +3584,7 @@
     {
         "_type": "Note",
         "title": "To read list",
-        "content": "Age of surveillance capitalism",
+        "content": "<ul data-type=\"todo_list\">\n <li data-type=\"todo_item\" data-done=\"false\"><p>Age of surveillance capitalism</p></li>\n</ul>\n<p></p>\n<p><em>What next?</em></p>",
         "allEdges": [
             {
                 "_type": "label",
@@ -3573,7 +3604,6 @@
         "_type": "Note",
         "title": "Ideas for memri",
         "content": "privacy by design, digital memory",
-        "starred": true,
         "dateModified": 1593677745298,
         "version": 1
     },
@@ -3633,7 +3663,7 @@
     {
         "_type": "Account",
         "uid": 20000000000,
-        "displayName": "Myself (WA)",
+        "displayName": "Myself",
         "externalId": "101010101010@s.whatsapp.net",
         "nameQuality": 2,
         "enablePresence": true,
@@ -3642,7 +3672,7 @@
         "allEdges": [
             {
                 "targetType": "Person",
-                "uid": 3,
+                "uid": 1,
                 "_type": "owner"
             },
             {
@@ -3657,7 +3687,6 @@
         "uid": 20000000001,
         "displayName": "+123456789 (WA)",
         "externalId": "123456789@s.whatsapp.net",
-        "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
         "allEdges": [
@@ -3678,18 +3707,17 @@
         "uid": 20000000002,
         "displayName": "+987654321 (WA)",
         "externalId": "987654321@s.whatsapp.net",
-        "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
         "allEdges": [
             {
                 "targetType": "Person",
-                "uid": 1,
+                "uid": 4,
                 "_type": "owner"
             },
             {
                 "targetType": "Network",
-                "uid": 9997,
+                "uid": 9999,
                 "_type": "network"
             }
         ]
@@ -3697,36 +3725,20 @@
     {
         "_type": "Account",
         "uid": 20000000003,
-        "displayName": "John Doe (WA)",
+        "displayName": "John Doe",
         "externalId": "1357924680@s.whatsapp.net",
-        "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
         "allEdges": [
             {
                 "targetType": "Person",
-                "uid": 1,
+                "uid": 3,
                 "_type": "owner"
             },
             {
                 "targetType": "Network",
                 "uid": 9997,
                 "_type": "network"
-            }
-        ]
-    },
-    {
-        "_type": "MessageChannel",
-        "uid": 20000000004,
-        "externalId": "status@broadcast",
-        "name": "WhatsApp Status Broadcast",
-        "topic": "WhatsApp status updates from your contacts",
-        "encrypted": false,
-        "allEdges": [
-            {
-                "targetType": "Account",
-                "uid": 20000000001,
-                "_type": "receiver"
             }
         ]
     },
@@ -3886,6 +3898,178 @@
                 "targetType": "Account",
                 "uid": 20000000000,
                 "_type": "sender"
+            }
+        ]
+    },
+    
+    {
+        "_type": "MessageChannel",
+        "uid": 200000500010,
+        "externalId": "987654321@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "targetType": "Account",
+                "uid": 2000000000110,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 2000000000110,
+        "externalId": "987654321@s.whatsapp.net",
+        "enablePresence": true,
+        "enableReceipts": true,
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 5,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
+    },
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000011,
+        "externalId": "987654321@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "targetType": "Account",
+                "uid": 2000000000111,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 2000000000111,
+        "externalId": "987654321@s.whatsapp.net",
+        "enablePresence": true,
+        "enableReceipts": true,
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 6,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
+    },
+    
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000012,
+        "externalId": "987654321@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "targetType": "Account",
+                "uid": 2000000000112,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 2000000000112,
+        "externalId": "987654321@s.whatsapp.net",
+        "enablePresence": true,
+        "enableReceipts": true,
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 7,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
+    },
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000013,
+        "externalId": "987654321@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "targetType": "Account",
+                "uid": 2000000000113,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 2000000000113,
+        "externalId": "987654321@s.whatsapp.net",
+        "enablePresence": true,
+        "enableReceipts": true,
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 8,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
+    },
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000014,
+        "externalId": "987654321@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "targetType": "Account",
+                "uid": 2000000000114,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 2000000000114,
+        "externalId": "987654321@s.whatsapp.net",
+        "enablePresence": true,
+        "enableReceipts": true,
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 9,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
             }
         ]
     },

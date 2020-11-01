@@ -21,7 +21,7 @@ struct NavigationWrapper<Content: View>: View {
     }) var offset: CGFloat = .zero
 
     func navWidth(_ geom: GeometryProxy) -> CGFloat {
-        geom.size.width * widthRatio
+        min(300, geom.size.width * widthRatio)
     }
 
     func cappedOffset(_ geom: GeometryProxy) -> CGFloat {
@@ -79,7 +79,7 @@ struct NavigationWrapper<Content: View>: View {
                     .simultaneousGesture(navigationDragGesture)
                     .zIndex(10)
                 Navigation()
-                    .frame(width: geom.size.width * widthRatio)
+                    .frame(width: navWidth(geom))
                     .edgesIgnoringSafeArea(.all)
                     .offset(
                         x: isVisible ? cappedOffset(geom) : (-navWidth(geom) + cappedOffset(geom)),
@@ -151,7 +151,7 @@ struct Navigation: View {
                 .padding(5)
                 .padding(.horizontal, 5)
                 .accentColor(.white)
-                .background(Color(hex: "#341e51"))
+                .background(Color.black.opacity(0.4))
                 .cornerRadius(5)
 
 //                Button(action: {}) {
@@ -169,7 +169,7 @@ struct Navigation: View {
             .padding(.top, 40)
             .padding(.horizontal, 20)
             .frame(minHeight: 95)
-            .background(Color(hex: "#492f6c"))
+            .background(Color("MemriUI-purpleBackSecondary"))
 
             ASTableView(section:
                 ASSection(id: 0, data: context.navigation.getItems(),
@@ -206,7 +206,7 @@ struct Navigation: View {
             //            .padding(.top, 10)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(hex: "543184"))
+        .background(Color("MemriUI-purpleBack"))
     }
 }
 
@@ -230,7 +230,7 @@ struct NavigationItemView: View {
                 .font(.system(size: 18, weight: .regular))
                 .padding(.vertical, 10)
                 .padding(.horizontal, 35)
-                .foregroundColor(Color(hex: "#d9d2e9"))
+                .foregroundColor(Color.white.opacity(0.7))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .contentShape(Rectangle())
         }

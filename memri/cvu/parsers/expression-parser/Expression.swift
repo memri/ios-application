@@ -99,12 +99,8 @@ public class Expression: CVUToString {
                         return (propType, dataItem, lastProperty.name)
                     }
                     else if let propType = PropertyType(rawValue: 7) {
-                        #warning(
-                            "This requires a local version a browsable schema that describes the types of edges"
-                        )
-                        //                        if let item = dataItem.edge(lastProperty.name)?.item() {
+                        // TODO: This requires a local version a browsable schema that describes the types of edges
                         return (propType, dataItem, lastProperty.name)
-                        //                        }
                     }
                 }
             }

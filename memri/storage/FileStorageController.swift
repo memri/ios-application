@@ -4,7 +4,6 @@
 
 import Foundation
 import UIKit
-import ZIPFoundation
 
 class FileStorageController {
     private init() {}
@@ -100,9 +99,10 @@ class FileStorageController {
         return UIImage(cgImage: downsampledImage)
     }
     
-    static func unzipFile(from sourceURL: URL, to folder: String? = nil, progress: Progress? = nil) throws {
-        try FileManager().unzipItem(at: sourceURL, to: folder.map { getFileStorageURL().appendingPathComponent($0, isDirectory: true) } ?? getFileStorageURL(), progress: progress)
-    }
+    // Requires `ZipFoundation` package
+//    static func unzipFile(from sourceURL: URL, to folder: String? = nil, progress: Progress? = nil) throws {
+//        try FileManager().unzipItem(at: sourceURL, to: folder.map { getFileStorageURL().appendingPathComponent($0, isDirectory: true) } ?? getFileStorageURL(), progress: progress)
+//    }
     static func deleteFolder(named folderName: String) throws {
         try FileManager.default.removeItem(at: getFileStorageURL().appendingPathComponent(folderName, isDirectory: true))
     }

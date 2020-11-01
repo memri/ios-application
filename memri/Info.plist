@@ -41,6 +41,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used for attaching photos from your library to your notes</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Used for attaching photos to your notes</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Access to your data is protected using face ID</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

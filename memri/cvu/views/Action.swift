@@ -109,7 +109,7 @@ extension MemriContext {
                     finalValue = try viewArgs.resolve(item)
                 }
                 else if let parsedDef = argValue as? CVUParsedDefinition {
-                    #warning("This seems to not set the head properly")
+                    // TODO: This seems to not set the head properly")
                     finalValue = try ViewArguments(parsedDef).resolve(item, viewArgs)
                 }
                 else {
@@ -443,9 +443,6 @@ public enum ActionFamily: String, CaseIterable {
     }
 }
 
-#warning(
-    "Check that the CVU validator is called. somehow with viewName missing defaults still passed"
-)
 public enum ActionProperties: String, CaseIterable {
     case name, arguments, binding, icon, renderAs, showTitle, opensView, color,
         backgroundColor, inactiveColor, activeBackgroundColor, inactiveBackgroundColor, title
@@ -482,7 +479,7 @@ protocol ActionExec {
     func exec(_ arguments: [String: Any?]) throws
 }
 
-#warning("Make this Subscriptable and add to expression docs on the wiki")
+// TODO: Make this Subscriptable and add to expression docs on the wiki")
 class ActionBack: Action, ActionExec {
     override var defaultValues: [String: Any?] { [
         "icon": "chevron.left",
@@ -533,7 +530,7 @@ class ActionAddItem: Action, ActionExec {
         if let dataItem = arguments["template"] as? Item {
             //			// Copy template
             //			let copy = try context.cache.duplicate(dataItem)
-            #warning("Test that this creates a unique node")
+            // TODO: Test that this creates a unique node")
             // Open view with the now managed copy
             try ActionOpenView.exec(context, ["item": dataItem])
         }
@@ -728,7 +725,7 @@ class ActionOpenViewWithUIDs: Action, ActionExec {
         with arguments: ViewArguments? = nil
     ) throws {
 		
-		#warning("@Ruben - this action isn't working since recent changes. The only relevant code for when you merge into the `OpenView` action is constructing the UID query (IN vs =)")
+		// TODO: @Ruben - this action isn't working since recent changes. The only relevant code for when you merge into the `OpenView` action is constructing the UID query (IN vs =)")
 		guard let firstUID = uids.first else { throw "No UIDs specified" }
 		// note that the `IN` selector requires >1 item or it will throw an exception (use `=` if one item)
 		let uidQueryString = uids.count > 1 ? "uid IN {\(uids.map { String($0) }.joined(separator: ","))}" : "uid = \(firstUID)"
@@ -1272,7 +1269,7 @@ class ActionRunImporter: Action, ActionExec {
             context.cache.isOnRemote(run) { error in
                 if error != nil {
                     // How to handle??
-                    #warning("Look at this when implementing syncing")
+                    // TODO: Look at this when implementing syncing")
                     debugHistory.error("Polling timeout. All polling services disabled")
                     return
                 }
@@ -1328,7 +1325,7 @@ class ActionRunIndexer: Action, ActionExec {
             context.cache.isOnRemote(run) { error in
                 if error != nil {
                     // How to handle??
-                    #warning("Look at this when implementing syncing")
+                    // TODO: Look at this when implementing syncing")
                     debugHistory.error("Polling timeout. All polling services disabled")
                     return
                 }
@@ -1341,28 +1338,7 @@ class ActionRunIndexer: Action, ActionExec {
                 // Start indexer process
                 self.context.podAPI.runIndexer(uid) { error, _ in
                     if error == nil {
-                        #warning("This is broken. Realm threading crash. watcher will not be retained if stored in local var")
-//                        var watcher: AnyCancellable?
-//                        watcher = self.context.cache.subscribe(to: run).sink { item in
-//                            if let progress: Int = item.get("progress") {
-//                                self.context.scheduleUIUpdate()
-//
-//                                print("progress \(progress)")
-//
-//                                if progress >= 100 {
-//                                    watcher?.cancel()
-//                                    watcher = nil
-//                                }
-//                            }
-//                            else {
-//                                debugHistory
-//                                    .error(
-//                                        "ERROR, could not get progress: \(String(describing: error))"
-//                                    )
-//                                watcher?.cancel()
-//                                watcher = nil
-//                            }
-//                        }
+                        // SUCCESS
                     }
                     else {
                         // TODO: User Error handling

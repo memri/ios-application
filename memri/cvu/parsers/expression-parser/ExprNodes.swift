@@ -163,7 +163,7 @@ public struct ExprBinaryOpNode: ExprNode {
         "BinaryOpNode(\(op), lhs: \(lhs), rhs: \(rhs))"
     }
 
-    #warning("hide () when possible")
+    // TODO: hide () when possible
     public func toExprString() -> String {
         "(\(lhs.toExprString()) \(op.rawValue) \(rhs.toExprString()))"
     }

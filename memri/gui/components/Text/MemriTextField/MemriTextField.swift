@@ -22,6 +22,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
     var showPrevNextButtons: Bool = true
     var selectAllOnEdit: Bool = false
     var font: UIFont?
+    var secureMode: Bool = false
 
     var isEditing: Binding<Bool>?
     /// Allows making this textfield
@@ -194,7 +195,8 @@ public extension MemriTextField where Value == String? {
         showPrevNextButtons: Bool = true,
         selectAllOnEdit: Bool = false,
         isEditing: Binding<Bool>? = nil,
-        isSharedEditingBinding: Bool = false
+        isSharedEditingBinding: Bool = false,
+        secureMode: Bool = false
     ) {
         _value = value
         valueToString = { $0 }
@@ -210,6 +212,7 @@ public extension MemriTextField where Value == String? {
         self.selectAllOnEdit = selectAllOnEdit
         self.isEditing = isEditing
         self.isSharedEditingBinding = isSharedEditingBinding
+        self.secureMode = secureMode
     }
 }
 
@@ -226,7 +229,8 @@ public extension MemriTextField where Value == String {
         showPrevNextButtons: Bool = true,
         selectAllOnEdit: Bool = false,
         isEditing: Binding<Bool>? = nil,
-        isSharedEditingBinding: Bool = false
+        isSharedEditingBinding: Bool = false,
+        secureMode: Bool = false
     ) {
         _value = value
         valueToString = { $0 }
@@ -242,6 +246,7 @@ public extension MemriTextField where Value == String {
         self.selectAllOnEdit = selectAllOnEdit
         self.isEditing = isEditing
         self.isSharedEditingBinding = isSharedEditingBinding
+        self.secureMode = secureMode
     }
 }
 

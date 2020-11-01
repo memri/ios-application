@@ -184,7 +184,7 @@ class DatabaseController {
                 reportedKey = true
                 print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
                 Authentication.getOwnerAndDBKey { err, owner, db in
-                    if err != nil {
+                    if let err = err {
                         print("AUTH ERROR: \(err)")
                         return
                     }
@@ -352,7 +352,6 @@ class DatabaseController {
     }
 
     static func clean(_ callback:@escaping (Error?) -> Void) {
-        #warning("@Toby, deleting here on realm doesnt remove them from the db and thus this is called every time. Any idea why?")
         DatabaseController.asyncOnBackgroundThread(write: true, error: callback) { realm in
             for itemType in ItemFamily.allCases {
 

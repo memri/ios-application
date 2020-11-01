@@ -34,9 +34,9 @@ struct SearchView: View {
                 .padding(.horizontal, 15)
                 .padding(.vertical, 6)
             }
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .modifier(KeyboardModifier())
-            .background(Color.white.edgesIgnoringSafeArea(.all))
+            .background(Color(.systemBackground).edgesIgnoringSafeArea(.all))
             .transition(.opacity)
         }
     }
