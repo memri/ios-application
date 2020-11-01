@@ -3,11 +3,15 @@ memri.xcodeproj/project.xcworkspace/xcuserdata/*
 memri.xcodeproj/xcuserdata/
 xcuserdata
 memri.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
-memri.xcodeproj/xcuserdata/koen.xcuserdatad/*
+memri.xcodeproj/xcuserdata/*
 
 builds/
 
 BuildTools/.build
+memri/gui/components/Text/MemriTextEditor/textEditor/node_modules
+memri/gui/renderers/NoteEditorRenderer/textEditor/node_modules
+BuildTools/.swiftpm
+
 
 #########################
 # .gitignore file for Xcode4 and Xcode5 Source projects
@@ -226,5 +230,3 @@ xcuserdata/
 ####
 # UNKNOWN: recommended by others, but I can't discover what these files are
 #
-memri/gui/components/Text/MemriTextEditor/textEditor/node_modules
-memri/gui/renderers/NoteEditorRenderer/textEditor/node_modules
