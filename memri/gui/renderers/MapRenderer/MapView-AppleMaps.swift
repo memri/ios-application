@@ -11,7 +11,7 @@ struct MapView_AppleMaps: UIViewRepresentable {
     var config: MapViewConfig
 
     func makeUIView(context: Context) -> MKMapView {
-        let mapView: MKMapView = MKMapView(frame: .zero)
+        let mapView = MKMapView(frame: .zero)
         mapView.delegate = context.coordinator
         context.coordinator.setup(mapView)
 
@@ -25,7 +25,7 @@ struct MapView_AppleMaps: UIViewRepresentable {
         context.coordinator.mapModel.locationResolver = config.locationResolver
         context.coordinator.mapModel.addressResolver = config.addressResolver
         context.coordinator.mapModel.labelResolver = config.labelResolver
-		context.coordinator.mapView?.isScrollEnabled = config.moveable
+        context.coordinator.mapView?.isScrollEnabled = config.moveable
     }
 
     func makeCoordinator() -> MapView_AppleMaps.Coordinator {
@@ -36,7 +36,7 @@ struct MapView_AppleMaps: UIViewRepresentable {
 
     final class Coordinator: NSObject, MKMapViewDelegate {
         var parent: MapView_AppleMaps
-        var mapModel: MapModel = MapModel()
+        var mapModel = MapModel()
 
         var mapView: MKMapView?
 
@@ -99,7 +99,7 @@ struct MapView_AppleMaps: UIViewRepresentable {
         ) {
             // ONPRESS
             guard let annotation = view.annotation as? MapAnnotation_AppleMaps,
-                let dataItem = annotation.dataItem else { return }
+                  let dataItem = annotation.dataItem else { return }
             parent.config.onPress?(dataItem)
         }
     }

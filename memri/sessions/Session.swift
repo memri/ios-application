@@ -117,7 +117,8 @@ public final class Session: Equatable, Subscriptable {
                 .edges("view")?
                 .sorted(byKeyPath: "sequence")
                 .items(type: CVUStateDefinition.self),
-                storedViewStates.count > 0 {
+                storedViewStates.count > 0
+            {
                 for viewState in storedViewStates {
                     views.append(try CascadableView(viewState, self))
                 }
@@ -125,8 +126,9 @@ public final class Session: Equatable, Subscriptable {
             // Or if the views are encoded in the definition
             else if
                 let parsedViews = parsed?["viewDefinitions"] as? [CVUParsedViewDefinition],
-                parsedViews.count > 0 {
-                try DatabaseController.trySync(write:true) { _ in
+                parsedViews.count > 0
+            {
+                try DatabaseController.trySync(write: true) { _ in
                     for parsed in parsedViews {
                         let viewState = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
                         _ = try state.link(viewState, type: "view", sequence: .last)
@@ -144,7 +146,7 @@ public final class Session: Equatable, Subscriptable {
             // Do nothing and expect a call to setCurrentView later
         }
     }
-    
+
     subscript(propName: String) -> Any? {
         get {
             switch propName {
@@ -182,7 +184,7 @@ public final class Session: Equatable, Subscriptable {
     }
 
     public func persist() throws {
-        DatabaseController.asyncOnCurrentThread(write:true) { realm in
+        DatabaseController.asyncOnCurrentThread(write: true) { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
             if state == nil {
                 debugHistory.warn("Could not find stored session CVU. Creating a new one.")
@@ -283,7 +285,8 @@ public final class Session: Equatable, Subscriptable {
             // hide filterpanel if view doesnt have a button to open it
             if showFilterPanel {
                 if currentView?.filterButtons
-                    .first(where: { $0.name == .toggleFilterPanel }) == nil {
+                    .first(where: { $0.name == .toggleFilterPanel }) == nil
+                {
                     showFilterPanel = false
                 }
             }
@@ -292,7 +295,7 @@ public final class Session: Equatable, Subscriptable {
         }
 
         context?.currentRendererController = currentView?.makeRendererController()
-        
+
         // Update the UI
         currentView?.context?.scheduleUIUpdate()
     }

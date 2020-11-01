@@ -38,7 +38,8 @@ struct TableView<Item, Content: View>: UIViewControllerRepresentable where Item:
 }
 
 class Coordinator<Item, Content: View>: NSObject, UITableViewDelegate,
-    UITableViewDataSource where Item: AnyObject {
+    UITableViewDataSource where Item: AnyObject
+{
     var parent: TableView<Item, Content>
     let tableViewController = TableViewController(style: UITableView.Style.plain)
 
@@ -286,6 +287,7 @@ class TableViewController: UITableViewController {
         super.init(style: style)
     }
 
+    @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

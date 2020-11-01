@@ -92,7 +92,10 @@ public class ResultSet: ObservableObject {
     ///  Items
     /// - Parameter callback: Callback with params (error: Error, result: [Item]) that is executed on the returned result
     /// - Throws: empty query error
-    func load(syncWithRemote: Bool = true, _ callback: @escaping (_ error: Error?) throws -> Void) throws {
+    func load(
+        syncWithRemote: Bool = true,
+        _ callback: @escaping (_ error: Error?) throws -> Void
+    ) throws {
         if !isLoading {
             if datasource.query == "" {
                 throw "Exception: No query specified when loading result set"
@@ -146,7 +149,7 @@ public class ResultSet: ObservableObject {
         if let filter = _filterText {
             // Filter using _filterText
             var filterResult: [Item] = []
-            
+
             // Filter through items
             let searchSet = _unfilteredItems ?? items
             if searchSet.count > 0 {
@@ -156,14 +159,15 @@ public class ResultSet: ObservableObject {
                     }
                 }
             }
-            
+
             // Store the items of this resultset
             if _unfilteredItems == nil { _unfilteredItems = items }
-            
+
             // Set the filtered result
             items = filterResult
             count = filterResult.count
-        } else {
+        }
+        else {
             // If we filtered before...
             if let _unfilteredItems = _unfilteredItems {
                 // Put back the items of this resultset

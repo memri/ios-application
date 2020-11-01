@@ -26,8 +26,8 @@ struct CalendarHelper {
 
     func getMonths(from startDate: Date, to endDate: Date) -> [Date] {
         guard endDate >= startDate,
-            let firstMonth = startOfMonth(for: startDate),
-            let lastMonth = startOfMonth(for: endDate)
+              let firstMonth = startOfMonth(for: startDate),
+              let lastMonth = startOfMonth(for: endDate)
         else { return [] }
         var dates: [Date] = []
         calendar.enumerateDates(
@@ -61,7 +61,7 @@ struct CalendarHelper {
 
     func getPaddedDays(forMonth month: Date) -> [Date?] {
         guard let weekdayAtStart = weekdayAtStartOfMonth(for: month),
-            let endOfMonth = endOfMonth(for: month) else { return [] }
+              let endOfMonth = endOfMonth(for: month) else { return [] }
         let adjustedWeekday = (weekdayAtStart - 1) // 0 = Sunday
         var dates: [Date?] = .init(repeating: nil, count: adjustedWeekday)
         calendar.enumerateDates(

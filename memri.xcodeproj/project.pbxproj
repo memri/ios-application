@@ -12,7 +12,6 @@
 		5D0A28BB24067E8000398B17 /* test_dataItems.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D0A28B7240677EE00398B17 /* test_dataItems.json */; };
 		5D0A28C324069A6500398B17 /* SessionViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A28C124069A6500398B17 /* SessionViewTest.swift */; };
 		5D179AB724756C7800AA275C /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D179AB624756C7800AA275C /* Action.swift */; };
-		5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A3E63240704D000A0583B /* CodablePublishedExtension.swift */; };
 		5D1A3E66240805C700A0583B /* empty_sessionview.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D1A3E652408035A00A0583B /* empty_sessionview.json */; };
 		5D1A3E67240805C700A0583B /* empty_sessionview.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D1A3E652408035A00A0583B /* empty_sessionview.json */; };
 		5D1A3E69240807C100A0583B /* SessionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A3E68240807C100A0583B /* SessionTest.swift */; };
@@ -30,7 +29,6 @@
 		5D395B5724A38FF90008610E /* label_indexer_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D395B5524A38FCC0008610E /* label_indexer_data.json */; };
 		5D3D961F24164B240004040E /* CodeExtended.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D961E24164B240004040E /* CodeExtended.swift */; };
 		5D3D9621241675100004040E /* JSONHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D9620241675100004040E /* JSONHandling.swift */; };
-		5D3D962424168C810004040E /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B67241294CC0018A8F1 /* AnyCodable.swift */; };
 		5D3EE57524476FFB00562AAC /* note.0x02.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3EE57024476FFB00562AAC /* note.0x02.json */; };
 		5D3EE57624476FFB00562AAC /* note.0x03.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3EE57124476FFB00562AAC /* note.0x03.json */; };
 		5D3EE57724476FFB00562AAC /* note.0x04.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3EE57224476FFB00562AAC /* note.0x04.json */; };
@@ -83,14 +81,7 @@
 		5DC1692D240945D200367905 /* empty_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692B2409453200367905 /* empty_sessions.json */; };
 		5DD17B5A241252D90018A8F1 /* add_action.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DD17B59241252D90018A8F1 /* add_action.json */; };
 		5DD17B5B241252D90018A8F1 /* add_action.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DD17B59241252D90018A8F1 /* add_action.json */; };
-		5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B5C2412677D0018A8F1 /* DefaultCodingKeys.swift */; };
-		5DD17B5E2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B5C2412677D0018A8F1 /* DefaultCodingKeys.swift */; };
 		5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 5DD17B60241293010018A8F1 /* AnyCodable */; };
-		5DD17B68241294CC0018A8F1 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B67241294CC0018A8F1 /* AnyCodable.swift */; };
-		5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B6A241294DC0018A8F1 /* AnyDecodable.swift */; };
-		5DD17B6C241294DC0018A8F1 /* AnyDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B6A241294DC0018A8F1 /* AnyDecodable.swift */; };
-		5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B6D241294E90018A8F1 /* AnyEncodable.swift */; };
-		5DD17B6F241294E90018A8F1 /* AnyEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B6D241294E90018A8F1 /* AnyEncodable.swift */; };
 		5DD1E9B323FD7E59007BDF7B /* TopNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD1E9B223FD7E59007BDF7B /* TopNavigation.swift */; };
 		5DD1E9B523FD7EB1007BDF7B /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD1E9B423FD7EB1007BDF7B /* SearchView.swift */; };
 		5DD1E9BA23FD81C5007BDF7B /* CascadingRendererConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD1E9B923FD81C5007BDF7B /* CascadingRendererConfig.swift */; };
@@ -312,7 +303,6 @@
 		5D0A28B8240678EE00398B17 /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		5D0A28C124069A6500398B17 /* SessionViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionViewTest.swift; sourceTree = "<group>"; };
 		5D179AB624756C7800AA275C /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		5D1A3E63240704D000A0583B /* CodablePublishedExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodablePublishedExtension.swift; sourceTree = "<group>"; };
 		5D1A3E652408035A00A0583B /* empty_sessionview.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = empty_sessionview.json; sourceTree = "<group>"; };
 		5D1A3E68240807C100A0583B /* SessionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTest.swift; sourceTree = "<group>"; };
 		5D1A3E6C2408099900A0583B /* empty_session.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = empty_session.json; sourceTree = "<group>"; };
@@ -370,10 +360,6 @@
 		5DC1692624093C3900367905 /* sessions_manually_single.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sessions_manually_single.json; sourceTree = "<group>"; };
 		5DC1692B2409453200367905 /* empty_sessions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_sessions.json; sourceTree = "<group>"; };
 		5DD17B59241252D90018A8F1 /* add_action.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = add_action.json; sourceTree = "<group>"; };
-		5DD17B5C2412677D0018A8F1 /* DefaultCodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCodingKeys.swift; sourceTree = "<group>"; };
-		5DD17B67241294CC0018A8F1 /* AnyCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCodable.swift; sourceTree = "<group>"; };
-		5DD17B6A241294DC0018A8F1 /* AnyDecodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDecodable.swift; sourceTree = "<group>"; };
-		5DD17B6D241294E90018A8F1 /* AnyEncodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEncodable.swift; sourceTree = "<group>"; };
 		5DD1E9B223FD7E59007BDF7B /* TopNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopNavigation.swift; sourceTree = "<group>"; };
 		5DD1E9B423FD7EB1007BDF7B /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		5DD1E9B923FD81C5007BDF7B /* CascadingRendererConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CascadingRendererConfig.swift; sourceTree = "<group>"; wrapsLines = 0; };
@@ -706,11 +692,6 @@
 		5D3D96222416764A0004040E /* codable */ = {
 			isa = PBXGroup;
 			children = (
-				5D1A3E63240704D000A0583B /* CodablePublishedExtension.swift */,
-				5DD17B5C2412677D0018A8F1 /* DefaultCodingKeys.swift */,
-				5DD17B67241294CC0018A8F1 /* AnyCodable.swift */,
-				5DD17B6A241294DC0018A8F1 /* AnyDecodable.swift */,
-				5DD17B6D241294E90018A8F1 /* AnyEncodable.swift */,
 				5D3D961E24164B240004040E /* CodeExtended.swift */,
 				5DE95A69241BC954003ABA63 /* DecodableDict.swift */,
 				869789EB24344C7E0003756B /* HeterogeneousCollections.swift */,
@@ -1696,7 +1677,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "SCHEME_NAME=`cat \"${SCHEME_FILE}\"`\n\nif [ \"${SCHEME_NAME}\" = \"BUILDTOOLS\" ]; then\ncd BuildTools\nSDKROOT=macosx\n\n#swift package update\n#swift run -c release swiftformat \"$SRCROOT\"\n\nfi\n";
+			shellScript = "SCHEME_NAME=`cat \"${SCHEME_FILE}\"`\n\nif [ \"${SCHEME_NAME}\" = \"BUILDTOOLS\" ]; then\ncd BuildTools\nSDKROOT=macosx\n\nswift package update\nswift run -c release swiftformat \"$SRCROOT\"\n\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1768,9 +1749,7 @@
 				5D487F22244073DF00B50202 /* UIElementView.swift in Sources */,
 				B821D67C24C70DCF006D6CFF /* PhotoViewerRenderer.swift in Sources */,
 				B88273F1252AAF140060E56E /* MemriTextEditor.swift in Sources */,
-				5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */,
 				B8A5E30924F77BA800A1F488 /* schema-manual.swift in Sources */,
-				5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
 				B8627E3D24A9EAAA005A1A8F /* UIFont+.swift in Sources */,
 				B826586D24D2F86F0051CCFE /* EmailThreadRenderer.swift in Sources */,
 				868EF63524766A8800C0375F /* Expression.swift in Sources */,
@@ -1779,7 +1758,6 @@
 				5D4B903D247BC0ED00EE50B4 /* ActionErrors.swift in Sources */,
 				86865D3324487B390010271A /* SettingsPane.swift in Sources */,
 				8690AF082472D91F00FC49F4 /* collection.swift in Sources */,
-				5DD17B68241294CC0018A8F1 /* AnyCodable.swift in Sources */,
 				8690AF0A2472F60600FC49F4 /* InMemoryObjectCache.swift in Sources */,
 				86911E8424C543CD009AC8B1 /* CascadableContextPane.swift in Sources */,
 				868EF63624766A8800C0375F /* ExprInterpreter.swift in Sources */,
@@ -1812,7 +1790,6 @@
 				B8FD53B324D506E100CA0709 /* FileRenderer.swift in Sources */,
 				B80E01A724C839250005D756 /* ProgressBarView.swift in Sources */,
 				5D395B5024A37A980008610E /* IndexerAPI.swift in Sources */,
-				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 				5D38DE19240577BA00FF9B70 /* Views.swift in Sources */,
 				B8AAB440250E2EDF007CF0E3 /* CVU_Map.swift in Sources */,
 				B8CE6FB02537E99E00FC8CDD /* MemriTextEditorHandlers.swift in Sources */,
@@ -1881,7 +1858,6 @@
 				B85DE32724F6363400D613B6 /* LabelAnnotationRenderer.swift in Sources */,
 				B881BED124BD4AA00016DBF5 /* TimelineItemView.swift in Sources */,
 				868EF63124766A8800C0375F /* CVU.swift in Sources */,
-				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				5DE95A6A241BC954003ABA63 /* DecodableDict.swift in Sources */,
 				C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */,
 			);
@@ -1899,7 +1875,6 @@
 				5DB3466324585246008FE8A9 /* FileTest.swift in Sources */,
 				861C52C524A5B24500B3230C /* installerTest.swift in Sources */,
 				86DDB364247AD0400051A92F /* CVUValidatorTests.swift in Sources */,
-				5DD17B6F241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				8693206124CB0BF30030863D /* CVUTests.swift in Sources */,
 				5DB8EBFF24598E1E0028FD2E /* ViewsTest.swift in Sources */,
 				5D29AF2A24A9D4E8000C9E2D /* LabelIndexerNotesTest.swift in Sources */,
@@ -1907,8 +1882,6 @@
 				86677DEB242A6751007A4782 /* CacheTests.swift in Sources */,
 				8693205724C9DE0B0030863D /* DatabaseControllerTests.swift in Sources */,
 				5D42A8F7245AF1ED0093D85F /* ItemTest.swift in Sources */,
-				5DD17B5E2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
-				5D3D962424168C810004040E /* AnyCodable.swift in Sources */,
 				5D487F272440776700B50202 /* ItemRendererTest.swift in Sources */,
 				8693205B24CAA1490030863D /* ActionsTests.swift in Sources */,
 				8693205F24CAAFDE0030863D /* ExpressionTests.swift in Sources */,
@@ -1922,7 +1895,6 @@
 				863D0E0624794D9000DAB6C8 /* CVUParserTests.swift in Sources */,
 				863D0E0524794D9000DAB6C8 /* ExprParserTests.swift in Sources */,
 				5DB8EC0B24599A080028FD2E /* CascadableViewTest.swift in Sources */,
-				5DD17B6C241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -63,7 +63,7 @@ extension String: Error {
 
     // let pattern = #"\{([^\.]+).(.*)\}"#
     func match(_ pattern: String, _ options: String = "i") -> [String] {
-        var nsOptions: NSRegularExpression.Options = NSRegularExpression.Options()
+        var nsOptions = NSRegularExpression.Options()
         for chr in options {
             if chr == "i" { nsOptions.update(with: .caseInsensitive) }
         }
@@ -118,14 +118,14 @@ extension String: Error {
     }
 
     func camelCaseToWords() -> String {
-		unicodeScalars.reduce("") {
+        unicodeScalars.reduce("") {
             if CharacterSet.uppercaseLetters.contains($1) {
-				return ($0 + " " + String($1).lowercased())
+                return ($0 + " " + String($1).lowercased())
             }
             else {
                 return $0 + String($1)
             }
-		}.capitalizingFirst()
+        }.capitalizingFirst()
     }
 
     public func titleCase() -> String {
@@ -137,7 +137,7 @@ extension String: Error {
         guard contains(where: { !$0.isWhitespace }) else { return nil }
         return self
     }
-    
+
     // Return nil if string is only whitespace and has no newlines
     var nilIfBlankOrSingleLine: String? {
         guard contains(where: { !$0.isWhitespace || $0.isNewline }) else { return nil }
@@ -155,6 +155,6 @@ extension RangeReplaceableCollection where Element == Character {
 extension String {
     func strippingHTMLtags() -> String {
         HTMLHelper.getPlainText(html: self)
-			.trimmingCharacters(in: .newlines) //Remove newlines at start/end
+            .trimmingCharacters(in: .newlines) // Remove newlines at start/end
     }
 }

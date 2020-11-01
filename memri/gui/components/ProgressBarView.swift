@@ -7,8 +7,8 @@ import SwiftUI
 struct ProgressBarView: View {
     var progressFraction: Double
     var frontColor: Color = .blue
-    var backColor: Color = Color(.systemFill)
-    var strokeColor: Color = Color(.secondarySystemFill)
+    var backColor = Color(.systemFill)
+    var strokeColor = Color(.secondarySystemFill)
 
     var bodyShape: some InsettableShape {
         RoundedRectangle(cornerRadius: 6, style: .continuous)

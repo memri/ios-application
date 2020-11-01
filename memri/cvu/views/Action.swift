@@ -10,11 +10,11 @@ import SwiftUI
 extension MemriContext {
     private func getItem(_ dict: [String: Any?]?) throws -> Item {
         let realm = try DatabaseController.getRealmSync()
-        
+
         guard let dict = dict else {
             throw "Missing properties"
         }
-        
+
         guard
             let stringType = dict["_type"] as? String,
             let schema = realm.schema[stringType]
@@ -30,8 +30,8 @@ extension MemriContext {
             throw "Cannot find family \(stringType)"
         }
 
-        var values = [String:Any?]()
-        var edges = [String:Any?]()
+        var values = [String: Any?]()
+        var edges = [String: Any?]()
         for (key, value) in dict {
             if key == "_type" || key == "uid" { continue }
             if schema[key] != nil { values[key] = value }
@@ -41,9 +41,9 @@ extension MemriContext {
                 throw "Passed invalid value as \(key)"
             }
         }
-        
+
         let item = try Cache.createItem(ItemType, values: values)
-        
+
         for (edgeType, value) in edges {
             if let list = value as? [Item] {
                 for target in list {
@@ -54,7 +54,7 @@ extension MemriContext {
                 _ = try item.link(target, type: edgeType, distinct: true)
             }
         }
-        
+
         return item
     }
 
@@ -280,7 +280,9 @@ public class Action: CVUToString {
 
     var backgroundColor: Color {
         if let active = isActive() {
-            if active { return get("activeBackgroundColor") ?? getColor("backgroundColor") ?? .clear }
+            if active {
+                return get("activeBackgroundColor") ?? getColor("backgroundColor") ?? .clear
+            }
             else { return get("inactiveBackgroundColor") ?? getColor("backgroundColor") ?? .clear }
         }
         else { return getColor("backgroundColor") ?? .clear }
@@ -289,12 +291,12 @@ public class Action: CVUToString {
     public var description: String {
         toCVUString(0, "    ")
     }
-    
+
     var transientUID = UUID() // Used to identify this object in SwiftUI
 
     init(_ context: MemriContext, _ name: String, values: [String: Any?] = [:]) {
         self.context = context
-        
+
         if let actionName = ActionFamily(rawValue: name) { self.name = actionName }
         else { self.name = .noop } // TODO: REfactor: Report error to user
 
@@ -398,13 +400,14 @@ public enum RenderType: String {
 
 public enum ActionFamily: String, CaseIterable {
     case back, addItem, openView, openDynamicView, openViewByName, openGroup, toggleEditMode,
-        toggleFilterPanel, star, showStarred, showContextPane, showOverlay, share, showNavigation,
-        addToPanel, duplicate, copyToClipboard,
-        schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
-        delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
-        showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
-        link, closePopup, unlink, multiAction, noop, runIndexer, runImporter,
-        setProperty, setSetting
+         toggleFilterPanel, star, showStarred, showContextPane, showOverlay, share, showNavigation,
+         addToPanel, duplicate, copyToClipboard,
+         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
+         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
+         showSessionSwitcher, forward, forwardToFront, backAsSession, openSession,
+         openSessionByName,
+         link, closePopup, unlink, multiAction, noop, runIndexer, runImporter,
+         setProperty, setSetting
 
     func getType() -> Action.Type {
         switch self {
@@ -445,10 +448,10 @@ public enum ActionFamily: String, CaseIterable {
 
 public enum ActionProperties: String, CaseIterable {
     case name, arguments, binding, icon, renderAs, showTitle, opensView, color,
-        backgroundColor, inactiveColor, activeBackgroundColor, inactiveBackgroundColor, title
+         backgroundColor, inactiveColor, activeBackgroundColor, inactiveBackgroundColor, title
     // These are arguments
     case viewName, sessionName, view, viewArguments, session, importer, indexer, subject, property,
-        value, path, edgeType, distinct, all, actions, item
+         value, path, edgeType, distinct, all, actions, item
 
     func validate(_ key: String, _ value: Any?) -> Bool {
         if value is Expression { return true }
@@ -578,7 +581,7 @@ class ActionOpenView: Action, ActionExec {
         "argumentTypes": [
             "item": ItemFamily.self,
             "view": CVUStateDefinition.self,
-            "viewArguments": ViewArguments.self
+            "viewArguments": ViewArguments.self,
         ],
         "withAnimation": false,
         "opensView": true,
@@ -724,12 +727,12 @@ class ActionOpenViewWithUIDs: Action, ActionExec {
         _ uids: [Int],
         with arguments: ViewArguments? = nil
     ) throws {
-		
-		// TODO: @Ruben - this action isn't working since recent changes. The only relevant code for when you merge into the `OpenView` action is constructing the UID query (IN vs =)")
-		guard let firstUID = uids.first else { throw "No UIDs specified" }
-		// note that the `IN` selector requires >1 item or it will throw an exception (use `=` if one item)
-		let uidQueryString = uids.count > 1 ? "uid IN {\(uids.map { String($0) }.joined(separator: ","))}" : "uid = \(firstUID)"
-		
+        // TODO: @Ruben - this action isn't working since recent changes. The only relevant code for when you merge into the `OpenView` action is constructing the UID query (IN vs =)")
+        guard let firstUID = uids.first else { throw "No UIDs specified" }
+        // note that the `IN` selector requires >1 item or it will throw an exception (use `=` if one item)
+        let uidQueryString = uids
+            .count > 1 ? "uid IN {\(uids.map { String($0) }.joined(separator: ","))}" :
+            "uid = \(firstUID)"
 
         // Create a new view
         let view = try Cache.createItem(CVUStateDefinition.self, values: [
@@ -906,7 +909,7 @@ class ActionShowNavigation: Action, ActionExec {
         "icon": "line.horizontal.3",
         "binding": Expression("context.showNavigation"),
         "inactiveColor": Color(hex: "#434343"),
-        "withAnimation": true
+        "withAnimation": true,
     ] }
 
     required init(_ context: MemriContext, values: [String: Any?] = [:]) {
@@ -1030,12 +1033,14 @@ class ActionBackAsSession: Action, ActionExec {
             else {
                 if
                     let state = session.state,
-                    let copy = try context.cache.duplicate(state as Item) as? CVUStateDefinition {
+                    let copy = try context.cache.duplicate(state as Item) as? CVUStateDefinition
+                {
                     for view in session.views {
                         if
                             let state = view.state,
                             let viewCopy = try context.cache
-                            .duplicate(state as Item) as? CVUStateDefinition {
+                            .duplicate(state as Item) as? CVUStateDefinition
+                        {
                             _ = try copy.link(viewCopy, type: "view", sequence: .last)
                         }
                     }
@@ -1079,7 +1084,7 @@ class ActionOpenSession: Action, ActionExec {
         try sessions.setCurrentSession(session)
         try sessions.currentSession?.setCurrentView(nil, args)
     }
-    
+
     func openSession(_ session: Session, _ args: ViewArguments? = nil) throws {
         let sessions = context.sessions
 
@@ -1191,7 +1196,8 @@ class ActionDelete: Action, ActionExec {
 
         if
             let selection = context.currentView?.userState.get("selection", type: [Item].self),
-            !selection.isEmpty {
+            !selection.isEmpty
+        {
             try context.cache.delete(selection)
             context.scheduleCascadableViewUpdate(immediate: true)
         }
@@ -1235,7 +1241,8 @@ class ActionDuplicate: Action, ActionExec {
     func exec(_ arguments: [String: Any?]) throws {
         if
             let selection = context.currentView?.userState.get("selection", type: [Item].self),
-            selection.count > 0 {
+            selection.count > 0
+        {
             try selection.forEach { item in try ActionAddItem.exec(context, ["item": item]) }
         }
         else if let item = arguments["item"] as? Item {
@@ -1265,7 +1272,6 @@ class ActionRunImporter: Action, ActionExec {
         // TODO: parse options
 
         if let run = arguments["importer"] as? ImporterRun {
-            
             context.cache.isOnRemote(run) { error in
                 if error != nil {
                     // How to handle??
@@ -1278,13 +1284,12 @@ class ActionRunImporter: Action, ActionExec {
                     debugHistory.error("Item does not have a uid")
                     return
                 }
-                self.context.cache.sync.schedule()  
-                
+                self.context.cache.sync.schedule()
+
                 self.context.podAPI.runImporter(uid) { error, _ in
                     if let error = error {
                         print("Cannot execute actionImport: \(error)")
                     }
-                    
                 }
             }
         }
@@ -1299,12 +1304,12 @@ class ActionRunIndexer: Action, ActionExec {
     required init(_ context: MemriContext, values: [String: Any?] = [:]) {
         super.init(context, "runIndexer", values: values)
     }
-    
+
     override var defaultValues: [String: Any?] {
         [
             "argumentTypes": [
-                "indexerRun": IndexerRun.self
-            ]
+                "indexerRun": IndexerRun.self,
+            ],
         ]
     }
 

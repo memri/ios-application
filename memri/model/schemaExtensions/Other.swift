@@ -81,19 +81,18 @@ class Person: SchemaPerson {
     override var computedTitle: String {
         fullName
     }
-    
-    
-    override var computedVars: [ComputedPropertyLink] {[
+
+    override var computedVars: [ComputedPropertyLink] { [
         ComputedPropertyLink(propertyName: "fullName", type: .string),
         ComputedPropertyLink(propertyName: "initials", type: .string),
-        ComputedPropertyLink(propertyName: "age", type: .int)
-    ]}
-    
+        ComputedPropertyLink(propertyName: "age", type: .int),
+    ] }
+
     // Full name in western style (first last)
     var fullName: String {
         "\(firstName ?? "") \(lastName ?? "")"
     }
-    
+
     // Initials (two letters) in western style (FL)
     var initials: String {
         [firstName?.first, lastName?.first].compactMap { $0 }.map { String($0) }.joined()
@@ -175,7 +174,7 @@ extension Indexer {
         name ?? ""
     }
 
-    internal convenience init(
+    convenience init(
         name: String? = nil,
         itemDescription: String? = nil,
         query: String? = nil,
@@ -194,7 +193,7 @@ extension Indexer {
 }
 
 extension IndexerRun {
-    internal convenience init(
+    convenience init(
         name: String? = nil,
         query: String? = nil,
         indexer: Indexer? = nil,
@@ -209,30 +208,32 @@ extension IndexerRun {
     }
 }
 
-extension CVUStateDefinition {
-    public class func fromCVUStoredDefinition(_ stored: CVUStoredDefinition) throws
-        -> CVUStateDefinition {
-            try Cache.createItem(CVUStateDefinition.self, values: [
-                "definition": stored.definition,
-                "domain": "state",
-                "name": stored.name,
-                "query": stored.query,
-                "selector": stored.selector,
-                "itemType": stored.itemType,
-            ])
-        }
+public extension CVUStateDefinition {
+    class func fromCVUStoredDefinition(_ stored: CVUStoredDefinition) throws
+        -> CVUStateDefinition
+    {
+        try Cache.createItem(CVUStateDefinition.self, values: [
+            "definition": stored.definition,
+            "domain": "state",
+            "name": stored.name,
+            "query": stored.query,
+            "selector": stored.selector,
+            "itemType": stored.itemType,
+        ])
+    }
 
-    public class func fromCVUParsedDefinition(_ parsed: CVUParsedDefinition) throws
-        -> CVUStateDefinition {
-            try Cache.createItem(CVUStateDefinition.self, values: [
-                "definition": parsed.toCVUString(0, "    "),
-                "domain": "state",
-                "name": parsed.name,
+    class func fromCVUParsedDefinition(_ parsed: CVUParsedDefinition) throws
+        -> CVUStateDefinition
+    {
+        try Cache.createItem(CVUStateDefinition.self, values: [
+            "definition": parsed.toCVUString(0, "    "),
+            "domain": "state",
+            "name": parsed.name,
 //            "query": stores.query,
-                "selector": parsed.selector,
-                "itemType": parsed.definitionType,
-            ])
-        }
+            "selector": parsed.selector,
+            "itemType": parsed.definitionType,
+        ])
+    }
 }
 
 extension CVUStoredDefinition {
@@ -242,7 +243,6 @@ extension CVUStoredDefinition {
         return "[No Name]"
     }
 }
-
 
 /// retrieves item from realm by type and uid.
 /// - Parameters:
@@ -263,14 +263,15 @@ func getItem(_ type: String, _ uid: Int) -> Item? {
 func me() -> Person {
     let realm = try! DatabaseController.getRealmSync()
     do {
-        guard let myself = realm.objects(Person.self).filter("ANY allEdges.type = 'me'").first else {
+        guard let myself = realm.objects(Person.self).filter("ANY allEdges.type = 'me'").first
+        else {
             throw "Unexpected error. Cannot find 'me' in the database"
         }
         return myself
     }
     catch {
         let person = Person()
-        //Add to realm
+        // Add to realm
         realm.add(person)
         return person
     }

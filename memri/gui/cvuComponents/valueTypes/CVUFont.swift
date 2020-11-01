@@ -1,10 +1,6 @@
 //
-//  CVUFont.swift
-//  memri
-//
-//  Created by Toby Brennan on 5/9/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// CVUFont.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
 import SwiftUI
@@ -14,11 +10,11 @@ struct CVUFont {
     var size: CGFloat?
     var weight: Font.Weight?
     var italic: Bool = false
-    
+
     var font: Font {
         Font(uiFont)
     }
-    
+
     var uiFont: UIFont {
         let font = UIFont.systemFont(
             ofSize: size ?? UIFont.systemFontSize,
@@ -52,6 +48,7 @@ extension Font.Weight {
         default: self = .regular
         }
     }
+
     var uiKit: UIFont.Weight {
         switch self {
         case .black: return .black

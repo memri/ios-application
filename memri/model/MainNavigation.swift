@@ -24,10 +24,8 @@ public class MainNavigation: ObservableObject {
 
     public var scheduleUIUpdate: ((((_ context: MemriContext) -> Bool)?) -> Void)?
 
-    required init() {
-        
-    }
-    
+    required init() {}
+
     public func getItems() -> [NavigationItem] {
         let needle = filterText.lowercased()
         let items = DatabaseController.sync {

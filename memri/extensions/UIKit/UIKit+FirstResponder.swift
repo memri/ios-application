@@ -9,14 +9,14 @@ public func dismissCurrentResponder() {
     UIApplication.shared.windows.first?.findFirstResponder()?.resignFirstResponder()
 }
 
-extension UIViewController {
-    public func findFirstResponder() -> UIView? {
+public extension UIViewController {
+    func findFirstResponder() -> UIView? {
         view.findFirstResponder()
     }
 }
 
-extension UIView {
-    public func findFirstResponder() -> UIView? {
+public extension UIView {
+    func findFirstResponder() -> UIView? {
         if isFirstResponder {
             return self
         }

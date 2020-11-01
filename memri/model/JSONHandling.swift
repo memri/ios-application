@@ -1,7 +1,8 @@
 //
-// util.swift
+// JSONHandling.swift
 // Copyright © 2020 memri. All rights reserved.
 
+import AnyCodable
 import Foundation
 import RealmSwift
 import SwiftUI

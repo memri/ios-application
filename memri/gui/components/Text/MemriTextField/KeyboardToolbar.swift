@@ -14,11 +14,11 @@ struct KeyboardToolbarView: View {
             if showArrows {
                 self.button(icon: Image(systemName: "chevron.left"), action: {
                     self.owner?.moveToNextResponder(forward: false)
-            })
+                })
                 Divider()
                 self.button(icon: Image(systemName: "chevron.right"), action: {
                     self.owner?.moveToNextResponder()
-            })
+                })
                 Divider()
             }
             Spacer()
@@ -26,9 +26,9 @@ struct KeyboardToolbarView: View {
             self.button(icon:
                 Image(systemName: "keyboard.chevron.compact.down")
                     .foregroundColor(Color(.label)),
-                        action: {
+                action: {
                     self.owner?.resignFirstResponder()
-        })
+                })
         }
         .padding(.horizontal, 4)
         .frame(minHeight: 40, idealHeight: 40, maxHeight: 60)

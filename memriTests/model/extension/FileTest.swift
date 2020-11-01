@@ -6,7 +6,7 @@
 import XCTest
 
 class FileTest: XCTestCase {
-    var testFile: File = File()
+    var testFile = File()
 
     override func setUpWithError() throws {
         // text file containing "test string\n")

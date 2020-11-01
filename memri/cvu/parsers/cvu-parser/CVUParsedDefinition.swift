@@ -30,7 +30,7 @@ public class CVUParsedDefinition: Equatable, CVUToString {
     public var description: String {
         toCVUString(0, "    ")
     }
-    
+
     var selectorIsForList: Bool {
         selector?.hasSuffix("[]") ?? false
     }

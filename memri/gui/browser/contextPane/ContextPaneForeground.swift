@@ -1,5 +1,5 @@
 //
-// ContextPaneForground.swift
+// ContextPaneForeground.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import SwiftUI
@@ -40,14 +40,15 @@ struct ContextPaneForeground: View {
                         .padding(.bottom, 15)
 
                         Divider()
-                        (context.item?.functions["describeChangelog"]?(nil) as? String).map { description in
-                            Text(description)
-                        }
-                        .padding(.horizontal, paddingLeft)
-                        .padding(.vertical, 10)
-                        .multilineTextAlignment(.center)
-                        .font(.system(size: 14, weight: .regular, design: .default))
-                        .opacity(0.6)
+                        (context.item?.functions["describeChangelog"]?(nil) as? String)
+                            .map { description in
+                                Text(description)
+                            }
+                            .padding(.horizontal, paddingLeft)
+                            .padding(.vertical, 10)
+                            .multilineTextAlignment(.center)
+                            .font(.system(size: 14, weight: .regular, design: .default))
+                            .opacity(0.6)
                         Divider()
                     }
                     HStack {
@@ -65,7 +66,7 @@ struct ContextPaneForeground: View {
                                 id: \.transientUID) { actionItem in
                             Button(action: {
                                 context.executeAction(actionItem)
-                    }) {
+                            }) {
                                 Text(actionItem.getString("title"))
                                     .foregroundColor(Color(.label))
                                     .opacity(0.6)
@@ -91,7 +92,7 @@ struct ContextPaneForeground: View {
                                 id: \.transientUID) { navigateItem in
                             Button(action: {
                                 context.executeAction(navigateItem)
-                    }) {
+                            }) {
                                 Text(LocalizedStringKey(navigateItem.getString("title")))
                                     .foregroundColor(Color(.label))
                                     .opacity(0.6)
@@ -116,7 +117,7 @@ struct ContextPaneForeground: View {
                         ForEach(labels) { labelItem in
                             Button(action: {
                                 context.executeAction(addLabelAction, with: labelItem)
-                    }) {
+                            }) {
                                 Text(labelItem.name ?? "")
                                     .foregroundColor(Color(.label))
                                     .opacity(0.6)
@@ -131,7 +132,7 @@ struct ContextPaneForeground: View {
                         }
                         Button(action: {
                             context.executeAction(ActionNoop(context))
-                }) {
+                        }) {
                             Text(addLabelAction.getString("title"))
                                 .foregroundColor(Color(.label))
                                 .opacity(0.6)

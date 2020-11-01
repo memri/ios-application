@@ -167,7 +167,7 @@ class ItemTest: XCTestCase {
             "uid": "0x012345",
             "starred": true,
             "dateCreated": "2020-04-10T11:11:11Z",
-            "version": 10
+            "version": 10,
         ])
 
         let dt = item1.dateAccessed
@@ -257,7 +257,7 @@ class ItemTest: XCTestCase {
         """.utf8)
         let items: [Person] = try MemriJSONDecoder.decode([Person].self, from: data1)
 
-        DatabaseController.sync(write:true) { realm in
+        DatabaseController.sync(write: true) { realm in
             for item in items {
                 realm.add(item, update: .modified)
             }
@@ -317,14 +317,26 @@ class ItemTest: XCTestCase {
 
     func testEdgeMulti() throws {
         let person = try createDataset()
-        XCTAssertEqual(person.edge("brother")?.target()?.edges(["sister", "aunt"])?.items()?.count, 1)
-        XCTAssertEqual(person.edge("father")?.target()?.edges(["sister", "aunt"])?.items()?.count, 0)
+        XCTAssertEqual(
+            person.edge("brother")?.target()?.edges(["sister", "aunt"])?.items()?.count,
+            1
+        )
+        XCTAssertEqual(
+            person.edge("father")?.target()?.edges(["sister", "aunt"])?.items()?.count,
+            0
+        )
     }
 
     func testEdgeMultiExpanded() throws {
         let person = try createDataset()
-        XCTAssertEqual(person.edge("brother")?.target()?.edges(["aunt", "family"])?.items()?.count, 2)
-        XCTAssertEqual(person.edge("father")?.target()?.edges(["aunt", "family"])?.items()?.count, 2)
+        XCTAssertEqual(
+            person.edge("brother")?.target()?.edges(["aunt", "family"])?.items()?.count,
+            2
+        )
+        XCTAssertEqual(
+            person.edge("father")?.target()?.edges(["aunt", "family"])?.items()?.count,
+            2
+        )
     }
 
     //    func testPerformanceExample() throws {

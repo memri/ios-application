@@ -1,5 +1,5 @@
 //
-// MapRendererView.swift
+// MapRenderer.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import Combine
@@ -8,28 +8,37 @@ import RealmSwift
 import SwiftUI
 
 class MapRendererController: RendererController, ObservableObject {
-    static let rendererType = RendererType(name: "map", icon: "map", makeController: MapRendererController.init, makeConfig: MapRendererController.makeConfig)
-    
+    static let rendererType = RendererType(
+        name: "map",
+        icon: "map",
+        makeController: MapRendererController.init,
+        makeConfig: MapRendererController.makeConfig
+    )
+
     required init(context: MemriContext, config: CascadingRendererConfig?) {
         self.context = context
         self.config = (config as? MapRendererConfig) ?? MapRendererConfig()
     }
-    
+
     let context: MemriContext
     let config: MapRendererConfig
-    
+
     func makeView() -> AnyView {
         MapRendererView(controller: self).eraseToAnyView()
     }
-    
+
     func update() {
         objectWillChange.send()
     }
-    
-    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig {
+
+    static func makeConfig(
+        head: CVUParsedDefinition?,
+        tail: [CVUParsedDefinition]?,
+        host: Cascadable?
+    ) -> CascadingRendererConfig {
         MapRendererConfig(head, tail, host)
     }
-    
+
     func resolveExpression<T>(
         _ expression: Expression?,
         toType _: T.Type = T.self,
@@ -38,36 +47,34 @@ class MapRendererController: RendererController, ObservableObject {
         let args = ViewArguments(context.currentView?.viewArguments, dataItem)
         return try? expression?.execForReturnType(T.self, args: args)
     }
-    
+
     var mapConfig: MapViewConfig {
         MapViewConfig(
             dataItems: context.items,
             locationResolver: {
                 self.resolveExpression(self.config.location, forItem: $0)
-        },
+            },
             addressResolver: {
                 let addr = self.config.address
                 return self.resolveExpression(addr, toType: Results<Item>.self, forItem: $0)
                     ?? self.resolveExpression(addr, toType: Address.self, forItem: $0)
-        },
+            },
             labelResolver: {
                 self.resolveExpression(self.config.label, forItem: $0)
-        },
+            },
             moveable: config.moveable,
             onPress: onPress
         )
     }
-    
-    
+
     func onPress(_ dataItem: Item) {
         config.press.map { context.executeAction($0, with: dataItem) }
     }
 }
-    
 
 class MapRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
     var type: String? = "map"
-    
+
     var showSortInConfig: Bool = false
     func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
         []
@@ -102,7 +109,7 @@ class MapRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
         get { cascadeProperty("moveable") ?? true }
         set(value) { setState("moveable", value) }
     }
-    
+
     let showContextualBarInEditMode: Bool = false
 }
 
@@ -117,6 +124,7 @@ struct MapRendererView: View {
 
 struct MapRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        MapRendererView(controller: MapRendererController(context: try! RootContext(name: "").mockBoot(), config: nil))
+        MapRendererView(controller: MapRendererController(context: try! RootContext(name: "")
+                .mockBoot(), config: nil))
     }
 }

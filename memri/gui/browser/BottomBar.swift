@@ -1,18 +1,18 @@
 //
-// ContextualBottomBar.swift
+// BottomBar.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import SwiftUI
 
 struct BottomBarView: View {
     @EnvironmentObject var context: MemriContext
-    
+
     var onSearchPressed: () -> Void
-    
+
     var currentFilter: String? {
         context.currentView?.filterText?.nilIfBlankOrSingleLine
     }
-    
+
     @ViewBuilder
     var body: some View {
         VStack(spacing: 0) {
@@ -39,11 +39,11 @@ struct BottomBarView: View {
                                 .foregroundColor(Color(.label))
                                 .font(.caption)
                         }
-                        
                     }
                 }
                 Spacer()
-                ForEach(context.currentView?.filterButtons ?? [], id: \.transientUID) { filterButton in
+                ForEach(context.currentView?.filterButtons ?? [],
+                        id: \.transientUID) { filterButton in
                     ActionButton(action: filterButton)
                 }
             }

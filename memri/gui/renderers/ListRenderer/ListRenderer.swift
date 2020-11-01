@@ -1,12 +1,11 @@
 //
-// ListRendererView.swift
+// ListRenderer.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import ASCollectionView
 import Combine
 import Foundation
 import SwiftUI
-
 
 class ListRendererConfig: CascadingRendererConfig {
     var longPress: Action? {
@@ -28,48 +27,59 @@ class ListRendererConfig: CascadingRendererConfig {
         get { cascadeList("slideRightActions") }
         set(value) { setState("slideRightActions", value) }
     }
-    
-    override var defaultEdgeInset: UIEdgeInsets { UIEdgeInsets(top: 8, left: 15, bottom: 8, right: 15) }
+
+    override var defaultEdgeInset: UIEdgeInsets {
+        UIEdgeInsets(top: 8, left: 15, bottom: 8, right: 15)
+    }
+
     override var defaultSpacing: CGSize { CGSize(width: 0, height: 10) }
 }
 
-
 class ListRendererController: RendererController, ObservableObject {
-    static let rendererType = RendererType(name: "list", icon: "line.horizontal.3", makeController: ListRendererController.init, makeConfig: ListRendererController.makeConfig)
-    
+    static let rendererType = RendererType(
+        name: "list",
+        icon: "line.horizontal.3",
+        makeController: ListRendererController.init,
+        makeConfig: ListRendererController.makeConfig
+    )
+
     required init(context: MemriContext, config: CascadingRendererConfig?) {
         self.context = context
         self.config = (config as? ListRendererConfig) ?? ListRendererConfig()
     }
-    
+
     let context: MemriContext
     let config: ListRendererConfig
-    
+
     func makeView() -> AnyView {
         ListRendererView(controller: self).eraseToAnyView()
     }
-    
+
     func update() {
         objectWillChange.send()
     }
-    
-    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig {
+
+    static func makeConfig(
+        head: CVUParsedDefinition?,
+        tail: [CVUParsedDefinition]?,
+        host: Cascadable?
+    ) -> CascadingRendererConfig {
         ListRendererConfig(head, tail, host)
     }
-    
+
     func view(for item: Item) -> some View {
         config.render(item: item)
             .environmentObject(context)
     }
-    
+
     var isEditing: Bool {
         context.editMode
     }
-    
+
     var hasItems: Bool {
         !context.items.isEmpty
     }
-    
+
     var emptyText: String? {
         context.currentView?.emptyResultText
     }
@@ -79,7 +89,7 @@ struct ListRendererView: View {
     @ObservedObject var controller: ListRendererController
 
     var body: some View {
-        return VStack {
+        VStack {
             if controller.hasItems {
                 ASTableView(editMode: controller.isEditing, section:
                     ASSection(id: 0,
@@ -87,27 +97,35 @@ struct ListRendererView: View {
                               dataID: \.uid.value,
                               selectionMode: selectionMode,
                               onSwipeToDelete: { _, item in
-                                self.controller.context.executeAction(ActionDelete(self.controller.context), with: item)
+                                  self.controller.context.executeAction(
+                                      ActionDelete(self.controller.context),
+                                      with: item
+                                  )
                                   return true
-							  },
-                              contextMenuProvider: contextMenuProvider
-                    ) { dataItem, cellContext in
+                              },
+                              contextMenuProvider: contextMenuProvider) { dataItem, cellContext in
                         self.controller.view(for: dataItem)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(EdgeInsets(top: cellContext.isFirstInSection ? 0 : self.controller.config.spacing.height / 2,
-												leading: self.controller.config.edgeInset.left,
-                                                bottom: cellContext.isLastInSection ? 0 : self.controller.config.spacing.height / 2,
-												trailing: self.controller.config.edgeInset.right))
+                            .padding(EdgeInsets(top: cellContext.isFirstInSection ? 0 : self
+                                    .controller.config.spacing.height / 2,
+                                leading: self.controller.config.edgeInset.left,
+                                bottom: cellContext.isLastInSection ? 0 : self
+                                    .controller.config.spacing.height / 2,
+                                trailing: self.controller.config.edgeInset.right))
+                    })
+                    .onPullToRefresh { callback in
+                        try? self.controller.context.currentView?.reload()
+                        callback()
                     }
-                )
-                .onPullToRefresh({ callback in
-                    try? self.controller.context.currentView?.reload()
-                    callback()
-                })
                     .alwaysBounce()
-					.contentInsets(.init(top: controller.config.edgeInset.top, left: 0, bottom: controller.config.edgeInset.bottom, right: 0))
-                    .background(controller.config.backgroundColor?.color ?? Color(.systemBackground))
-            
+                    .contentInsets(.init(
+                        top: controller.config.edgeInset.top,
+                        left: 0,
+                        bottom: controller.config.edgeInset.bottom,
+                        right: 0
+                    ))
+                    .background(controller.config.backgroundColor?
+                        .color ?? Color(.systemBackground))
             }
             else {
                 controller.emptyText.map { text in
@@ -119,32 +137,36 @@ struct ListRendererView: View {
                 .padding(30)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            
         }
-            .id(controller.config.ui_UUID) // Fix swiftUI wrongly animating between different lists
+        .id(controller.config.ui_UUID) // Fix swiftUI wrongly animating between different lists
     }
-    
-    
+
     var selectionMode: ASSectionSelectionMode {
         if controller.isEditing {
             return .selectMultiple(controller.context.selectedIndicesBinding)
-        } else {
+        }
+        else {
             return .selectSingle { index in
                 if let press = self.controller.config.press {
-                    self.controller.context.executeAction(press, with: self.controller.context.items[safe: index])
+                    self.controller.context.executeAction(
+                        press,
+                        with: self.controller.context.items[safe: index]
+                    )
                 }
             }
         }
     }
-    
+
     func contextMenuProvider(index: Int, item: Item) -> UIContextMenuConfiguration? {
-        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak controller] (suggested) -> UIMenu? in
-            let children: [UIMenuElement] = controller?.config.contextMenuActions.map { [weak controller] action in
-                UIAction(title: action.getString("title"),
-                         image: nil) { [weak controller] (_) in
-                            controller?.context.executeAction(action, with: item)
-                }
-            } ?? []
+        UIContextMenuConfiguration(identifier: nil,
+                                   previewProvider: nil) { [weak controller] (_) -> UIMenu? in
+            let children: [UIMenuElement] = controller?.config.contextMenuActions
+                .map { [weak controller] action in
+                    UIAction(title: action.getString("title"),
+                             image: nil) { [weak controller] _ in
+                        controller?.context.executeAction(action, with: item)
+                    }
+                } ?? []
             return UIMenu(title: "", children: children)
         }
     }

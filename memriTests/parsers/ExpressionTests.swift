@@ -1,10 +1,6 @@
 //
-//  ExpressionTests.swift
-//  memriTests
-//
-//  Created by Ruben Daniels on 7/24/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// ExpressionTests.swift
+// Copyright © 2020 memri. All rights reserved.
 
 @testable import memri
 import XCTest
@@ -23,8 +19,8 @@ class ExpressionTests: XCTestCase {
     func testExecute() throws {
         installer.installForTesting { error, context in
             guard let context = context else { throw "Failed to initialize: \(error!)" }
-            
-            let item = try Cache.createItem(Note.self, values: [ "title": "hello"])
+
+            let item = try Cache.createItem(Note.self, values: ["title": "hello"])
             let expr = Expression(".title", startInStringMode: false,
                                   lookup: context.views.lookupValueOfVariables,
                                   execFunc: context.views.executeFunction)
@@ -39,5 +35,4 @@ class ExpressionTests: XCTestCase {
 //            // Put the code you want to measure the time of here.
 //        }
 //    }
-
 }

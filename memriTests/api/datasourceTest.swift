@@ -1,5 +1,5 @@
 //
-// DatasourceTest.swift
+// datasourceTest.swift
 // Copyright © 2020 memri. All rights reserved.
 
 @testable import memri
@@ -53,7 +53,7 @@ class DatasourceTest: XCTestCase {
                 XCTFail("\(error!)")
                 return
             }
-            
+
             do {
                 let parsed = [
                     try root.views.parseDefinition(def1) as! CVUParsedDatasourceDefinition,
@@ -89,7 +89,7 @@ class DatasourceTest: XCTestCase {
                 XCTFail("\(error!)")
                 return
             }
-            
+
             do {
                 let head = try root.views.parseDefinition(def1) as! CVUParsedDatasourceDefinition
                 let ds = CascadingDatasource(head)

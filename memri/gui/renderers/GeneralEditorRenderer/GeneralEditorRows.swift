@@ -1,28 +1,25 @@
 //
-//  GeneralEditorRows.swift
-//  memri
-//
-//  Copyright © 2020 memri. All rights reserved.
-//
+// GeneralEditorRows.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
 import SwiftUI
 
 struct DefaultGeneralEditorRow: View {
     @EnvironmentObject var context: MemriContext
-    
+
     var item: Item
     var prop: String
     var readOnly: Bool
     var isLast: Bool
     var renderConfig: CascadingRendererConfig
     var arguments: ViewArguments
-    
+
     var body: some View {
         // Get the type from the schema, because when the value is nil the type cannot be determined
         let propType = item.objectSchema[prop]?.type
         let propValue: Any? = self.item.get(self.prop)
-        
+
         return VStack(spacing: 0) {
             if propValue == nil && readOnly {
                 EmptyView()
@@ -34,7 +31,7 @@ struct DefaultGeneralEditorRow: View {
                         .lowercased()
                         .capitalizingFirst())
                         .generalEditorLabel()
-                    
+
                     if renderConfig.hasGroup(prop) {
                         renderConfig.render(item: item, group: prop, arguments: arguments)
                     }
@@ -74,29 +71,29 @@ struct DefaultGeneralEditorRow: View {
                 .padding(.bottom, 10)
                 .padding(.horizontal)
                 .background(Color(.systemBackground))
-                
+
                 if !isLast {
                     Divider().padding(.leading, 35)
                 }
             }
         }
     }
-    
+
     func stringRow() -> some View {
         let binding = Binding<String>(
             get: { self.item.getString(self.prop) ?? "" },
             set: {
                 self.item.set(self.prop, $0)
-        }
+            }
         )
-        
+
         return MemriTextField(value: binding,
                               clearButtonMode: .whileEditing,
                               isEditing: $context.editMode,
                               isSharedEditingBinding: true)
-        .generalEditorCaption()
+            .generalEditorCaption()
     }
-    
+
     func boolRow() -> some View {
         let binding = Binding<Bool>(
             get: { self.item[self.prop] as? Bool ?? false },
@@ -106,9 +103,9 @@ struct DefaultGeneralEditorRow: View {
                     self.context.objectWillChange.send()
                 }
                 catch {}
-        }
+            }
         )
-        
+
         return Toggle(isOn: binding) {
             Text(prop
                 .camelCaseToWords()
@@ -117,39 +114,39 @@ struct DefaultGeneralEditorRow: View {
         }
         .generalEditorCaption()
     }
-    
+
     func intRow() -> some View {
         let binding = Binding<Int>(
             get: { self.item[self.prop] as? Int ?? 0 },
             set: {
                 self.item.set(self.prop, $0)
                 self.context.objectWillChange.send()
-        }
+            }
         )
-        
+
         return MemriTextField(value: binding,
                               clearButtonMode: .whileEditing,
                               isEditing: $context.editMode,
                               isSharedEditingBinding: true)
-        .generalEditorCaption()
+            .generalEditorCaption()
     }
-    
+
     func doubleRow() -> some View {
         let binding = Binding<Double>(
             get: { self.item[self.prop] as? Double ?? 0 },
             set: {
                 self.item.set(self.prop, $0)
                 self.context.objectWillChange.send()
-        }
+            }
         )
-        
+
         return MemriTextField(value: binding,
                               clearButtonMode: .whileEditing,
                               isEditing: $context.editMode,
                               isSharedEditingBinding: true)
-        .generalEditorCaption()
+            .generalEditorCaption()
     }
-    
+
     @ViewBuilder
     func dateRow() -> some View {
         let binding = Binding<Date>(
@@ -157,13 +154,13 @@ struct DefaultGeneralEditorRow: View {
             set: {
                 self.item.set(self.prop, $0)
                 self.context.objectWillChange.send()
-        }
+            }
         )
-        
+
         DatePicker("", selection: binding, displayedComponents: .date)
             .labelsHidden()
     }
-    
+
     func defaultRow(_ caption: String? = nil) -> some View {
         Text(caption ?? prop.camelCaseToWords().lowercased().capitalizingFirst())
             .generalEditorCaption()

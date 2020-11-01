@@ -22,21 +22,21 @@ struct Browser: View {
     }
 
     var activeRendererController: RendererController? {
-        self.context.currentRendererController
+        context.currentRendererController
     }
-    
+
     @State var isSearchActive: Bool = false
-    
+
     var showFilterPanel: Bool {
         get {
-            self.context.currentSession?.showFilterPanel ?? false
+            context.currentSession?.showFilterPanel ?? false
         }
         nonmutating set {
             self.context.currentSession?.showFilterPanel = newValue
             self.context.scheduleUIUpdate(updateWithAnimation: true)
         }
     }
-    
+
     @GestureState var filterPanelGestureOffset: CGFloat = .zero
 
     var body: some View {
@@ -45,9 +45,10 @@ struct Browser: View {
         return ZStack(alignment: .bottom) {
             if self.context.currentView == nil {
                 Text("Loading...")
-                .padding()
+                    .padding()
                     .frame(maxWidth: .infinity)
-            } else {
+            }
+            else {
                 VStack(alignment: .center, spacing: 0) {
                     if currentView.showToolbar && !currentView.fullscreen {
                         TopNavigation(inSubView: inSubView, showCloseButton: showCloseButton)
@@ -59,42 +60,45 @@ struct Browser: View {
                                 activeRendererController.map { activeRendererController in
                                     activeRendererController.makeView()
                                         .fullHeight().layoutPriority(1)
-                                        .background((currentView.fullscreen ? Color.black : Color.clear)
+                                        .background((currentView.fullscreen ? Color.black : Color
+                                                .clear)
                                             .edgesIgnoringSafeArea(.all))
                                 }
-                            } else {
-                                Text("No active renderer").padding().frame(maxWidth: .infinity, maxHeight: .infinity)
                             }
-                            
+                            else {
+                                Text("No active renderer").padding()
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            }
+
                             if currentView.showBottomBar {
                                 ContextualBottomBar()
-                                
+
                                 if !currentView.fullscreen {
                                     BottomBarView(onSearchPressed: {
                                         self.isSearchActive = true
                                     })
-                                    .zIndex(8)
+                                        .zIndex(8)
                                 }
                             }
                         }
                         if showFilterPanel && currentView.showBottomBar {
                             Color.black.opacity(0.15)
                                 .onTapGesture {
-                                self.showFilterPanel = false
-                            }
-                            .gesture(DragGesture().updating($filterPanelGestureOffset) { (value, state, _) in
-                                state = max(0, value.translation.height)
-                            }.onEnded({ (value) in
-                                if value.predictedEndTranslation.height > 20 {
                                     self.showFilterPanel = false
                                 }
-                            }))
+                                .gesture(DragGesture()
+                                    .updating($filterPanelGestureOffset) { value, state, _ in
+                                        state = max(0, value.translation.height)
+                                    }.onEnded { value in
+                                        if value.predictedEndTranslation.height > 20 {
+                                            self.showFilterPanel = false
+                                        }
+                                    })
                         }
                     }
-                    
                 }
                 SearchView(isActive: $isSearchActive)
-                
+
                 if showFilterPanel {
                     VStack {
                         Capsule()
@@ -108,13 +112,12 @@ struct Browser: View {
                     .transition(.move(edge: .bottom))
                     .zIndex(9)
                 }
-                
+
                 if currentView.contextPane.isSet() {
                     ContextPane()
-                    .zIndex(15)
+                        .zIndex(15)
                 }
             }
-            
         }
     }
 }

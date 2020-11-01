@@ -2,23 +2,23 @@
 // Installer.swift
 // Copyright © 2020 memri. All rights reserved.
 
+import Alamofire
 import Foundation
 import RealmSwift
-import Alamofire
-
 
 public class Installer: ObservableObject {
     @Published var isInstalled: Bool = false
     @Published var debugMode: Bool = false
-    
-    
+
     enum InstallerState {
         case inactive
         case downloadingDemoData(Double)
         case extractingDemoData
         case installingDatabase
     }
-    @Published var state: InstallerState = .inactive // For future use in reporting progress of installation
+
+    @Published var state: InstallerState =
+        .inactive // For future use in reporting progress of installation
 
     private var readyCallback: () throws -> Void = {}
 
@@ -26,27 +26,27 @@ public class Installer: ObservableObject {
         debugMode = CrashObserver.shared.didCrashLastTime
     }
 
-    public func await(_ context:MemriContext, _ callback: @escaping () throws -> Void) throws {
+    public func await(_ context: MemriContext, _ callback: @escaping () throws -> Void) throws {
         let authAtStartup = Settings.shared.get("device/auth/atStartup", type: Bool.self) ?? true
-        
+
         func check() {
             if let _ = LocalSetting.get("memri/installed") {
-                self.isInstalled = true
-                
-                if !self.debugMode {
-                    self.ready(context)
+                isInstalled = true
+
+                if !debugMode {
+                    ready(context)
                 }
             }
         }
-        
-        self.readyCallback = callback
-        
+
+        readyCallback = callback
+
         if authAtStartup {
             Authentication.authenticateOwner { error in
                 if let error = error {
-                    fatalError("Unable to authenticate \(error)") // TODO report to user allow retry
+                    fatalError("Unable to authenticate \(error)") // TODO: report to user allow retry
                 }
-                    
+
                 check()
             }
         }
@@ -55,7 +55,7 @@ public class Installer: ObservableObject {
         }
     }
 
-    public func ready(_ context:MemriContext) {
+    public func ready(_ context: MemriContext) {
         isInstalled = true
 
         LocalSetting.set("memri/installed", Date().description)
@@ -69,49 +69,50 @@ public class Installer: ObservableObject {
             debugHistory.error("\(error)")
         }
     }
-    
+
     public func installLocalAuthForNewPod(
-        _ context:MemriContext,
+        _ context: MemriContext,
         areYouSure: Bool,
         host: String,
         _ callback: @escaping (Error?) -> Void
     ) {
-        
         DatabaseController.deleteDatabase { error in
             do {
                 if let error = error {
                     throw "\(error)"
                 }
-                
+
                 _ = try Authentication.createRootKey(areYouSure: areYouSure)
-                    
+
                 self.installDemoDatabase(context) { error in
                     if let error = error {
-                        // TODO Error Handling - show to the user
+                        // TODO: Error Handling - show to the user
                         debugHistory.warn("\(error)")
                         callback(error)
                         return
                     }
-                    
+
                     DispatchQueue.main.async {
                         if let error = error {
-                            // TODO Error Handling - show to the user
+                            // TODO: Error Handling - show to the user
                             debugHistory.warn("\(error)")
                             callback(error)
                             return
                         }
-                        
+
                         do {
-                            print("KEY: \(try Authentication.getPublicRootKeySync().hexEncodedString(options: .upperCase))")
-                            
+                            print(
+                                "KEY: \(try Authentication.getPublicRootKeySync().hexEncodedString(options: .upperCase))"
+                            )
+
                             try Authentication.createOwnerAndDBKey()
                         }
                         catch { callback(error) }
-                        
+
                         Settings.shared.set("user/pod/host", host)
                         self.ready(context)
                         context.cache.sync.schedule()
-                        
+
                         callback(nil)
                     }
                 }
@@ -121,9 +122,9 @@ public class Installer: ObservableObject {
             }
         }
     }
-    
+
     public func installLocalAuthForExistingPod(
-        _ context:MemriContext,
+        _ context: MemriContext,
         areYouSure: Bool,
         host: String,
         privateKey: String,
@@ -131,21 +132,20 @@ public class Installer: ObservableObject {
         dbKey: String,
         _ callback: @escaping (Error?) -> Void
     ) {
-        
         DatabaseController.deleteDatabase { error in
             do {
                 if let error = error {
                     callback(error)
                     throw "Unable to authenticate: \(error)"
                 }
-                
+
                 context.podAPI.host = host
-            
+
                 _ = try Authentication.createRootKey(areYouSure: areYouSure)
-                
-                context.cache.sync.syncAllFromPod { // TODO error handling
+
+                context.cache.sync.syncAllFromPod { // TODO: error handling
                     Settings.shared.set("user/pod/host", host)
-                    
+
                     do {
                         try Authentication.setOwnerAndDBKey(
                             privateKey: privateKey,
@@ -154,9 +154,9 @@ public class Installer: ObservableObject {
                         )
                     }
                     catch { callback(error) }
-                    
+
                     self.ready(context)
-                    
+
                     callback(nil)
                 }
             }
@@ -165,30 +165,28 @@ public class Installer: ObservableObject {
             }
         }
     }
-    
-    
+
     public func installLocalAuthForLocalInstallation(
-        _ context:MemriContext,
+        _ context: MemriContext,
         areYouSure: Bool,
         _ callback: @escaping (Error?) -> Void
     ) {
-        
         DatabaseController.deleteDatabase { error in
             do {
                 if let error = error {
                     throw "Unable to authenticate: \(error)"
                 }
-                
+
                 _ = try Authentication.createRootKey(areYouSure: areYouSure)
-                
+
                 self.installDemoDatabase(context) { error in
                     if let error = error {
-                        // TODO Error Handling - show to the user
+                        // TODO: Error Handling - show to the user
                         debugHistory.warn("\(error)")
                         callback(error)
                     }
                     self.ready(context)
-                    
+
                     callback(nil)
                 }
             }
@@ -197,85 +195,89 @@ public class Installer: ObservableObject {
             }
         }
     }
-    
+
     #if targetEnvironment(simulator)
-    public var testRoot: RootContext? = nil
-    public func installForTesting(boot:Bool = true,
-                                  _ callback:@escaping (Error?, RootContext?) throws -> Void) {
-        do {
-            if let testRoot = testRoot {
-                try callback(nil, testRoot)
-                return
-            }
-            
-            DatabaseController.realmTesting = true
-            Settings.shared = Settings()
-            
-            testRoot = try RootContext(name: "")
-            
-            try await (testRoot!) {
-                if boot {
-                    self.testRoot!.boot(isTesting: true) { error in
-                        if let error = error {
-                            debugHistory.error("\(error)")
-                            do { try callback(error, nil) }
+        public var testRoot: RootContext?
+        public func installForTesting(
+            boot: Bool = true,
+            _ callback: @escaping (Error?, RootContext?) throws -> Void
+        ) {
+            do {
+                if let testRoot = testRoot {
+                    try callback(nil, testRoot)
+                    return
+                }
+
+                DatabaseController.realmTesting = true
+                Settings.shared = Settings()
+
+                testRoot = try RootContext(name: "")
+
+                try await(testRoot!) {
+                    if boot {
+                        self.testRoot!.boot(isTesting: true) { error in
+                            if let error = error {
+                                debugHistory.error("\(error)")
+                                do { try callback(error, nil) }
+                                catch { debugHistory.error("\(error)") }
+                                return
+                            }
+
+                            do { try callback(nil, self.testRoot) }
                             catch { debugHistory.error("\(error)") }
-                            return
                         }
-                        
+                    }
+                    else {
                         do { try callback(nil, self.testRoot) }
                         catch { debugHistory.error("\(error)") }
                     }
                 }
-                else {
-                    do { try callback(nil, self.testRoot) }
-                    catch { debugHistory.error("\(error)") }
+
+                if let _ = LocalSetting.get("memri/installed") {
+                    isInstalled = true
                 }
-            }
-            
-            if let _ = LocalSetting.get("memri/installed") {
-                isInstalled = true
-            }
-            
-            if isInstalled {
-                ready(testRoot!)
-            }
-            else {
-                clearDatabase(testRoot!) { error in
-                    if let error = error {
-                        debugHistory.error("\(error)")
-                        do { try callback(error, nil) }
-                        catch { debugHistory.error("\(error)") }
-                        return
-                    }
-                    
-                    self.installDemoDatabase(self.testRoot!) { error in
+
+                if isInstalled {
+                    ready(testRoot!)
+                }
+                else {
+                    clearDatabase(testRoot!) { error in
                         if let error = error {
                             debugHistory.error("\(error)")
                             do { try callback(error, nil) }
                             catch { debugHistory.error("\(error)") }
                             return
                         }
-                        
-                        self.ready(self.testRoot!)
+
+                        self.installDemoDatabase(self.testRoot!) { error in
+                            if let error = error {
+                                debugHistory.error("\(error)")
+                                do { try callback(error, nil) }
+                                catch { debugHistory.error("\(error)") }
+                                return
+                            }
+
+                            self.ready(self.testRoot!)
+                        }
                     }
                 }
             }
+            catch {
+                do { try callback(error, nil) }
+                catch { debugHistory.error("\(error)") }
+            }
         }
-        catch {
-            do { try callback(error, nil) }
-            catch { debugHistory.error("\(error)") }
-        }
-    }
     #endif
-    
-    public func handleInstallError(error:Error?) {
-        // TODO ERror handling - report to the user
+
+    public func handleInstallError(error: Error?) {
+        // TODO: ERror handling - report to the user
         debugHistory.warn("\(error!)")
     }
 
-    public func installDemoDatabase(_ context: MemriContext,
-                                       _ callback:@escaping (Error?) -> Void) {
+    public func installDemoDatabase(
+        _ context: MemriContext,
+        _ callback: @escaping (Error?) -> Void
+    ) {
         debugHistory.info("Installing demo database")
         install(context, dbName: "demo_database", callback)
     }
@@ -331,9 +333,12 @@ public class Installer: ObservableObject {
 //        }
 //    }
 
-    private func install(_ context: MemriContext, dbName: String,
-                         _ callback:@escaping (Error?) -> Void) {
-        self.state = .installingDatabase
+    private func install(
+        _ context: MemriContext,
+        dbName: String,
+        _ callback: @escaping (Error?) -> Void
+    ) {
+        state = .installingDatabase
         do {
             // Load default objects in database
             try context.cache.install(dbName) { error in
@@ -356,11 +361,11 @@ public class Installer: ObservableObject {
                             callback(error)
                             return
                         }
-                        
+
                         // Installation complete
                         LocalSetting.set("memri/installed", Date().description)
                         self.state = .inactive
-                        
+
                         callback(nil)
                     }
                 }
@@ -376,34 +381,37 @@ public class Installer: ObservableObject {
         ready(context)
     }
 
-    public func clearDatabase(_ context: MemriContext,
-                              _ callback:@escaping (Error?) -> Void) {
-        DatabaseController.asyncOnCurrentThread(write:true, error:callback) { realm in
+    public func clearDatabase(
+        _ context: MemriContext,
+        _ callback: @escaping (Error?) -> Void
+    ) {
+        DatabaseController.asyncOnCurrentThread(write: true, error: callback) { realm in
             realm.deleteAll()
-            
+
             Cache.cacheUIDCounter = -1
 
             self.isInstalled = false
             self.debugMode = false
             context.scheduleUIUpdate()
-            
+
             callback(nil)
         }
     }
 
-    public func clearSessions(_ context: MemriContext,
-                              _ callback:@escaping (Error?) -> Void) {
-        
-        DatabaseController.asyncOnCurrentThread(write:true, error:callback) { _ in
+    public func clearSessions(
+        _ context: MemriContext,
+        _ callback: @escaping (Error?) -> Void
+    ) {
+        DatabaseController.asyncOnCurrentThread(write: true, error: callback) { _ in
             // Create a new default session
             context.sessions.install(context) { error in
                 if let error = error {
-                    // TODO Error Handling - show to the user
+                    // TODO: Error Handling - show to the user
                     debugHistory.warn("\(error)")
                     callback(error)
                     return
                 }
-                
+
                 self.debugMode = false
                 self.ready(context)
                 callback(nil)

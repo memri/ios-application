@@ -4,8 +4,8 @@
 
 import CoreGraphics
 import Foundation
-import SwiftUI
 import Realm
+import SwiftUI
 
 enum SelectorType {
     case singleItem
@@ -86,7 +86,8 @@ public class Cascadable: CustomStringConvertible {
     }
 
     func cascadePropertyAsCGFloat(_ name: String)
-        -> CGFloat? { // Renamed to avoid mistaken calls when comparing to nil
+        -> CGFloat?
+    { // Renamed to avoid mistaken calls when comparing to nil
         (cascadeProperty(name) as Double?).map { CGFloat($0) }
     }
 
@@ -130,7 +131,6 @@ public class Cascadable: CustomStringConvertible {
 
         return nil
     }
-    
 
     func cascadeList(
         _ name: String,
@@ -177,7 +177,11 @@ public class Cascadable: CustomStringConvertible {
     }
 
     // TODO: support deleting items
-    func cascadeList<T>(_ name: String, selectorType: SelectorType? = nil, merge: Bool = true) -> [T] {
+    func cascadeList<T>(
+        _ name: String,
+        selectorType: SelectorType? = nil,
+        merge: Bool = true
+    ) -> [T] {
         if let x = localCache[name] as? [T] { return x }
 
         var result = [T]()

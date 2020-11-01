@@ -2,6 +2,7 @@
 // SettingsPane.swift
 // Copyright © 2020 memri. All rights reserved.
 
+import AnyCodable
 import Foundation
 import SwiftUI
 
@@ -51,7 +52,8 @@ struct SettingsPane: View {
                         HStack {
                             Button(action: {
                                 if let datasource = self.context.currentView?.datasource
-                                    .flattened() {
+                                    .flattened()
+                                {
                                     self.context.cache.sync.clearSyncCache()
                                     self.context.cache.sync.syncQuery(datasource)
                                 }
@@ -127,7 +129,7 @@ struct SettingsPane: View {
                             Text("Automatically reload CVU when it changes")
                         }
                     }
-                    
+
                     Section(
                         header: Text("Debug Actions")
                     ) {

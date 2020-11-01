@@ -32,11 +32,12 @@ class CVUSerializer {
                 return "{{ item('\(p.genericType)', \(uid)) }}"
             }
             else if p is ItemReference, let p = (p as? ItemReference)?.resolve(),
-                let uid = p.uid.value {
+                    let uid = p.uid.value
+            {
                 return "{{ item('\(p.genericType)', \(uid)) }}"
             }
             else if case let CVUColor.hex(hex) = p {
-				return "#\(hex.trimmingCharacters(in: CharacterSet(charactersIn: "#")))"
+                return "#\(hex.trimmingCharacters(in: CharacterSet(charactersIn: "#")))"
             }
             else if case let CVUColor.system(uiColor) = p {
                 return uiColor.hexString()
@@ -159,7 +160,8 @@ class CVUSerializer {
         var str = [String]()
         for key in keys {
             if key == "children" || key == "rendererDefinitions" || key == "datasourceDefinition"
-                || key == "sessionDefinitions" || key == "viewDefinitions" || key == "." {
+                || key == "sessionDefinitions" || key == "viewDefinitions" || key == "."
+            {
                 continue
             }
             else if key == "cornerborder" {
@@ -172,7 +174,12 @@ class CVUSerializer {
                 }
             }
             else if key == "frame" {
-                let names = ["minWidth", "maxWidth", "minHeight", "maxHeight"] // "align" left out as it remains in the primary dict
+                let names = [
+                    "minWidth",
+                    "maxWidth",
+                    "minHeight",
+                    "maxHeight",
+                ] // "align" left out as it remains in the primary dict
                 if let list = dict[key] as? [Any?] {
                     for i in 0 ..< min(names.count, list.count) {
                         if let v = list[i] {
@@ -213,19 +220,22 @@ class CVUSerializer {
             hasPriorContent = true
         }
         if let p = (dict["sessionDefinitions"] as? [CVUParsedSessionDefinition])?
-            .filter({ $0.parsed != nil }), p.count > 0 {
+            .filter({ $0.parsed != nil }), p.count > 0
+        {
             let body = arrayToString(p, depth, tab, withDef: false, extraNewLine: true)
             definitions.append("\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)")
             hasPriorContent = true
         }
         if let p = (dict["viewDefinitions"] as? [CVUParsedViewDefinition])?
-            .filter({ $0.parsed != nil }), p.count > 0 {
+            .filter({ $0.parsed != nil }), p.count > 0
+        {
             let body = arrayToString(p, depth, tab, withDef: false, extraNewLine: true)
             definitions.append("\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)")
             hasPriorContent = true
         }
         if let p = (dict["rendererDefinitions"] as? [CVUParsedRendererDefinition])?
-            .filter({ $0.parsed != nil }), p.count > 0 {
+            .filter({ $0.parsed != nil }), p.count > 0
+        {
             let body = arrayToString(p, depth, tab, withDef: false, extraNewLine: true)
             definitions.append("\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)")
             hasPriorContent = true

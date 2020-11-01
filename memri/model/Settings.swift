@@ -2,6 +2,7 @@
 // Settings.swift
 // Copyright © 2020 memri. All rights reserved.
 
+import AnyCodable
 import Combine
 import Foundation
 import RealmSwift
@@ -10,17 +11,15 @@ import RealmSwift
 /// buttons by default, etc.
 public class Settings {
     /// Shared settings that can be used from the main thread
-    static var shared: Settings = Settings()
+    static var shared = Settings()
 
     private var listeners = [String: [UUID]]()
     private var callbacks = [UUID: (Any?) -> Void]()
 
     /// Init settings with the realm database
     /// - Parameter rlm: realm database object
-    init() {
-        
-    }
-    
+    init() {}
+
     // TODO: Refactor this so that the default settings are always used if not found in Realm.
     // Otherwise anytime we add a new setting the get function will return nil instead of the default
 
@@ -128,7 +127,7 @@ public class Settings {
     ///   - path: path of the setting
     ///   - value: setting Value
     public func setSetting(_ path: String, _ value: AnyCodable) throws {
-        try DatabaseController.trySync(write:true) { realm in
+        try DatabaseController.trySync(write: true) { realm in
             if let s = realm.objects(Setting.self).first(where: { $0.key == path }) {
                 s.json = try serialize(value)
 

@@ -11,7 +11,7 @@ struct LineChartSwiftUIView: UIViewRepresentable {
     var onPress: ((Int) -> Void)?
 
     func makeUIView(context: Context) -> LineChartView {
-        let chartView: LineChartView = LineChartView()
+        let chartView = LineChartView()
         chartView.delegate = context.coordinator
         chartView.legend.enabled = false
         chartView.xAxis.labelPosition = .bottom
@@ -30,7 +30,7 @@ struct LineChartSwiftUIView: UIViewRepresentable {
     func updateUIView(_ chartView: LineChartView, context _: Context) {
         chartView.xAxis.drawGridLinesEnabled = !model.hideGridLines
         chartView.leftAxis.drawGridLinesEnabled = !model.hideGridLines
-        
+
         chartView.data = model.generateData()
         chartView.notifyDataSetChanged()
     }

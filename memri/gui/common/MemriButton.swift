@@ -10,31 +10,31 @@ public struct MemriButton: View {
 
     let item: Item?
     let edge: Edge?
-    
-    init(item:Item? = nil, edge:Edge? = nil) {
+
+    init(item: Item? = nil, edge: Edge? = nil) {
         self.item = item
         self.edge = edge
     }
 
     public var body: some View {
-        var inputItem:Item? = item
+        var inputItem: Item? = item
         if edge != nil {
             inputItem = edge?.target()
         }
-        
+
         let family = ItemFamily(rawValue: inputItem?.genericType ?? "Note")
         var type = edge?.type?.capitalizingFirst() ?? (inputItem?.objectSchema["itemType"] == nil
             ? inputItem?.genericType
             : inputItem?.getString("itemType"))
         if type == "" { type = inputItem?.genericType }
-        
+
         var title = inputItem?.computedTitle ?? ""
         var bgColor = family?.backgroundColor ?? Color.white
         if inputItem?.genericType == "Person" && inputItem == me() {
             title = "Me"
-            bgColor = Color(hex:"#e8ba32")
+            bgColor = Color(hex: "#e8ba32")
         }
-        
+
         return Group {
             if inputItem == nil {
                 EmptyView()

@@ -1,10 +1,6 @@
 //
-//  AuthenticationTests.swift
-//  memriTests
-//
-//  Created by Ruben Daniels on 7/28/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// AuthenticationTests.swift
+// Copyright © 2020 memri. All rights reserved.
 
 @testable import memri
 import XCTest
@@ -27,39 +23,38 @@ class AuthenticationTests: XCTestCase {
             }
         }
     }
-    
+
     func testCreateRootKey() throws {
         let data = try Authentication.createRootKey(areYouSure: true)
-            
+
         XCTAssertNotNil(data)
-        
-        Authentication.getPublicRootKey { error, fetchedData in
+
+        Authentication.getPublicRootKey { _, fetchedData in
             XCTAssertEqual(fetchedData, data)
         }
     }
-    
+
     func testCreateOwnerAndDBKey() throws {
-        installer.installForTesting() { error, _ in
+        installer.installForTesting { error, _ in
             if let error = error {
                 XCTFail("\(error)")
                 return
             }
-            
+
             try Authentication.createOwnerAndDBKey()
-                
-            Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
+
+            Authentication.getOwnerAndDBKey { _, ownerKey, dbKey in
                 XCTAssertNotNil(ownerKey)
                 XCTAssertNotNil(dbKey)
                 XCTAssertEqual(dbKey?.count ?? 0, 64)
             }
         }
     }
-    
+
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
-        self.measure {
+        measure {
             // Put the code you want to measure the time of here.
         }
     }
-
 }

@@ -66,7 +66,7 @@ public final class Sessions: ObservableObject, Equatable {
         persistCancellable = persistSubject
             .throttle(for: .milliseconds(300), scheduler: RunLoop.main, latest: true)
             .sink { [weak self] in
-                DatabaseController.asyncOnBackgroundThread(write:true) { _ in
+                DatabaseController.asyncOnBackgroundThread(write: true) { _ in
                     try self?.persist()
                 }
             }
@@ -87,7 +87,8 @@ public final class Sessions: ObservableObject, Equatable {
         try DatabaseController.trySync { realm in
             if let state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid) {
                 guard let p = try context.views
-                    .parseDefinition(state) as? CVUParsedSessionsDefinition else {
+                    .parseDefinition(state) as? CVUParsedSessionsDefinition
+                else {
                     throw "Unable to parse state definition"
                 }
 
@@ -110,7 +111,7 @@ public final class Sessions: ObservableObject, Equatable {
                     let parsedSessions = p["sessionDefinitions"] as? [CVUParsedSessionDefinition],
                     parsedSessions.count > 0
                 {
-                    try DatabaseController.trySync(write:true) { _ in
+                    try DatabaseController.trySync(write: true) { _ in
                         for parsed in parsedSessions {
                             let sessionState = try CVUStateDefinition
                                 .fromCVUParsedDefinition(parsed)
@@ -160,7 +161,7 @@ public final class Sessions: ObservableObject, Equatable {
 
         schedulePersist()
     }
-    
+
     public func setCurrentSession(_ session: Session) throws {
         // If the session already exists, we simply update the session index
         if let index = sessions.firstIndex(where: { s in
@@ -243,7 +244,7 @@ public final class Sessions: ObservableObject, Equatable {
 
             try self.persist()
             try self.load(context)
-            
+
             callback(nil)
         }
     }

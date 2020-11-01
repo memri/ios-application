@@ -1,5 +1,5 @@
 //
-// Search.swift
+// SearchView.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import Combine

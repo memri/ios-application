@@ -39,8 +39,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
         }
         set {
             let new = stringToValue(newValue)
-            DispatchQueue.main.async
-            { [_value] in
+            DispatchQueue.main.async { [_value] in
                 _value.assignIfChanged(new)
             }
         }
@@ -300,8 +299,8 @@ public extension MemriTextField where Value == Double {
     }
 }
 
-extension MemriTextField {
-    public func textFieldFont(_ font: UIFont) -> Self {
+public extension MemriTextField {
+    func textFieldFont(_ font: UIFont) -> Self {
         var this = self
         this.font = font
         return this
@@ -322,8 +321,7 @@ func assignIfChanged<Object: AnyObject, T: Equatable>(
     _ object: Object,
     _ keyPath: ReferenceWritableKeyPath<Object, T>,
     newValue: T
-)
-{
+) {
     guard newValue != object[keyPath: keyPath] else { return }
     object[keyPath: keyPath] = newValue
 }
@@ -344,16 +342,18 @@ public class MemriTextField_UIKit: UITextField {
             }
         }
     }
-    
+
     /// If this is set to true, the textfield won't respond to isEditing being set to true (but will resign responder if isEditing is set to false - useful for shared binding with other fields)
     var isSharedEditingBinding: Bool = false
-    
+
     var isEditingBinding: Binding<Bool>? {
         didSet {
             if let bindingIsEditing = isEditingBinding?.wrappedValue,
-                bindingIsEditing != isEditing,
-                !isSharedEditingBinding || (isSharedEditingBinding && !bindingIsEditing) // If shared, only use for resigning first responder
-                {
+               bindingIsEditing != isEditing,
+               !isSharedEditingBinding ||
+               (isSharedEditingBinding &&
+                   !bindingIsEditing) // If shared, only use for resigning first responder
+            {
                 if bindingIsEditing {
                     becomeFirstResponder()
                 }
@@ -371,6 +371,7 @@ public class MemriTextField_UIKit: UITextField {
         updateToolbar()
     }
 
+    @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -1,38 +1,33 @@
 //
-//  UINodeResolver.swift
-//  memri
-//
-//  Created by Toby Brennan on 29/10/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// UINodeResolver.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 public struct UINodeResolver: Identifiable {
     init(node: UINode, viewArguments: ViewArguments) {
         self.node = node
         self.viewArguments = viewArguments
     }
-    
+
     public var id: UUID { node.id }
     var node: UINode
     var viewArguments: ViewArguments
-    
-    
+
     var item: Item? { viewArguments.get(".") }
-    
+
     func resolve<T>(_ propertyName: String, type: T.Type = T.self) -> T? {
         guard let property = node.properties[propertyName] else {
             return nil
         }
-        
+
         if let propertyExpression = property as? Expression {
             do {
                 if T.self == [Item].self {
                     let x = try propertyExpression.execute(viewArguments)
-                    
+
                     var result = [Item]()
                     if let list = x as? Results<Edge> {
                         for edge in list {
@@ -44,7 +39,7 @@ public struct UINodeResolver: Identifiable {
                     else {
                         result = dataItemListToArray(x as Any)
                     }
-                    
+
                     return (result as! T)
                 }
                 else {
@@ -65,36 +60,40 @@ public struct UINodeResolver: Identifiable {
         }
         else if let value = property as? T {
             return value
-        } else {
+        }
+        else {
             return nil
         }
-        
     }
-    
+
     var childrenInForEach: some View {
-        let childNodeResolvers = node.children.map { UINodeResolver(node: $0, viewArguments: viewArguments) }
+        let childNodeResolvers = node.children
+            .map { UINodeResolver(node: $0, viewArguments: viewArguments) }
         return ForEach(childNodeResolvers) { childNodeResolver in
             UIElementView(nodeResolver: childNodeResolver)
         }
     }
-    
+
     var childrenInArray: [UIElementView] {
-        node.children.map { UINodeResolver(node: $0, viewArguments: viewArguments) }.map { UIElementView(nodeResolver: $0) }
+        node.children.map { UINodeResolver(node: $0, viewArguments: viewArguments) }
+            .map { UIElementView(nodeResolver: $0) }
     }
-    
-    
+
     func childrenInForEach(usingItem item: Item) -> some View {
         let newArguments = ViewArguments(viewArguments, item)
-        let childNodeResolvers = node.children.map { UINodeResolver(node: $0, viewArguments: newArguments) }
+        let childNodeResolvers = node.children
+            .map { UINodeResolver(node: $0, viewArguments: newArguments) }
         return ForEach(childNodeResolvers) { childNodeResolver in
             UIElementView(nodeResolver: childNodeResolver)
         }
     }
-    
+
     func childrenInArray(usingItem item: Item) -> [UIElementView] {
         let newArguments = ViewArguments(viewArguments, item)
-        return node.children.map { UINodeResolver(node: $0, viewArguments: newArguments) }.map { UIElementView(nodeResolver: $0) }
+        return node.children.map { UINodeResolver(node: $0, viewArguments: newArguments) }
+            .map { UIElementView(nodeResolver: $0) }
     }
+
     //
     //
     //    func processText(_ text: String?) -> String? {
@@ -111,8 +110,7 @@ public struct UINodeResolver: Identifiable {
     //            .trimmingCharacters(in: .whitespacesAndNewlines) // Remove whitespace/newLine from start/end of string
     //            .split { $0.isNewline }.joined(separator: " ") // Replace new-lines with a space
     //    }
-    
-    
+
     func fileURI(for propertyName: String) -> String? {
         if let file: File = resolve(propertyName) {
             return file.filename
@@ -122,8 +120,7 @@ public struct UINodeResolver: Identifiable {
         }
         return nil
     }
-    
-    
+
     func color(for propertyName: String = "color") -> CVUColor? {
         if let colorDef = resolve(propertyName, type: CVUColor.self) {
             return colorDef
@@ -131,14 +128,18 @@ public struct UINodeResolver: Identifiable {
         else if let colorName = resolve(propertyName, type: String.self) {
             if CVUColor.hasNamed(colorName) {
                 return CVUColor.named(colorName)
-            } else {
+            }
+            else {
                 return CVUColor.hex(colorName)
             }
         }
         return nil
     }
-    
-    func font(for propertyName: String = "font", baseFont defaultValue: CVUFont = CVUFont()) -> CVUFont {
+
+    func font(
+        for propertyName: String = "font",
+        baseFont defaultValue: CVUFont = CVUFont()
+    ) -> CVUFont {
         if let value = resolve(propertyName, type: [Any].self) {
             if let name = value[safe: 0] as? String, let size = value[safe: 1] as? Double {
                 return CVUFont(
@@ -148,7 +149,12 @@ public struct UINodeResolver: Identifiable {
                 )
             }
             else if let size = value[safe: 0] as? Double {
-                return CVUFont(name: defaultValue.name, size: CGFloat(size), weight: (value[safe: 1] as? String).flatMap(Font.Weight.init) ?? defaultValue.weight)
+                return CVUFont(
+                    name: defaultValue.name,
+                    size: CGFloat(size),
+                    weight: (value[safe: 1] as? String).flatMap(Font.Weight.init) ?? defaultValue
+                        .weight
+                )
             }
         }
         else if let size = resolve(propertyName, type: CGFloat.self) {
@@ -159,7 +165,7 @@ public struct UINodeResolver: Identifiable {
         }
         return defaultValue
     }
-    
+
     func alignment(for propertyName: String = "alignment") -> Alignment {
         switch resolve(propertyName, type: String.self) {
         case "left", "leading": return Alignment.leading
@@ -174,7 +180,7 @@ public struct UINodeResolver: Identifiable {
         default: return Alignment.center
         }
     }
-    
+
     func textAlignment(for propertyName: String = "textAlign") -> TextAlignment {
         switch resolve(propertyName, type: String.self) {
         case "left", "leading": return .leading
@@ -183,33 +189,37 @@ public struct UINodeResolver: Identifiable {
         default: return .leading
         }
     }
-    
+
     func string(for propertyName: String) -> String? {
         resolve(propertyName, type: String.self)
     }
-    
+
     func int(for propertyName: String) -> Int? {
         resolve(propertyName, type: Int.self)
     }
-    
+
     func double(for propertyName: String) -> Double? {
         resolve(propertyName, type: Double.self)
     }
-    
+
     func cgFloat(for propertyName: String) -> CGFloat? {
         resolve(propertyName, type: CGFloat.self)
     }
-    
+
     func cgPoint(for propertyName: String) -> CGPoint? {
-        if let dimensions = resolve(propertyName, type: [Double].self), let x = dimensions[safe: 0], let y = dimensions[safe: 1] {
+        if let dimensions = resolve(propertyName, type: [Double].self), let x = dimensions[safe: 0],
+           let y = dimensions[safe: 1]
+        {
             return CGPoint(x: x, y: y)
-        } else if let dimension = resolve(propertyName, type: CGFloat.self) {
+        }
+        else if let dimension = resolve(propertyName, type: CGFloat.self) {
             return CGPoint(x: dimension, y: dimension)
-        } else {
+        }
+        else {
             return nil
         }
     }
-    
+
     func insets(for propertyName: String) -> UIEdgeInsets? {
         if let insetArray = resolve(propertyName, type: [Double].self)?.map({ CGFloat($0) }) {
             switch insetArray.count {
@@ -227,22 +237,24 @@ public struct UINodeResolver: Identifiable {
             )
             default: return .init()
             }
-        } else if let edgeInset = resolve(propertyName, type: CGFloat.self) {
+        }
+        else if let edgeInset = resolve(propertyName, type: CGFloat.self) {
             return UIEdgeInsets(
                 top: edgeInset,
                 left: edgeInset,
                 bottom: edgeInset,
                 right: edgeInset
             )
-        } else {
+        }
+        else {
             return nil
         }
     }
-    
+
     func bool(for propertyName: String, defaultValue: Bool) -> Bool {
         resolve(propertyName, type: Bool.self) ?? defaultValue
     }
-    
+
     func binding<T>(for propertyName: String, type: T.Type = T.self) -> Binding<T?>? {
         let (_, dataItemOptional, itemPropertyName) = getType(for: propertyName)
         guard let dataItem = dataItemOptional, dataItem.hasProperty(itemPropertyName)
@@ -252,18 +264,22 @@ public struct UINodeResolver: Identifiable {
             set: { dataItem.set(itemPropertyName, $0) }
         )
     }
-    
-    func binding<T>(for propertyName: String, defaultValue: T, type: T.Type = T.self) -> Binding<T> {
+
+    func binding<T>(
+        for propertyName: String,
+        defaultValue: T,
+        type: T.Type = T.self
+    ) -> Binding<T> {
         let (_, dataItemOptional, itemPropertyName) = getType(for: propertyName)
         guard let dataItem = dataItemOptional, dataItem.hasProperty(itemPropertyName) else {
             return .constant(defaultValue)
         }
-        return  Binding<T>(
+        return Binding<T>(
             get: { dataItem.get(itemPropertyName) ?? defaultValue },
             set: { dataItem.set(itemPropertyName, $0) }
         )
     }
-    
+
     func getType(for propName: String) -> (PropertyType, Item?, String) {
         if let prop = node.properties[propName] {
             // Execute expression to get the right value
@@ -279,79 +295,92 @@ public struct UINodeResolver: Identifiable {
         }
         return (.any, item, "")
     }
-    
 }
 
 extension UINodeResolver {
     var showNode: Bool {
-        return bool(for: "show", defaultValue: true)
+        bool(for: "show", defaultValue: true)
     }
+
     var opacity: Double {
         double(for: "opacity") ?? 1
     }
-    
+
     var cornerRadius: CGFloat {
         cgFloat(for: "cornerRadius") ?? 0
     }
-    
+
     var spacing: CGPoint {
         cgPoint(for: "spacing") ?? .zero
     }
-    
+
     var backgroundColor: CVUColor? {
         color(for: "background")
     }
-    
+
     var borderColor: CVUColor? {
         color(for: "border")
     }
-    
+
     var minWidth: CGFloat? {
         cgFloat(for: "width") ?? cgFloat(for: "minWidth")
     }
+
     var minHeight: CGFloat? {
         cgFloat(for: "height") ?? cgFloat(for: "minHeight")
     }
+
     var maxWidth: CGFloat? {
         cgFloat(for: "width") ?? cgFloat(for: "maxWidth")
     }
+
     var maxHeight: CGFloat? {
         cgFloat(for: "height") ?? cgFloat(for: "maxHeight")
     }
-    
+
     var offset: CGSize {
         guard let value = cgPoint(for: "offset") else { return .zero }
         return CGSize(width: value.x, height: value.y)
     }
-    
+
     var shadow: CGFloat? {
         guard let value = cgFloat(for: "shadow"), value > 0 else { return nil }
         return value
     }
-    
+
     var sizingMode: CVU_SizingMode {
         string(for: "sizingMode").flatMap { CVU_SizingMode(rawValue: $0) } ?? .fit
     }
-    
+
     var zIndex: Double? {
         double(for: "zIndex")
     }
-    
+
     var lineLimit: Int? {
         int(for: "lineLimit")
     }
-    
+
     var forceAspect: Bool {
         bool(for: "forceAspect", defaultValue: false)
     }
-    
+
     var padding: EdgeInsets {
         guard let uiInsets = insets(for: "padding") else { return .init() }
-        return EdgeInsets(top: uiInsets.top, leading: uiInsets.left, bottom: uiInsets.bottom, trailing: uiInsets.right)
+        return EdgeInsets(
+            top: uiInsets.top,
+            leading: uiInsets.left,
+            bottom: uiInsets.bottom,
+            trailing: uiInsets.right
+        )
     }
-    
+
     var margin: EdgeInsets {
         guard let uiInsets = insets(for: "margin") else { return .init() }
-        return EdgeInsets(top: uiInsets.top, leading: uiInsets.left, bottom: uiInsets.bottom, trailing: uiInsets.right)
+        return EdgeInsets(
+            top: uiInsets.top,
+            leading: uiInsets.left,
+            bottom: uiInsets.bottom,
+            trailing: uiInsets.right
+        )
     }
 }

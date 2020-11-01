@@ -5,12 +5,12 @@
 import SwiftUI
 
 struct TimelineItemView: View {
-    var icon: Image = Image(systemName: "paperplane")
+    var icon = Image(systemName: "paperplane")
     var title: String = "Hello world"
     var subtitle: String? = nil
     var cornerRadius: CGFloat = 5
 
-    var backgroundColor: Color = Color(.systemGreen)
+    var backgroundColor = Color(.systemGreen)
     var foregroundColor: Color {
         Color.white
     }

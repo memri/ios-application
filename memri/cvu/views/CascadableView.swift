@@ -31,7 +31,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                 debugHistory
                     .error(
                         "Exception: Unable to determine the active renderer. Missing defaultRenderer in view?"
-                )
+                    )
                 return ""
             }
             return s
@@ -46,7 +46,8 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 
     func makeRendererController(forRendererType: String? = nil) -> RendererController? {
         guard let context = context else { return nil }
-        return Renderers.rendererTypes[forRendererType ?? activeRenderer]?.makeController(context, renderConfig)
+        return Renderers.rendererTypes[forRendererType ?? activeRenderer]?
+            .makeController(context, renderConfig)
     }
 
     var fullscreen: Bool {
@@ -84,12 +85,12 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         get { cascadeProperty("actionButton") }
         set(value) { setState("actionButton", value) }
     }
-    
+
     var editActionButton: Action? {
         get { cascadeProperty("editActionButton") }
         set(value) { setState("editActionButton", value) }
     }
-    
+
     var titleActionButton: Action? {
         get { cascadeProperty("titleActionButton") }
         set(value) { setState("titleActionButton", value) }
@@ -180,7 +181,8 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         do {
             for def in renderDef {
                 if let parsedRenderDef = try context?.views
-                    .parseDefinition(def) as? CVUParsedRendererDefinition {
+                    .parseDefinition(def) as? CVUParsedRendererDefinition
+                {
                     if parsedRenderDef.domain == "user" {
                         let insertPoint: Int = {
                             for i in 0 ..< tail.count { if tail[i].domain == "view" { return i } }
@@ -284,20 +286,22 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
             }
             else {
                 // MARK: Single item
+
                 // Let the renderer handle it if it can
                 context?.scheduleUIUpdate()
             }
 
-            if let filterText = userState.get("filterText", type: String.self)?.nilIfBlankOrSingleLine {
-                
+            if let filterText = userState.get("filterText", type: String.self)?
+                .nilIfBlankOrSingleLine
+            {
                 // Set the title to an appropriate message
                 if resultSet.count == 0 { _titleTemp = "No results" }
                 else if resultSet.count == 1 { _titleTemp = "1 item found" }
                 else { _titleTemp = "\(resultSet.count) items found" }
-                
+
                 // Temporarily hide the subtitle
                 // _subtitleTemp = " " // TODO how to clear the subtitle ??
-                
+
                 _emptyResultTextTemp =
                     "No results found using '\(filterText)'"
             }
@@ -413,7 +417,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     }
 
     public func persist() throws {
-        try DatabaseController.trySync(write:true) { realm in
+        try DatabaseController.trySync(write: true) { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
             if state == nil {
                 debugHistory.warn("Could not find stored view CVU. Creating a new one.")
@@ -490,7 +494,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 
             if var parsedDef = try context?.views.parseDefinition(def) {
                 parsedDef.domain = domain
-                
+
                 if let views = parsedDef["viewDefinitions"] as? [CVUParsedViewDefinition] {
                     if let view = views[safe: parsedDef["currentViewIndex"] as? Int ?? 0] {
                         parsedDef = view
@@ -542,7 +546,8 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         for domain in ["user", "defaults"] {
             for needle in needles {
                 if let def = context?.views.fetchDefinitions(selector: needle, domain: domain)
-                    .first {
+                    .first
+                {
                     parse(def, domain)
                 }
                 else if domain != "user" {

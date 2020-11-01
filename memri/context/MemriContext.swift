@@ -2,6 +2,7 @@
 // MemriContext.swift
 // Copyright © 2020 memri. All rights reserved.
 
+import AnyCodable
 import Combine
 import Foundation
 import RealmSwift
@@ -41,7 +42,7 @@ public class MemriContext: ObservableObject, Subscriptable {
     public var currentView: CascadableView? {
         sessions.currentSession?.currentView
     }
-    
+
     public var currentRendererController: RendererController?
 
     public var views: Views
@@ -136,7 +137,7 @@ public class MemriContext: ObservableObject, Subscriptable {
     }
 
     public func getPropertyValue(_ name: String) -> Any {
-        let type: Mirror = Mirror(reflecting: self)
+        let type = Mirror(reflecting: self)
 
         for child in type.children {
             if child.label == name || child.label == "_" + name {
@@ -186,7 +187,7 @@ public class MemriContext: ObservableObject, Subscriptable {
                 if let x = newValue as? Bool { x ? alias.on?() : alias.off?() }
 
                 let shouldAnimate = (propName == "showNavigation")
-                
+
                 scheduleUIUpdate(updateWithAnimation: shouldAnimate)
             }
             else {
@@ -215,20 +216,20 @@ public class MemriContext: ObservableObject, Subscriptable {
     public func getSelection() -> [Item] {
         currentView?.userState.get("selection") ?? []
     }
-    
+
     public func setSelection(_ selection: [Item]) {
         currentView?.userState.set("selection", selection)
-        self.scheduleUIUpdate()
+        scheduleUIUpdate()
     }
-    
+
     public var editMode: Bool {
         get { currentSession?.editMode ?? false }
         set {
             currentSession?.editMode = newValue
-            self.scheduleUIUpdate()
+            scheduleUIUpdate()
         }
     }
-    
+
     var selectedIndicesBinding: Binding<Set<Int>> {
         Binding<Set<Int>>(
             get: {
@@ -320,7 +321,7 @@ public class RootContext: MemriContext {
     var subContexts = [SubContext]()
 
     // TODO: Refactor: Should installer be moved to rootmain?
-    
+
     init(name: String) throws {
         let podAPI = PodAPI()
         let cache = try Cache(podAPI)
@@ -360,7 +361,7 @@ public class RootContext: MemriContext {
         cache.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }
         navigation.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }
     }
-    
+
     public func createSubContext(_ state: CVUStateDefinition? = nil) throws -> MemriContext {
         let subContext = try SubContext(name: "Proxy", self, state)
         subContexts.append(subContext)
@@ -372,7 +373,7 @@ public class RootContext: MemriContext {
             do {
                 // Load views configuration
                 try views.load(self)
-                
+
                 // Stop here is we're testing
                 if isTesting {
                     callback(nil)
@@ -383,15 +384,15 @@ public class RootContext: MemriContext {
                 try sessions.load(self)
 
                 // Update view when sessions changes
-                self.cancellable = self.sessions.objectWillChange.sink { _ in
+                cancellable = sessions.objectWillChange.sink { _ in
                     self.scheduleUIUpdate()
                 }
 
                 // Load current view
-                try self.currentSession?.setCurrentView()
-                
+                try currentSession?.setCurrentView()
+
                 // Start syncing
-                self.cache.sync.load()
+                cache.sync.load()
 
                 callback(nil)
             }
@@ -399,7 +400,7 @@ public class RootContext: MemriContext {
                 callback(error)
             }
         }
-        
+
         if !isTesting {
             DatabaseController.clean { error in
                 DispatchQueue.main.async {
@@ -407,23 +408,23 @@ public class RootContext: MemriContext {
                         callback(error)
                         return
                     }
-                    
+
                     #if targetEnvironment(simulator)
-                    // Reload for easy adjusting
-                    self.views.context = self
-                    
-                    self.views.install { error in
-                        DispatchQueue.main.async {
-                            if let error = error {
-                                callback(error)
-                                return
+                        // Reload for easy adjusting
+                        self.views.context = self
+
+                        self.views.install { error in
+                            DispatchQueue.main.async {
+                                if let error = error {
+                                    callback(error)
+                                    return
+                                }
+
+                                doBoot()
                             }
-                            
-                            doBoot()
                         }
-                    }
                     #else
-                    doBoot()
+                        doBoot()
                     #endif
                 }
             }
@@ -434,7 +435,7 @@ public class RootContext: MemriContext {
     }
 
     public func mockBoot() -> MemriContext {
-        boot{_ in}
+        boot { _ in }
         return self
     }
 }

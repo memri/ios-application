@@ -1,37 +1,44 @@
 //
-// GeneralEditorView.swift
+// GeneralEditorRenderer.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import RealmSwift
 import SwiftUI
 
 class GeneralEditorRendererController: RendererController, ObservableObject {
-    static let rendererType = RendererType(name: "generalEditor", icon: "pencil.circle.fill", makeController: GeneralEditorRendererController.init, makeConfig: GeneralEditorRendererController.makeConfig)
-    
+    static let rendererType = RendererType(
+        name: "generalEditor",
+        icon: "pencil.circle.fill",
+        makeController: GeneralEditorRendererController.init,
+        makeConfig: GeneralEditorRendererController.makeConfig
+    )
+
     required init(context: MemriContext, config: CascadingRendererConfig?) {
         self.context = context
         self.config = (config as? GeneralEditorRendererConfig) ?? GeneralEditorRendererConfig()
     }
-    
+
     let context: MemriContext
     let config: GeneralEditorRendererConfig
-    
+
     func makeView() -> AnyView {
         GeneralEditorRendererView(controller: self).eraseToAnyView()
     }
-    
+
     func update() {
         objectWillChange.send()
     }
-    
-    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig {
+
+    static func makeConfig(
+        head: CVUParsedDefinition?,
+        tail: [CVUParsedDefinition]?,
+        host: Cascadable?
+    ) -> CascadingRendererConfig {
         GeneralEditorRendererConfig(head, tail, host)
     }
 }
 
-
 class GeneralEditorRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
-    
     var type: String? = "generalEditor"
 
     var layout: [GeneralEditorLayoutItem] {
@@ -53,14 +60,18 @@ class GeneralEditorRendererConfig: CascadingRendererConfig, ConfigurableRenderCo
             }
         )
         .map { dict -> GeneralEditorLayoutItem in
-            GeneralEditorLayoutItem(id: dict["section"] as? String ?? "", dict: dict, viewArguments: self.viewArguments)
+            GeneralEditorLayoutItem(
+                id: dict["section"] as? String ?? "",
+                dict: dict,
+                viewArguments: self.viewArguments
+            )
         }
     }
-    
+
     var showSortInConfig: Bool = false
-    
+
     var showContextualBarInEditMode: Bool = false
-    
+
     func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
         []
     }
@@ -133,7 +144,7 @@ struct GeneralEditorRendererView: View {
         let item = getItem()
         let layout = controller.config.layout
         let usedFields = getUsedFields(layout)
-        
+
         if layout.count > 0 {
             ForEach(layout, id: \.id) { layoutSection in
                 GeneralEditorSection(
@@ -145,17 +156,17 @@ struct GeneralEditorRendererView: View {
             }
         }
     }
-    
+
     var body: some View {
         ScrollView(.vertical) {
             #if targetEnvironment(macCatalyst)
-            VStack(alignment: .leading, spacing: 0) {
-                stackContent
-            }
+                VStack(alignment: .leading, spacing: 0) {
+                    stackContent
+                }
             #else
-            LazyVStack(alignment: .leading, spacing: 0) {
-                stackContent
-            }
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    stackContent
+                }
             #endif
         }
     }
@@ -184,7 +195,7 @@ struct GeneralEditorRendererView: View {
     }
 }
 
-//struct GeneralEditorView_Previews: PreviewProvider {
+// struct GeneralEditorView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        let context = try! RootContext(name: "").mockBoot()
 //
@@ -198,7 +209,7 @@ struct GeneralEditorRendererView: View {
 //            ContextPane()
 //        }.environmentObject(context)
 //    }
-//}
+// }
 
 struct GeneralEditorSection: View {
     @EnvironmentObject var context: MemriContext
@@ -300,7 +311,7 @@ struct GeneralEditorSection: View {
                                 // Render the edges
                                 if edges.count > 0 {
                                     ForEach<[Edge], Edge, AnyView>(edges,
-                                                                         id: \.self) { edge in
+                                                                   id: \.self) { edge in
                                         let targetItem = edge.target()
                                         return renderConfig.render(
                                             item: targetItem,
@@ -379,7 +390,7 @@ struct GeneralEditorSection: View {
         item.objectSchema.properties.filter {
             !used.contains($0.name)
                 && !$0.isArray
-        }.map { $0.name }
+        }.map(\.name)
     }
 
     func _args(
@@ -392,7 +403,7 @@ struct GeneralEditorSection: View {
         ViewArguments(
             [
                 "subject": item,
-                "readOnly": !(context.editMode),
+                "readOnly": !context.editMode,
                 "title": groupKey.camelCaseToWords().uppercased(),
                 "displayName": name.camelCaseToWords().capitalizingFirst(),
                 "name": name,

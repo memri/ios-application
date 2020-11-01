@@ -145,7 +145,7 @@ public class CVULexer {
 
             if isMode.rawValue >= Mode.string.rawValue {
                 if c == "\n" { ln += 1; ch = 0 }
-                
+
                 if isMode == .escapedString {
                     keyword.append(String(c))
                     isMode = .string

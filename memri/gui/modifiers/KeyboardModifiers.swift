@@ -1,10 +1,6 @@
 //
-//  KeyboardModifiers.swift
-//  memri
-//
-//  Created by Toby Brennan on 31/7/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// KeyboardModifiers.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import SwiftUI
 
@@ -14,13 +10,17 @@ struct KeyboardModifier: ViewModifier {
     @ObservedObject var keyboard = KeyboardResponder.shared
     @EnvironmentObject var extraEnvironment: ExtraEnvironment
     @State var contentBounds: CGRect?
-    
+
     func body(content: Content) -> some View {
         content
             .offset(enabled ? (contentBounds.flatMap { contentBounds in
                 CGSize(width: 0,
-                       height: min(0, (extraEnvironment.screenSize.height - contentBounds.maxY) - keyboard.currentHeight))
-                } ?? .zero) : .zero)
+                       height: min(
+                           0,
+                           (extraEnvironment.screenSize.height - contentBounds.maxY) - keyboard
+                               .currentHeight
+                       ))
+            } ?? .zero) : .zero)
             .frame(height: keyboard.keyboardVisible ? overrideHeightWhenVisible : nil)
             .background(
                 GeometryReader { geom in
@@ -29,7 +29,7 @@ struct KeyboardModifier: ViewModifier {
                         value: geom.frame(in: .global)
                     )
                 }
-        )
+            )
             .onPreferenceChange(BoundsPreferenceKey.self, perform: { value in
                 DispatchQueue.main.async {
                     self.contentBounds = value
@@ -37,7 +37,6 @@ struct KeyboardModifier: ViewModifier {
             })
     }
 }
-
 
 struct KeyboardPaddingModifier: ViewModifier {
     var enabled: Bool = true
@@ -48,8 +47,12 @@ struct KeyboardPaddingModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(.bottom, enabled ? (contentBounds.flatMap { contentBounds in
-                max(0, keyboard.currentHeight - (extraEnvironment.screenSize.height - contentBounds.maxY))
-                } ?? 0) : 0)
+                max(
+                    0,
+                    keyboard
+                        .currentHeight - (extraEnvironment.screenSize.height - contentBounds.maxY)
+                )
+            } ?? 0) : 0)
             .background(
                 GeometryReader { geom in
                     Color.clear.preference(
@@ -57,7 +60,7 @@ struct KeyboardPaddingModifier: ViewModifier {
                         value: geom.frame(in: .global)
                     )
                 }
-        )
+            )
             .onPreferenceChange(BoundsPreferenceKey.self, perform: { value in
                 DispatchQueue.main.async {
                     self.contentBounds = value
@@ -68,9 +71,9 @@ struct KeyboardPaddingModifier: ViewModifier {
 
 private struct BoundsPreferenceKey: PreferenceKey {
     typealias Value = CGRect?
-    
+
     static var defaultValue: Value = nil
-    
+
     static func reduce(
         value: inout Value,
         nextValue: () -> Value

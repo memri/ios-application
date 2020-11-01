@@ -1,17 +1,13 @@
 //
-//  CVU_MemriButton.swift
-//  memri
-//
-//  Created by Toby Brennan on 30/9/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// CVU_Button.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import SwiftUI
 
 struct CVU_Button: View {
     var nodeResolver: UINodeResolver
     var context: MemriContext
-    
+
     var body: some View {
         Button(action: {
             if let press: Action = self.nodeResolver.resolve("press") {
@@ -26,8 +22,7 @@ struct CVU_Button: View {
         }
         .buttonStyle(Style())
     }
-    
-    
+
     struct Style: ButtonStyle {
         func makeBody(configuration: Configuration) -> some View {
             configuration
@@ -36,4 +31,3 @@ struct CVU_Button: View {
         }
     }
 }
-

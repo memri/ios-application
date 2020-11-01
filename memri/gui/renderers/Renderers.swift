@@ -1,13 +1,8 @@
 //
-//  Renderers.swift
-//  memri
-//
-//  Created by Toby Brennan on 31/8/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// Renderers.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
-
 
 public class Renderers {
     static var rendererTypes: [String: RendererType] = {
@@ -25,15 +20,21 @@ public class Renderers {
             TimelineRendererController.rendererType,
             ChartRendererController.rendererType,
             PhotoViewerRendererController.rendererType,
-            EmailThreadRendererController.rendererType
-            ].map { ($0.name, $0) })
+            EmailThreadRendererController.rendererType,
+        ].map { ($0.name, $0) })
     }()
+
     private init() {}
 }
 
 public struct RendererType {
     var name: String
     var icon: String
-    var makeController: (_ context: MemriContext, _ config: CascadingRendererConfig?) -> RendererController
-    var makeConfig: (_ head: CVUParsedDefinition?, _ tail: [CVUParsedDefinition]?, _ host: Cascadable?) -> CascadingRendererConfig
+    var makeController: (_ context: MemriContext, _ config: CascadingRendererConfig?)
+        -> RendererController
+    var makeConfig: (
+        _ head: CVUParsedDefinition?,
+        _ tail: [CVUParsedDefinition]?,
+        _ host: Cascadable?
+    ) -> CascadingRendererConfig
 }

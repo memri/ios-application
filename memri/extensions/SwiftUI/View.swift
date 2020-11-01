@@ -1,5 +1,5 @@
 //
-// view.swift
+// View.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import Foundation
@@ -12,7 +12,7 @@ extension View {
               minHeight: 0, maxHeight: .infinity,
               alignment: alignment)
     }
-    
+
     func fullWidth(alignment: Alignment = .topLeading) -> some View {
         frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
     }
@@ -45,9 +45,9 @@ extension View {
             self
         }
     }
-    
+
     @ViewBuilder
-    func `ifLet`<T, Content: View>(_ optional: T?, content: (Self, T) -> Content) -> some View {
+    func ifLet<T, Content: View>(_ optional: T?, content: (Self, T) -> Content) -> some View {
         if optional != nil {
             optional.map { content(self, $0) }
         }
@@ -55,9 +55,9 @@ extension View {
             self
         }
     }
-    
+
     func modify<T: View>(@ViewBuilder _ modifier: (Self) -> T) -> some View {
-        return modifier(self)
+        modifier(self)
     }
 }
 
@@ -75,7 +75,7 @@ extension Image {
     }
 }
 
-//extension View {
+// extension View {
 //    func setProperties(
 //        _ properties: [String: Any?],
 //        _: Item,
@@ -283,9 +283,8 @@ extension Image {
 //    }
 //  }
 
-
 //
-//extension View {
+// extension View {
 //    func border(width: [CGFloat], color: Color) -> some View {
 //        overlay(
 //            GeometryReader { geom in
@@ -317,4 +316,4 @@ extension Image {
 //            EdgeBorder(width: width, edge: edge).foregroundColor(color)
 //        )
 //    }
-//}
+// }

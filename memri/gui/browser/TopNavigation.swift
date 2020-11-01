@@ -158,7 +158,8 @@ public struct TopNavigation: View {
                 // TODO: this should not be a setting but a user defined view that works on all
                 if context.item != nil || context.items.count > 0 &&
                     context.settings.getBool("user/general/gui/showEditButton") != false &&
-                    context.currentView?.editActionButton != nil {
+                    context.currentView?.editActionButton != nil
+                {
                     ActionButton(action: context.currentView?.editActionButton)
                         .font(Font.system(size: 19, weight: .semibold))
                 }
@@ -183,14 +184,15 @@ public struct TopNavigation: View {
         .centeredOverlayWithinBoundsPreferenceKey {
             Button(action: {
                 if !self.showingTitleActions,
-                    let titleActionButton = context.currentView?.titleActionButton {
-                        context.executeAction(titleActionButton)
+                   let titleActionButton = context.currentView?.titleActionButton
+                {
+                    context.executeAction(titleActionButton)
                 }
             }) {
                 Text(context.currentView?.title ?? "")
-                .font(.headline)
+                    .font(.headline)
                     .foregroundColor(Color(.label))
-                .truncationMode(.tail)
+                    .truncationMode(.tail)
             }
             .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: { someBool in
                 if self.isPressing || someBool {
@@ -227,7 +229,8 @@ private struct BoundsPreferenceKey: PreferenceKey {
 
 private extension View {
     func centeredOverlayWithinBoundsPreferenceKey<Content: View>(content: @escaping () -> Content)
-        -> some View {
+        -> some View
+    {
         func calculateCenterAndMaxSize(
             geometry: GeometryProxy,
             anchor: Anchor<CGRect>?
