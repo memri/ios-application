@@ -41,8 +41,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Used for attaching photos from your library to your notes</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Used for attaching photos to your notes</string>
 	<key>NSFaceIDUsageDescription</key>
@@ -51,6 +49,8 @@
 	<string>Used for tracking your day-to-day movements</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Used for showing your location on map views.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used for attaching photos from your library to your notes</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
