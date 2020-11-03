@@ -10,9 +10,9 @@ xcodebuild_arguments:
 author: Koen van der Veen
 module: memri
 module_version: 0.0.1
-copyright: Copyright message here
+copyright: Copyright Memri B.V. 2020
 min_acl: internal
 # Options : [apple | fullwidth | jony | DIRPATH]
 # Which theme to use. Specify either ‘apple’ (default), one of the other built-in theme names, or the path to your mustache templates and other assets for a custom theme.Default: apple
 theme: fullwidth
-
+documentation: memri/gui/renderers/NoteEditorRenderer/textEditor/README.md
