@@ -20,12 +20,30 @@
         }
       },
       {
+        "package": "ASCollectionView",
+        "repositoryURL": "https://gitlab.memri.io/memri/ascollectionview",
+        "state": {
+          "branch": "master",
+          "revision": "b038490c5ec4fd1a67f17ac7777905c8c5c82d92",
+          "version": null
+        }
+      },
+      {
         "package": "Charts",
         "repositoryURL": "https://gitlab.memri.io/memri/ios-dependencies/charts",
         "state": {
           "branch": "master",
           "revision": "c75cbbaa7227c3ba565008f5c0b954d9a4c72f74",
           "version": null
+        }
+      },
+      {
+        "package": "DifferenceKit",
+        "repositoryURL": "https://github.com/ra1028/DifferenceKit",
+        "state": {
+          "branch": null,
+          "revision": "14c66681e12a38b81045f44c6c29724a0d4b0e72",
+          "version": "1.1.5"
         }
       },
       {
