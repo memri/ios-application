@@ -509,7 +509,6 @@
 		B88B8D5625247AC6001295D7 /* CVU_Shape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_Shape.swift; sourceTree = "<group>"; };
 		B88B8D5B25247F36001295D7 /* CVU_HTMLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_HTMLView.swift; sourceTree = "<group>"; };
 		B88B8D6025248CDA001295D7 /* SizeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
-		B88B8D682524AEA8001295D7 /* ascollectionview */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ascollectionview; path = ../ascollectionview; sourceTree = "<group>"; };
 		B88B8D6C2524C04A001295D7 /* CVU_TimelineItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_TimelineItem.swift; sourceTree = "<group>"; };
 		B8984750254A754800B8F50A /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		B8984758254A880F00B8F50A /* UINodeResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINodeResolver.swift; sourceTree = "<group>"; };
@@ -782,7 +781,6 @@
 				5D38DE3F240581E500FF9B70 /* memri.app */,
 				B857B7B424A1CBE700615BA7 /* memriTests.xctest */,
 				B857B7B524A1CBE700615BA7 /* memriUITests.xctest */,
-				B88B8D682524AEA8001295D7 /* ascollectionview */,
 			);
 			sourceTree = "<group>";
 		};

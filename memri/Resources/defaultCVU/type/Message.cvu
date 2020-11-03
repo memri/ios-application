@@ -105,7 +105,7 @@ Message[] {
             VStack {
                 spacing: 2
                 padding: 5
-                background: {{ .sender.owner = me ? "#dbf7c5" : "secondaryBackground" }} /* TODO: secondarySystemBackground */
+                background: {{ .sender.owner = me ? "greenBackground" : "secondaryBackground" }}
                 cornerRadius: 5
                 
                 Text {
