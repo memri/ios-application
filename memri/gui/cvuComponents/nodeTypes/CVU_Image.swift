@@ -13,13 +13,10 @@ enum CVU_SizingMode: String {
 struct CVU_Image: View {
     var nodeResolver: UINodeResolver
 
-    var fileImage: UIImage? {
-        guard let imageURI = nodeResolver.fileURI(for: "image"),
-              let image = FileStorageController.getImage(fromFileForUUID: imageURI)
-        else {
-            return nil
-        }
-        return image
+    var fileImageURL: URL? {
+        guard let imageURI = nodeResolver.fileURI(for: "image")
+        else { return nil }
+        return FileStorageController.getURLForFile(withUUID: imageURI)
     }
 
     var bundleImage: UIImage? {
@@ -33,10 +30,13 @@ struct CVU_Image: View {
 
     @ViewBuilder
     var body: some View {
-        if let image = fileImage {
-            MemriImageView(image: image, fitContent: nodeResolver.sizingMode == .fit)
+        if let imageURL = fileImageURL {
+            MemriImageView(imageURL: imageURL, fitContent: nodeResolver.sizingMode == .fit)
                 .if(nodeResolver.sizingMode == .fit) {
-                    $0.aspectRatio(image.aspectRatio, contentMode: .fit)
+                    $0.aspectRatio(
+                        MemriImageView.getAspectRatio(of: imageURL) ?? 1,
+                        contentMode: .fit
+                    )
                 }
         }
         else if let bundleImage = bundleImage {
@@ -55,6 +55,8 @@ struct CVU_Image: View {
                 .renderingMode(.template)
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(Color(.secondaryLabel))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .layoutPriority(-1)
         }
     }
 }

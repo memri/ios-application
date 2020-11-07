@@ -230,6 +230,10 @@ public class MemriContext: ObservableObject, Subscriptable {
         }
     }
 
+    var allItemsSelected: Bool {
+        getSelection().count >= items.count
+    }
+
     var selectedIndicesBinding: Binding<Set<Int>> {
         Binding<Set<Int>>(
             get: {

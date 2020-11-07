@@ -12,6 +12,17 @@
 import UIKit
 
 extension UIColor {
+    convenience init(light: String, dark: String) {
+        self.init { (trait) -> UIColor in
+            if trait.userInterfaceStyle == .dark {
+                return UIColor(hex: dark)
+            }
+            else {
+                return UIColor(hex: light)
+            }
+        }
+    }
+
     convenience init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0

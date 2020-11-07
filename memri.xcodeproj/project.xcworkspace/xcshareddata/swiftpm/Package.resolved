@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/Alamofire/Alamofire",
         "state": {
           "branch": null,
-          "revision": "097e1f03166d49b31f824507fb85ad843b14fc13",
-          "version": "5.3.0"
+          "revision": "9e0328127dfb801cefe8ac53a13c0c90a7770448",
+          "version": "5.4.0"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/Flight-School/AnyCodable",
         "state": {
           "branch": null,
-          "revision": "79b05a5da89557a4fa50647cc92488a3d9c3f478",
-          "version": "0.3.0"
+          "revision": "38b05fc9f86501ef8018aa90cf3d83bd97f74067",
+          "version": "0.4.0"
         }
       },
       {
@@ -24,7 +24,7 @@
         "repositoryURL": "https://gitlab.memri.io/memri/ascollectionview",
         "state": {
           "branch": "master",
-          "revision": "b038490c5ec4fd1a67f17ac7777905c8c5c82d92",
+          "revision": "e1f46940d88ac529afb390c963b110ad25fd7ed1",
           "version": null
         }
       },
@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/realm/realm-cocoa",
         "state": {
           "branch": null,
-          "revision": "fa43b8e2909334c79f233ce472332c136ca108da",
-          "version": "4.4.1"
+          "revision": "efaf9c31dd042274a8b38f021ab19c33047a8a6a",
+          "version": "10.1.2"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/realm/realm-core",
         "state": {
           "branch": null,
-          "revision": "35662ff940e340bf630ad1d1d88acfc7af18bee6",
-          "version": "5.23.8"
+          "revision": "63b42fc6835efdd27b706a6a6b629edc36018d43",
+          "version": "10.1.1"
         }
       },
       {

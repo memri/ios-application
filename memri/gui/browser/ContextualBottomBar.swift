@@ -24,13 +24,25 @@ struct ContextualBottomBar: View {
                 Divider()
                 HStack {
                     if context.editMode {
-                        Button(action: {
-                            withAnimation {
-                                self.context.executeAction(ActionSelectAll(self.context))
+                        if context.allItemsSelected {
+                            Button(action: {
+                                withAnimation {
+                                    self.context.executeAction(ActionDeselectAll(self.context))
+                                }
+                            }) {
+                                Text("Deselect all")
+                                    .padding(5)
                             }
-                        }) {
-                            Text("Select All")
-                                .padding(5)
+                        }
+                        else {
+                            Button(action: {
+                                withAnimation {
+                                    self.context.executeAction(ActionSelectAll(self.context))
+                                }
+                            }) {
+                                Text("Select All")
+                                    .padding(5)
+                            }
                         }
                     }
                     Spacer()

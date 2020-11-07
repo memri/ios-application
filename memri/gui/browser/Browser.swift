@@ -8,6 +8,8 @@ import SwiftUI
 struct Browser: View {
     @EnvironmentObject var context: MemriContext
 
+    @ObservedObject var keyboardResponder = KeyboardResponder.shared
+
     let inSubView: Bool
     let showCloseButton: Bool
 
@@ -60,9 +62,10 @@ struct Browser: View {
                                 activeRendererController.map { activeRendererController in
                                     activeRendererController.makeView()
                                         .fullHeight().layoutPriority(1)
-                                        .background((currentView.fullscreen ? Color.black : Color
-                                                .clear)
-                                            .edgesIgnoringSafeArea(.all))
+                                        .background(
+                                            (currentView.fullscreen ? Color.black : Color.clear)
+                                                .edgesIgnoringSafeArea(.all)
+                                        )
                                 }
                             }
                             else {
@@ -70,7 +73,7 @@ struct Browser: View {
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                             }
 
-                            if currentView.showBottomBar {
+                            if currentView.showBottomBar && !keyboardResponder.keyboardVisible {
                                 ContextualBottomBar()
 
                                 if !currentView.fullscreen {

@@ -9,7 +9,7 @@
 
 Photo {
     title: "Photo"
-    defaultRenderer: grid
+    defaultRenderer: photoViewer
     emptyResultText: "No photo found"
     
     editActionButton: toggleEditMode
@@ -21,15 +21,8 @@ Photo {
         sortAscending: false
     }
     
-    [renderer = grid] {
-        spacing: 1
-        column: 1
-        edgeInset: 0 0 0 0
-        Image {
-            image: {{.file}} /* TODO: ALLOW BOTH STRINGS AND FILES*/
-            sizingMode: fill
-            background: #AAA
-        }
+    [renderer = photoViewer] {
+        file: {{.file}}
     }
 }
 
@@ -64,7 +57,7 @@ Photo[] {
         Image {
             image: {{.file}}
             sizingMode: fill
-            background: #AAA
+            background: background
         }
     }
 	
