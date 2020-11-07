@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Override point for customization after application launch.
         MapHelper.shared.onAppStart()
-        
+
         // Warm up some views for faster loading (eg. notes editor)
         UIPreloader.prepare()
 

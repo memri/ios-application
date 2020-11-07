@@ -94,7 +94,8 @@ struct MessageRendererView: View {
         ASSection<Int>(
             id: 0,
             data: controller.context.items,
-            selectionMode: controller.editMode ? .selectMultiple(controller.context.selectedIndicesBinding) : .none
+            selectionMode: controller
+                .editMode ? .selectMultiple(controller.context.selectedIndicesBinding) : .none
         ) { item, cellContext in
             // let previousItem = context.items[safe: cellContext.index - 1])
             self.controller.view(for: item) // , ViewArguments(["previousItem": previousItem]))

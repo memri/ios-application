@@ -229,7 +229,7 @@ public class MemriContext: ObservableObject, Subscriptable {
             scheduleUIUpdate()
         }
     }
-    
+
     var allItemsSelected: Bool {
         getSelection().count >= items.count
     }

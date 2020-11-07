@@ -1,17 +1,13 @@
 //
-//  UIPreloader.swift
-//  memri
-//
-//  Created by T Brennan on 7/11/20.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// UIPreloader.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
 import WebKit
 
 class MemriWKWebView: WKWebView {
     var customInputAccessory: UIView?
-    
+
     override var inputAccessoryView: UIView? { customInputAccessory }
 }
 
@@ -52,9 +48,9 @@ class MemriFileSchemeHandler: NSObject, WKURLSchemeHandler {
     }
 }
 
-class UIPreloader {
+enum UIPreloader {
     private static var preloadedWebView: MemriWKWebView?
-    
+
     static func makeWebView() -> MemriWKWebView {
         let config = WKWebViewConfiguration()
         config.setURLSchemeHandler(MemriFileSchemeHandler(), forURLScheme: "memriFile")
@@ -62,13 +58,13 @@ class UIPreloader {
         wv.loadHTMLString("", baseURL: nil)
         return wv
     }
-    
+
     static func prepare() {
         if preloadedWebView == nil {
             preloadedWebView = makeWebView()
         }
     }
-    
+
     static func getWebView() -> MemriWKWebView {
         let wv = preloadedWebView ?? makeWebView()
         preloadedWebView = nil

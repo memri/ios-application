@@ -160,7 +160,7 @@ struct GeneralEditorRendererView: View {
     var body: some View {
         ScrollView(.vertical) {
             VStack(alignment: .leading, spacing: 0) {
-                    stackContent
+                stackContent
             }
         }
     }

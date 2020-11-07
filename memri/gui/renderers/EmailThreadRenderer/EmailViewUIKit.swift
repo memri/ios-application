@@ -24,6 +24,7 @@ class EmailViewUIKit: UIView {
             loadContent()
         }
     }
+
     var enableHeightConstraint = false {
         didSet {
             heightConstraint?.isActive = enableHeightConstraint
@@ -61,7 +62,7 @@ class EmailViewUIKit: UIView {
     init() {
         webView = UIPreloader.getWebView()
         super.init(frame: .zero)
-        
+
         webView.alpha = 0
 
         clipsToBounds = true
@@ -109,7 +110,7 @@ class EmailViewUIKit: UIView {
         _loadPlaceholder()
         loadContent()
     }
-    
+
     private func loadContent() {
         loadingCancellable = _compileContentRules().replaceError(with: nil).sink { ruleList in
             ruleList.map {
@@ -123,8 +124,12 @@ class EmailViewUIKit: UIView {
     private func _compileContentRules() -> Future<WKContentRuleList?, Error> {
         if loadRemoteContent {
             return WKContentRuleListStore.default()
-                .compileContentRuleList(forIdentifier: "ContentBlockingRules", encodedContentRuleList: "")
-        } else {
+                .compileContentRuleList(
+                    forIdentifier: "ContentBlockingRules",
+                    encodedContentRuleList: ""
+                )
+        }
+        else {
             return WKContentRuleListStore.default()
                 .compileContentRuleList(forIdentifier: "ContentBlockingRules",
                                         encodedContentRuleList: blockRules)

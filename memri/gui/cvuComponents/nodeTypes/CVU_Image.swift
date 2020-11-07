@@ -31,10 +31,12 @@ struct CVU_Image: View {
     @ViewBuilder
     var body: some View {
         if let imageURL = fileImageURL {
-            
             MemriImageView(imageURL: imageURL, fitContent: nodeResolver.sizingMode == .fit)
                 .if(nodeResolver.sizingMode == .fit) {
-                    $0.aspectRatio(MemriImageView.getAspectRatio(of: imageURL) ?? 1, contentMode: .fit)
+                    $0.aspectRatio(
+                        MemriImageView.getAspectRatio(of: imageURL) ?? 1,
+                        contentMode: .fit
+                    )
                 }
         }
         else if let bundleImage = bundleImage {

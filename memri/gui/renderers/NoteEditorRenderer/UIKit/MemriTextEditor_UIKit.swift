@@ -100,7 +100,7 @@ class MemriTextEditor_UIKit: UIView {
     }
 
     let userController: WKUserContentController
-    
+
     var fileSchemeHandler: MemriFileSchemeHandler? {
         webView.configuration.urlSchemeHandler(forURLScheme: "memriFile") as? MemriFileSchemeHandler
     }
@@ -108,13 +108,13 @@ class MemriTextEditor_UIKit: UIView {
     init(initialModel: MemriTextEditorModel) {
         self.initialModel = initialModel
         let webView = UIPreloader.getWebView()
-        self.userController = webView.configuration.userContentController
+        userController = webView.configuration.userContentController
         self.webView = webView
         super.init(frame: .zero)
-        
+
         setContentHuggingPriority(.defaultLow, for: .horizontal)
         setContentHuggingPriority(.defaultLow, for: .vertical)
-        
+
         addSubview(webView)
         addSubview(activityIndicator)
         activityIndicator.startAnimating()
@@ -124,7 +124,7 @@ class MemriTextEditor_UIKit: UIView {
 
         self.webView.navigationDelegate = self
         self.webView.scrollView.delegate = self
-        
+
         // The scrolling of the notes view is handled by a scrollView in the html/css
         self.webView.scrollView.isScrollEnabled = false
 
@@ -144,11 +144,10 @@ class MemriTextEditor_UIKit: UIView {
         {
             webView.loadHTMLString(baseString, baseURL: url)
         }
-        
+
         setupConstraints()
     }
-    
-    
+
     var activityIndicator = UIActivityIndicatorView(style: .large)
 
     var showActivityIndicator: Bool = true {
@@ -171,33 +170,33 @@ class MemriTextEditor_UIKit: UIView {
         ]
 
         #if targetEnvironment(macCatalyst)
-        constraints.append(contentsOf: [
-            webView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            webView.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
-        if let toolbarWrapperView = toolbarWrapperView {
-            toolbarWrapperView.translatesAutoresizingMaskIntoConstraints = false
             constraints.append(contentsOf: [
-                toolbarWrapperView.topAnchor.constraint(equalTo: topAnchor),
-                toolbarWrapperView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                toolbarWrapperView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                toolbarWrapperView.heightAnchor.constraint(equalToConstant: 50),
-                webView.topAnchor.constraint(equalTo: toolbarWrapperView.bottomAnchor),
+                webView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                webView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                webView.bottomAnchor.constraint(equalTo: bottomAnchor),
             ])
-        }
-        else {
-            constraints.append(contentsOf: [
-                webView.topAnchor.constraint(equalTo: topAnchor),
-            ])
-        }
+            if let toolbarWrapperView = toolbarWrapperView {
+                toolbarWrapperView.translatesAutoresizingMaskIntoConstraints = false
+                constraints.append(contentsOf: [
+                    toolbarWrapperView.topAnchor.constraint(equalTo: topAnchor),
+                    toolbarWrapperView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                    toolbarWrapperView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                    toolbarWrapperView.heightAnchor.constraint(equalToConstant: 50),
+                    webView.topAnchor.constraint(equalTo: toolbarWrapperView.bottomAnchor),
+                ])
+            }
+            else {
+                constraints.append(contentsOf: [
+                    webView.topAnchor.constraint(equalTo: topAnchor),
+                ])
+            }
         #else
-        constraints.append(contentsOf: [
-            webView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            webView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-            webView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-        ])
+            constraints.append(contentsOf: [
+                webView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+                webView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+                webView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+                webView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            ])
         #endif
 
         customConstraints = constraints
@@ -209,15 +208,15 @@ class MemriTextEditor_UIKit: UIView {
         setContent(content: initialModel.html)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-            guard let self = self else { return }
-            UIView.animate(withDuration: 0.1) {
-                self.webView.alpha = 1
-                self.showActivityIndicator = false
-            }
-            self.updateToolbar()
-            self.updateSearchState().sink {}.store(in: &self.cancellableBag)
-            self.grabFocus(takeFirstResponder: false)
-        }.store(in: &cancellableBag)
+                guard let self = self else { return }
+                UIView.animate(withDuration: 0.1) {
+                    self.webView.alpha = 1
+                    self.showActivityIndicator = false
+                }
+                self.updateToolbar()
+                self.updateSearchState().sink {}.store(in: &self.cancellableBag)
+                self.grabFocus(takeFirstResponder: false)
+            }.store(in: &cancellableBag)
     }
 
     @available(*, unavailable)
@@ -454,7 +453,7 @@ class MemriTextEditor_UIKit: UIView {
             let wrapper = ToolbarWrapperView(toolbarView: toolbarHost.view)
             toolbarWrapperView = wrapper
             #if targetEnvironment(macCatalyst)
-            toolbarWrapperView.map(addSubview)
+                toolbarWrapperView.map(addSubview)
             #else
                 wrapper.sizeToFit()
                 webView.customInputAccessory = wrapper
@@ -605,10 +604,10 @@ class ToolbarWrapperView: UIView {
     init(toolbarView: UIView) {
         self.toolbarView = toolbarView
         super.init(frame: .zero)
-        
+
         toolbarView.setContentHuggingPriority(.defaultLow, for: .horizontal)
         toolbarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        
+
         addSubview(toolbarView)
         translatesAutoresizingMaskIntoConstraints = false
         toolbarView.translatesAutoresizingMaskIntoConstraints = false

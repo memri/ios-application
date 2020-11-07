@@ -1462,7 +1462,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5D599BE123F2B77700F218A0 /* Build configuration list for PBXNativeTarget "memri" */;
 			buildPhases = (
-				B8E8BA7324A8227500A89F60 /* Swift Format (disabled temporarily) */,
+				B8E8BA7324A8227500A89F60 /* Swift Format (BUILD TOOLS SCHEME) */,
 				5D599BB323F2B77500F218A0 /* Sources */,
 				5D599BB423F2B77500F218A0 /* Frameworks */,
 				5D599BB523F2B77500F218A0 /* Resources */,
@@ -1662,7 +1662,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		B8E8BA7324A8227500A89F60 /* Swift Format (disabled temporarily) */ = {
+		B8E8BA7324A8227500A89F60 /* Swift Format (BUILD TOOLS SCHEME) */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1671,7 +1671,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Swift Format (disabled temporarily)";
+			name = "Swift Format (BUILD TOOLS SCHEME)";
 			outputFileListPaths = (
 			);
 			outputPaths = (

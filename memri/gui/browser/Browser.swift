@@ -7,7 +7,7 @@ import SwiftUI
 
 struct Browser: View {
     @EnvironmentObject var context: MemriContext
-    
+
     @ObservedObject var keyboardResponder = KeyboardResponder.shared
 
     let inSubView: Bool
@@ -66,7 +66,6 @@ struct Browser: View {
                                             (currentView.fullscreen ? Color.black : Color.clear)
                                                 .edgesIgnoringSafeArea(.all)
                                         )
-                                        
                                 }
                             }
                             else {

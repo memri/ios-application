@@ -33,7 +33,8 @@ struct ContextualBottomBar: View {
                                 Text("Deselect all")
                                     .padding(5)
                             }
-                        } else {
+                        }
+                        else {
                             Button(action: {
                                 withAnimation {
                                     self.context.executeAction(ActionSelectAll(self.context))

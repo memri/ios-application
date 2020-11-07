@@ -137,13 +137,13 @@ class DatabaseController {
             let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
             let documentsDirectory = paths[0]
             let url = documentsDirectory.appendingPathComponent("memri.realm")
-        #if DEBUG
-        if !DatabaseController.hasPrintedURL {
-            print("Using realm at \(url)")
-            DatabaseController.hasPrintedURL = true
-        }
-        #endif
-        return url
+            #if DEBUG
+                if !DatabaseController.hasPrintedURL {
+                    print("Using realm at \(url)")
+                    DatabaseController.hasPrintedURL = true
+                }
+            #endif
+            return url
         #endif
     }
 
