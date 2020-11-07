@@ -159,15 +159,9 @@ struct GeneralEditorRendererView: View {
 
     var body: some View {
         ScrollView(.vertical) {
-            #if targetEnvironment(macCatalyst)
-                VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                     stackContent
-                }
-            #else
-                LazyVStack(alignment: .leading, spacing: 0) {
-                    stackContent
-                }
-            #endif
+            }
         }
     }
 

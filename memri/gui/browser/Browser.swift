@@ -60,9 +60,11 @@ struct Browser: View {
                                 activeRendererController.map { activeRendererController in
                                     activeRendererController.makeView()
                                         .fullHeight().layoutPriority(1)
-                                        .background((currentView.fullscreen ? Color.black : Color
-                                                .clear)
-                                            .edgesIgnoringSafeArea(.all))
+                                        .background(
+                                            (currentView.fullscreen ? Color.black : Color.clear)
+                                                .edgesIgnoringSafeArea(.all)
+                                        )
+                                        
                                 }
                             }
                             else {

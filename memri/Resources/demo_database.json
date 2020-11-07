@@ -1856,18 +1856,6 @@
         "url": "www.eagleve.com"
     },
     {
-        "_type": "OnlineProfile",
-        "uid": 1008,
-        "type": "twitter",
-        "handle": "@eagleve91"
-    },
-    {
-        "_type": "OnlineProfile",
-        "uid": 1009,
-        "type": "facebook",
-        "handle": "@eagleve2393"
-    },
-    {
         "_type": "Diet",
         "uid": 1010,
         "type": "Vegan",
@@ -3900,12 +3888,12 @@
             },
             {
                 "targetType": "MessageChannel",
-                "uid": 20000000005,
+                "uid": 20000000006,
                 "_type": "messageChannel"
             },
             {
                 "targetType": "Account",
-                "uid": 20000000001,
+                "uid": 20000000000,
                 "_type": "sender"
             }
         ]
@@ -4204,11 +4192,6 @@
         "content": "where r u?",
         "dateSent": 1589691690000,
         "allEdges": [
-            {
-                "targetType": "EmailMessage",
-                "uid": 22000000010,
-                "_type": "message"
-            },
             {
                 "targetType": "Account",
                 "uid": 20000000002,

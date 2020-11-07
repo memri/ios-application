@@ -1081,7 +1081,6 @@
 		86A5D83D243CEAB600F8FAD8 /* install */ = {
 			isa = PBXGroup;
 			children = (
-				8680189124D1D048004FC4E3 /* demo_database.json */,
 				861439F12435942A008D6B5B /* Installer.swift */,
 				8693206624CDD4910030863D /* SetupWizard.swift */,
 			);
@@ -1443,6 +1442,7 @@
 		C8A6F7332419907D00FF8183 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				8680189124D1D048004FC4E3 /* demo_database.json */,
 				B809A694254BF19F00FEDD73 /* defaultCVU */,
 				B8CE6FB42537EBF700FC8CDD /* Assets.xcassets */,
 				B8BF1D332529FFEB00919E6E /* demoAssets */,
