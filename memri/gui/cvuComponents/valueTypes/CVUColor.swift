@@ -50,6 +50,7 @@ enum CVUDefaultNamedColor: String {
     case green
     case blue
     case greenBackground
+    case purpleBackground
 
     var uiColor: UIColor {
         switch self {
@@ -77,13 +78,9 @@ enum CVUDefaultNamedColor: String {
             return UIColor.systemBlue
         case .greenBackground:
             // TODO: UIColor extension for this
-            return UIColor { (trait) -> UIColor in
-                if trait.userInterfaceStyle == .dark {
-                    return UIColor(hex: "#394232")
-                } else {
-                    return UIColor(hex: "#dbf7c5")
-                }
-            }
+            return UIColor(light: "#dbf7c5", dark: "#394232")
+        case .purpleBackground:
+            return UIColor(light: "#efe4fd", dark: "#493266")
         }
     }
 

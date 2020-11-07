@@ -229,6 +229,10 @@ public class MemriContext: ObservableObject, Subscriptable {
             scheduleUIUpdate()
         }
     }
+    
+    var allItemsSelected: Bool {
+        getSelection().count >= items.count
+    }
 
     var selectedIndicesBinding: Binding<Set<Int>> {
         Binding<Set<Int>>(

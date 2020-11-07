@@ -7,84 +7,12 @@ import SwiftUI
 import UIKit
 import WebKit
 
-public class MemriTextEditor_UIKitWrapper: UIView {
-    // This UIView allows us to add overlays to the UITextView if needed
-    var textEditor: MemriTextEditor_UIKit
-    var toolbar: UIView? {
-        didSet {
-            if toolbar !== oldValue {
-                toolbar.map(addSubview)
-                setupConstraints()
-            }
-        }
-    }
-
-    var activityIndicator = UIActivityIndicatorView(style: .large)
-
-    var showActivityIndicator: Bool = true {
-        didSet {
-            UIView.animate(withDuration: 0.2) {
-                self.activityIndicator.isHidden = !self.showActivityIndicator
-            }
-        }
-    }
-
-    init(_ textEditor: MemriTextEditor_UIKit) {
-        self.textEditor = textEditor
-        super.init(frame: .zero)
-        addSubview(textEditor)
-        addSubview(activityIndicator)
-        activityIndicator.startAnimating()
-
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor),
-        ])
-
-        setupConstraints()
-    }
-
-    func setupConstraints() {
-        textEditor.removeConstraints(textEditor.constraints)
-        textEditor.translatesAutoresizingMaskIntoConstraints = false
-
-        var constraints = [
-            textEditor.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-            textEditor.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-            textEditor.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-        ]
-
-        if let toolbar = toolbar {
-            toolbar.removeConstraints(toolbar.constraints)
-            toolbar.translatesAutoresizingMaskIntoConstraints = false
-            constraints.append(contentsOf: [
-                toolbar.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-                toolbar.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-                toolbar.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
-                toolbar.heightAnchor.constraint(equalToConstant: 50),
-                textEditor.topAnchor.constraint(equalTo: toolbar.bottomAnchor),
-            ])
-        }
-        else {
-            constraints.append(contentsOf: [
-                textEditor.topAnchor.constraint(equalTo: topAnchor),
-            ])
-        }
-
-        NSLayoutConstraint.activate(constraints)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class MemriTextEditor_UIKit: WKWebView {
+class MemriTextEditor_UIKit: UIView {
+    private var webView: MemriWKWebView
     private var toolbarHost: UIHostingControllerNoSafeArea<MemriTextEditor_Toolbar>?
     private var toolbarWrapperView: ToolbarWrapperView?
 
+    var fileHandler: MemriTextEditorFileHandler?
     var imageSelectionHandler: MemriTextEditorImageSelectionHandler?
 
     private var cancellableBag: Set<AnyCancellable> = []
@@ -171,25 +99,34 @@ class MemriTextEditor_UIKit: WKWebView {
         didSet { updateToolbar() }
     }
 
-    let userController = WKUserContentController()
-    let fileHandler = FileHandler()
+    let userController: WKUserContentController
+    
+    var fileSchemeHandler: MemriFileSchemeHandler? {
+        webView.configuration.urlSchemeHandler(forURLScheme: "memriFile") as? MemriFileSchemeHandler
+    }
 
     init(initialModel: MemriTextEditorModel) {
-        let config = WKWebViewConfiguration()
-        config.userContentController = userController
-        config.setURLSchemeHandler(fileHandler, forURLScheme: "memriFile")
-
         self.initialModel = initialModel
-
-        super.init(frame: .zero, configuration: config)
+        let webView = UIPreloader.getWebView()
+        self.userController = webView.configuration.userContentController
+        self.webView = webView
+        super.init(frame: .zero)
+        
+        setContentHuggingPriority(.defaultLow, for: .horizontal)
+        setContentHuggingPriority(.defaultLow, for: .vertical)
+        
+        addSubview(webView)
+        addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        webView.alpha = 0
 
         isOpaque = false // Prevent white flash in dark mode
 
-        navigationDelegate = self
-        scrollView.delegate = self
-        scrollView
-            .isScrollEnabled =
-            false // The scrolling of the notes view is handled by a scrollView in the html/css
+        self.webView.navigationDelegate = self
+        self.webView.scrollView.delegate = self
+        
+        // The scrolling of the notes view is handled by a scrollView in the html/css
+        self.webView.scrollView.isScrollEnabled = false
 
         userController.add(self, name: "formatChange")
         userController.add(self, name: "textChange")
@@ -205,15 +142,78 @@ class MemriTextEditor_UIKit: WKWebView {
             let data = try? Data(contentsOf: url),
             let baseString = String(data: data, encoding: .utf8)
         {
-            loadHTMLString(baseString, baseURL: url)
+            webView.loadHTMLString(baseString, baseURL: url)
         }
+        
+        setupConstraints()
+    }
+    
+    
+    var activityIndicator = UIActivityIndicatorView(style: .large)
+
+    var showActivityIndicator: Bool = true {
+        didSet {
+            UIView.animate(withDuration: 0.2) {
+                self.activityIndicator.isHidden = !self.showActivityIndicator
+            }
+        }
+    }
+
+    var customConstraints: [NSLayoutConstraint] = []
+    func setupConstraints() {
+        NSLayoutConstraint.deactivate(customConstraints)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        webView.translatesAutoresizingMaskIntoConstraints = false
+
+        var constraints = [
+            activityIndicator.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor),
+        ]
+
+        #if targetEnvironment(macCatalyst)
+        constraints.append(contentsOf: [
+            webView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            webView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+        if let toolbarWrapperView = toolbarWrapperView {
+            toolbarWrapperView.translatesAutoresizingMaskIntoConstraints = false
+            constraints.append(contentsOf: [
+                toolbarWrapperView.topAnchor.constraint(equalTo: topAnchor),
+                toolbarWrapperView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                toolbarWrapperView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                toolbarWrapperView.heightAnchor.constraint(equalToConstant: 50),
+                webView.topAnchor.constraint(equalTo: toolbarWrapperView.bottomAnchor),
+            ])
+        }
+        else {
+            constraints.append(contentsOf: [
+                webView.topAnchor.constraint(equalTo: topAnchor),
+            ])
+        }
+        #else
+        constraints.append(contentsOf: [
+            webView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            webView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            webView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+        ])
+        #endif
+
+        customConstraints = constraints
+        NSLayoutConstraint.activate(constraints)
     }
 
     // Called once the webpage has been loaded - now we can set the contents of our editor
     func onEditorLoaded() {
-        setContent(content: initialModel.html).sink { [weak self] in
+        setContent(content: initialModel.html)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
             guard let self = self else { return }
-            (self.superview as? MemriTextEditor_UIKitWrapper)?.showActivityIndicator = false
+            UIView.animate(withDuration: 0.1) {
+                self.webView.alpha = 1
+                self.showActivityIndicator = false
+            }
             self.updateToolbar()
             self.updateSearchState().sink {}.store(in: &self.cancellableBag)
             self.grabFocus(takeFirstResponder: false)
@@ -443,16 +443,6 @@ class MemriTextEditor_UIKit: WKWebView {
         }
     }
 
-    override public func didMoveToSuperview() {
-        super.didMoveToSuperview()
-        (superview as? MemriTextEditor_UIKitWrapper)?.showActivityIndicator = isLoading
-        #if targetEnvironment(macCatalyst)
-            if let superview = superview as? MemriTextEditor_UIKitWrapper {
-                superview.toolbar = toolbarHost?.view
-            }
-        #endif
-    }
-
     func _setToolbar(_ view: MemriTextEditor_Toolbar) {
         if let hc = toolbarHost {
             hc.rootView = view
@@ -461,15 +451,15 @@ class MemriTextEditor_UIKit: WKWebView {
         else {
             let toolbarHost = UIHostingControllerNoSafeArea(rootView: view)
             self.toolbarHost = toolbarHost
+            let wrapper = ToolbarWrapperView(toolbarView: toolbarHost.view)
+            toolbarWrapperView = wrapper
             #if targetEnvironment(macCatalyst)
-                if let superview = superview as? MemriTextEditor_UIKitWrapper {
-                    superview.toolbar = toolbarHost.view
-                }
+            toolbarWrapperView.map(addSubview)
             #else
-                let wrapper = ToolbarWrapperView(toolbarView: toolbarHost.view)
                 wrapper.sizeToFit()
-                toolbarWrapperView = wrapper
+                webView.customInputAccessory = wrapper
             #endif
+            setupConstraints()
         }
     }
 
@@ -481,9 +471,9 @@ class MemriTextEditor_UIKit: WKWebView {
     }
 
     func grabFocus(takeFirstResponder: Bool = true) {
-        evaluateJavaScript("window.editor.focus();")
+        webView.evaluateJavaScript("window.editor.focus();")
         if takeFirstResponder {
-            becomeFirstResponder()
+            webView.becomeFirstResponder()
         }
     }
 
@@ -497,7 +487,7 @@ class MemriTextEditor_UIKit: WKWebView {
 
     @discardableResult
     override func becomeFirstResponder() -> Bool {
-        if super.becomeFirstResponder() {
+        if webView.becomeFirstResponder() {
             didBeginEditing()
             return true
         }
@@ -506,7 +496,7 @@ class MemriTextEditor_UIKit: WKWebView {
 
     @discardableResult
     override func resignFirstResponder() -> Bool {
-        if super.resignFirstResponder() {
+        if webView.resignFirstResponder() {
             didEndEditing()
             return true
         }
@@ -516,7 +506,7 @@ class MemriTextEditor_UIKit: WKWebView {
     override var bounds: CGRect {
         didSet {
             if bounds != oldValue {
-                evaluateJavaScript("window.scrollToSelection();")
+                webView.evaluateJavaScript("window.scrollToSelection();")
             }
         }
     }
@@ -534,45 +524,6 @@ extension MemriTextEditor_UIKit {
 
     func handlePhotoInsertion(url: URL) {
         executeEditorCommand("image", info: ["src": url.absoluteString])
-    }
-}
-
-extension MemriTextEditor_UIKit {
-    class FileHandler: NSObject, WKURLSchemeHandler {
-        var fileHandler: MemriTextEditorFileHandler?
-
-        func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-            do {
-                guard let url = urlSchemeTask.request.url,
-                      let data = getFileData(forEditorURL: url)
-                else {
-                    throw "Failed to get data"
-                }
-
-                urlSchemeTask.didReceive(URLResponse(
-                    url: url,
-                    mimeType: "text/html",
-                    expectedContentLength: data.count,
-                    textEncodingName: nil
-                ))
-                urlSchemeTask.didReceive(data)
-                urlSchemeTask.didFinish()
-            }
-            catch {
-                print(
-                    "Unexpected error when get data from URL: \(urlSchemeTask.request.url?.absoluteString ?? "No url")"
-                )
-                urlSchemeTask.didFailWithError(error)
-            }
-        }
-
-        func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
-            //
-        }
-
-        func getFileData(forEditorURL url: URL) -> Data? {
-            fileHandler?.getFileData(forEditorURL: url)
-        }
     }
 }
 
@@ -615,7 +566,7 @@ extension MemriTextEditor_UIKit {
             }
         return Future { promise in
             if let script = setContent {
-                self.evaluateJavaScript(script) { _, _ in
+                self.webView.evaluateJavaScript(script) { _, _ in
                     promise(.success(()))
                 }
             }
@@ -630,7 +581,7 @@ extension MemriTextEditor_UIKit {
             (try? String(data: JSONSerialization.data(withJSONObject: info), encoding: .utf8)) ?? ""
         let script = "window.editor.commands.\(format)(\(infoString));"
         return Future { promise in
-            self.evaluateJavaScript(script) { _, _ in
+            self.webView.evaluateJavaScript(script) { _, _ in
                 promise(.success(()))
             }
         }
@@ -641,7 +592,7 @@ extension MemriTextEditor_UIKit {
             "window.editor.commands.find(\"\(searchString.escapeForJavascript())\");"
         } ?? "window.editor.commands.clearSearch()"
         return Future { promise in
-            self.evaluateJavaScript(script) { _, _ in
+            self.webView.evaluateJavaScript(script) { _, _ in
                 promise(.success(()))
             }
         }
@@ -654,8 +605,10 @@ class ToolbarWrapperView: UIView {
     init(toolbarView: UIView) {
         self.toolbarView = toolbarView
         super.init(frame: .zero)
-        clipsToBounds = false
-        toolbarView.clipsToBounds = false
+        
+        toolbarView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        toolbarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        
         addSubview(toolbarView)
         translatesAutoresizingMaskIntoConstraints = false
         toolbarView.translatesAutoresizingMaskIntoConstraints = false
@@ -674,7 +627,7 @@ class ToolbarWrapperView: UIView {
 
     override var intrinsicContentSize: CGSize {
         CGSize(
-            width: toolbarView.intrinsicContentSize.width,
+            width: UIView.noIntrinsicMetric,
             height: toolbarView.intrinsicContentSize.height + safeAreaInsets.bottom
         )
     }

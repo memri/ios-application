@@ -14,6 +14,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // Override point for customization after application launch.
         MapHelper.shared.onAppStart()
+        
+        // Warm up some views for faster loading (eg. notes editor)
+        UIPreloader.prepare()
 
         // This works for normal app startup and background location event startups (testing for the launch "location" key not necessary)
         SensorManager.shared.onAppStart()

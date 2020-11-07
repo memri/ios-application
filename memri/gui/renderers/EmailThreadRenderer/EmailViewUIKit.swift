@@ -18,7 +18,12 @@ class EmailViewUIKit: UIView {
         }
     }
 
-    var loadRemoteContent: Bool = false
+    // TODO: Depending on user settings this should default to false and have a UI option to load remote
+    var loadRemoteContent: Bool = true {
+        didSet {
+            loadContent()
+        }
+    }
     var enableHeightConstraint = false {
         didSet {
             heightConstraint?.isActive = enableHeightConstraint
@@ -40,6 +45,9 @@ class EmailViewUIKit: UIView {
         didSet {
             if isLoaded {
                 activityIndicator.stopAnimating()
+                UIView.animate(withDuration: 0.2) {
+                    self.webView.alpha = 1.0
+                }
             }
             else {
                 activityIndicator.startAnimating()
@@ -51,10 +59,10 @@ class EmailViewUIKit: UIView {
     private let activityIndicator = UIActivityIndicatorView()
 
     init() {
-        let config = WKWebViewConfiguration()
-        config.dataDetectorTypes = [.all]
-        webView = WKWebView(frame: .zero, configuration: config)
+        webView = UIPreloader.getWebView()
         super.init(frame: .zero)
+        
+        webView.alpha = 0
 
         clipsToBounds = true
 
@@ -99,6 +107,10 @@ class EmailViewUIKit: UIView {
             return
         }
         _loadPlaceholder()
+        loadContent()
+    }
+    
+    private func loadContent() {
         loadingCancellable = _compileContentRules().replaceError(with: nil).sink { ruleList in
             ruleList.map {
                 self.webView.configuration.userContentController.removeAllContentRuleLists()
@@ -108,19 +120,24 @@ class EmailViewUIKit: UIView {
         }
     }
 
-    func _compileContentRules() -> Future<WKContentRuleList?, Error> {
-        WKContentRuleListStore.default()
-            .compileContentRuleList(forIdentifier: "ContentBlockingRules",
-                                    encodedContentRuleList: blockRules)
+    private func _compileContentRules() -> Future<WKContentRuleList?, Error> {
+        if loadRemoteContent {
+            return WKContentRuleListStore.default()
+                .compileContentRuleList(forIdentifier: "ContentBlockingRules", encodedContentRuleList: "")
+        } else {
+            return WKContentRuleListStore.default()
+                .compileContentRuleList(forIdentifier: "ContentBlockingRules",
+                                        encodedContentRuleList: blockRules)
+        }
     }
 
-    func _loadPlaceholder() {
+    private func _loadPlaceholder() {
         isLoaded = false
         let bundleURL = Bundle.main.bundleURL
         webView.loadHTMLString(emailHTML ?? "", baseURL: bundleURL)
     }
 
-    func _loadContent() {
+    private func _loadContent() {
         guard let jsURL = Bundle.main.url(
             forResource: "HTMLResources/purify.min",
             withExtension: "js"
@@ -140,20 +157,6 @@ class EmailViewUIKit: UIView {
         webView.configuration.userContentController.removeAllUserScripts()
         webView.configuration.userContentController.addUserScript(domPurifyScript)
         webView.configuration.userContentController.addUserScript(sanitizeScript)
-    }
-
-    func enableRemoteContent() {
-        guard isLoaded else { return }
-        webView.configuration.userContentController.removeAllContentRuleLists()
-        webView.evaluateJavaScript("""
-        var images = document.getElementsByTagName('img');
-                    for(var i = 0; i < images.length; i++)
-                    {
-                        images[i].src = images[i].src
-                    }
-        """) { _, error in
-            error.map { print($0) }
-        }
     }
 
     func evaluateWebViewHeight(_: WKWebView) {

@@ -279,6 +279,7 @@
 		C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8630B2B2418609200C36D6F /* ContextPane.swift */; };
 		C892B3E824A5455D006707EC /* SensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C892B3E724A5455D006707EC /* SensorManager.swift */; };
 		C8A6F739241993AD00FF8183 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8A6F73B241993AD00FF8183 /* Localizable.strings */; };
+		D71F888325563E7900DADDD1 /* UIPreloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D71F888225563E7900DADDD1 /* UIPreloader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -549,6 +550,7 @@
 		C8A6F736241992ED00FF8183 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		C8A6F73A241993AD00FF8183 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C8A6F73C241993CA00FF8183 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D71F888225563E7900DADDD1 /* UIPreloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIPreloader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1157,6 +1159,7 @@
 				86B7A6772457F28A00292E81 /* KeyboardResponder.swift */,
 				B81237EC24A43E42003E8BCB /* MapHelper.swift */,
 				B866A0512519E5980028EF49 /* UIHostingControllerNoSafeArea.swift */,
+				D71F888225563E7900DADDD1 /* UIPreloader.swift */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -1719,6 +1722,7 @@
 				B88B8D5725247AC6001295D7 /* CVU_Shape.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
 				5D38DE132405775400FF9B70 /* PodAPI.swift in Sources */,
+				D71F888325563E7900DADDD1 /* UIPreloader.swift in Sources */,
 				B881BEC924BD3C8B0016DBF5 /* CalendarHelper.swift in Sources */,
 				B8AAB435250DAC0A007CF0E3 /* CVU_Stack.swift in Sources */,
 				5D4320E8247E79890052B224 /* HorizontalLine.swift in Sources */,

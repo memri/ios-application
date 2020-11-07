@@ -89,7 +89,7 @@ struct MemriTextEditor_Toolbar: View {
                     }
                 #endif
             }
-            .frame(minHeight: 40)
+            .frame(maxWidth: .infinity, minHeight: 40, maxHeight: .infinity)
             #if targetEnvironment(macCatalyst)
                 Divider()
             #endif

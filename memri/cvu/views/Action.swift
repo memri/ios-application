@@ -1215,6 +1215,20 @@ class ActionDelete: Action, ActionExec {
     }
 }
 
+class ActionDeselectAll: Action, ActionExec {
+    required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+        super.init(context, "deselectAll", values: values)
+    }
+
+    func exec(_: [String: Any?]) throws {
+        context.setSelection([])
+    }
+
+    class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
+        execWithoutThrow { try ActionDeselectAll(context).exec(arguments) }
+    }
+}
+
 class ActionSelectAll: Action, ActionExec {
     required init(_ context: MemriContext, values: [String: Any?] = [:]) {
         super.init(context, "selectAll", values: values)

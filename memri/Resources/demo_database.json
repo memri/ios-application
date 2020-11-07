@@ -3893,7 +3893,7 @@
             },
             {
                 "targetType": "Account",
-                "uid": 20000000000,
+                "uid": 20000000002,
                 "_type": "sender"
             }
         ]
@@ -3902,7 +3902,7 @@
         "_type": "Message",
         "uid": 20000000011,
         "externalId": "7A1FCF21F8E4216509EF8300D7C5CC57",
-        "content": "where r u?",
+        "content": "Where are you?",
         "dateSent": 1589691690000,
         "allEdges": [
             {
