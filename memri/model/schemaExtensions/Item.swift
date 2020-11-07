@@ -64,7 +64,7 @@ public class Item: SchemaItem {
         edges("changelog")?.items(type: AuditItem.self)
     }
 
-    required init() {
+    required override init() {
         super.init()
 
         functions["describeChangelog"] = { _ in
