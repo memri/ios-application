@@ -151,7 +151,8 @@ public class MemriFittedTextEditor_UIKit: UITextView, UITextViewDelegate {
         #endif
     }
 
-    var toolbarHost: UIHostingController<MemriFittedTextEditorToolbar>?
+    var toolbarHost: UIHostingControllerNoSafeArea<MemriFittedTextEditorToolbar>?
+    private var toolbarWrapperView: ToolbarWrapperView?
 
     func updateToolbar() {
         let view = MemriFittedTextEditorToolbar(owner: self)
@@ -159,30 +160,12 @@ public class MemriFittedTextEditor_UIKit: UITextView, UITextViewDelegate {
             hc.rootView = view
         }
         else {
-            let toolbarHost = UIHostingController(rootView: view)
-            #if targetEnvironment(macCatalyst)
-//                if let superview = superview {
-//                    superview.addSubview(toolbarHost.view)
-//                    toolbarHost.view.translatesAutoresizingMaskIntoConstraints = false
-//                    NSLayoutConstraint.activate([
-//                        toolbarHost.view.leadingAnchor.constraint(
-//                            equalTo: superview.leadingAnchor,
-//                            constant: 0
-//                        ),
-//                        toolbarHost.view.trailingAnchor.constraint(
-//                            equalTo: superview.trailingAnchor,
-//                            constant: 0
-//                        ),
-//                        toolbarHost.view.heightAnchor.constraint(equalToConstant: toolbarInset),
-//                        toolbarHost.view.topAnchor.constraint(equalTo: superview.topAnchor),
-//                    ])
-//                    self.toolbarHost = toolbarHost
-//                }
-            #else
-                toolbarHost.view.sizeToFit()
-                inputAccessoryView = toolbarHost.view
-                self.toolbarHost = toolbarHost
-            #endif
+            let toolbarHost = UIHostingControllerNoSafeArea(rootView: view)
+            let toolbarWrapperView = ToolbarWrapperView(toolbarView: toolbarHost.view)
+            toolbarWrapperView.sizeToFit()
+            inputAccessoryView = toolbarWrapperView
+            self.toolbarHost = toolbarHost
+            self.toolbarWrapperView = toolbarWrapperView
         }
     }
 

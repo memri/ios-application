@@ -12,7 +12,13 @@ import SwiftUI
 class KeyboardResponder: ObservableObject {
     static var shared = KeyboardResponder()
 
-    @Published private(set) var currentHeight: CGFloat = 0
+    private(set) var currentHeight: CGFloat = 0 {
+        willSet {
+            if currentHeight != newValue {
+                objectWillChange.send()
+            }
+        }
+    }
     var keyboardVisible: Bool { currentHeight > 0 }
 
     var _center: NotificationCenter
