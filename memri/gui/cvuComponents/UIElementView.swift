@@ -21,6 +21,7 @@ public enum UIElementFamily: String, CaseIterable {
     case HTMLView
     case TimelineItem
     case ItemCell
+    case FileThumbnail
 }
 
 public struct UIElementView: SwiftUI.View {
@@ -94,6 +95,8 @@ public struct UIElementView: SwiftUI.View {
                      arguments: nodeResolver.viewArguments)
         case .TimelineItem:
             CVU_TimelineItem(nodeResolver: nodeResolver)
+        case .FileThumbnail:
+            CVU_FileThumbnail(nodeResolver: nodeResolver)
         }
     }
 

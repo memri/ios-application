@@ -41,7 +41,7 @@ public class Views {
 
     public func listenForChanges() {
         guard context?.podAPI.isConfigured ?? false else { return }
-        guard !DatabaseController.realmTesting else { return }
+        guard !DatabaseController.isRunningXcodeTests else { return }
 
         // Subscribe to changes in CVUStoredDefinition
         cvuWatcher = context?.cache.subscribe(query: "CVUStoredDefinition")
@@ -382,6 +382,16 @@ public class Views {
                         }
                     }
                 }
+                else if let v = value as? Double {
+                    switch node.name {
+                    case "currency": value = {
+                        let formatter = NumberFormatter()
+                        formatter.numberStyle = .currency
+                        return formatter.string(from: NSNumber(value: v))
+                    }()
+                        default: break
+                    }
+                }
                 else if let v = value as? String {
                     switch node.name {
                     case "uppercased": value = v.uppercased()
@@ -658,10 +668,8 @@ public class Views {
 
             func searchForRenderer(in viewDefinition: CVUStoredDefinition) throws -> Bool {
                 let parsed = try context.views.parseDefinition(viewDefinition)
-                for def in parsed?["rendererDefinitions"] as? [CVUParsedRendererDefinition] ?? [] {
-                    for name in rendererNames {
-                        // TODO: Should this first search for the first renderer everywhere
-                        //       before trying the second renderer?
+                for name in rendererNames {
+                    for def in parsed?["rendererDefinitions"] as? [CVUParsedRendererDefinition] ?? [] {
                         if def.name == name {
                             if def["children"] != nil {
                                 cascadeStack.append(def)

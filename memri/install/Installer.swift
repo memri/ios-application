@@ -208,7 +208,7 @@ public class Installer: ObservableObject {
                     return
                 }
 
-                DatabaseController.realmTesting = true
+                DatabaseController.isRunningXcodeTests = true
                 Settings.shared = Settings()
 
                 testRoot = try RootContext(name: "")

@@ -85,6 +85,8 @@ public class Cache {
                 }
 
                 let item = try Cache.createItem(itemType, values: values)
+                // Set fake dateModified for the demo data
+                item.dateModified = Date(timeIntervalSinceNow: TimeInterval.random(in: -2592000...0))
                 if let allEdges = dict["allEdges"] as? [[String: Any]] {
                     items[item] = allEdges
                 }

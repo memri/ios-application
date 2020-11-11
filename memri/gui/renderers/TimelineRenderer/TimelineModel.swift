@@ -36,7 +36,7 @@ struct TimelineModel {
         itemDateTimeResolver: (Item) -> Date?,
         level: TimelineModel.DetailLevel,
         mostRecentFirst: Bool,
-        collapseByTypeWhereCountGreaterThan maxCount: Int = 2
+        collapseByTypeWhereCountGreaterThan maxCount: Int = 3
     ) -> [TimelineGroup] {
         let groupedByDay = Dictionary(grouping: data) { dataItem -> Date? in
             guard let date = itemDateTimeResolver(dataItem) else { return nil }

@@ -92,6 +92,12 @@
     {
         "_type": "NavigationItem",
         "type": "item",
+        "title": "Receipts",
+        "sessionName": "all-receipts"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
         "title": "addresses",
         "sessionName": "all-addresses"
     },
@@ -1834,7 +1840,7 @@
     {
         "_type": "Label",
         "uid": 1017,
-        "name": "Government",
+        "name": "Rome Trip",
         "color": "#835506"
     },
     {
@@ -1881,11 +1887,6 @@
         "street": "1600 Pennsylvania Ave",
         "postalCode": "20500",
         "allEdges": [
-            {
-                "_type": "label",
-                "targetType": "Label",
-                "uid": 1017
-            },
             {
                 "_type": "country",
                 "targetType": "Country",
@@ -3597,10 +3598,16 @@
     },
     {
         "_type": "Note",
-        "title": "Love letter",
-        "content": "Roses are red, violets are blue",
-        "dateModified": 1593147945298,
-        "version": 1
+        "title": "Trip Diary - Day 3",
+        "content": "This morning we went exploring a bit closer to our hotel. First we found an amazing bakery just around the corner - their pastries where amazing!",
+        "version": 1,
+        "allEdges": [
+            {
+                "_type": "label",
+                "targetType": "Label",
+                "uid": 1017
+            }
+        ]
     },
     {
         "_type": "Network",
@@ -3960,7 +3967,6 @@
             }
         ]
     },
-    
     {
         "_type": "MessageChannel",
         "uid": 200000500010,
@@ -4029,7 +4035,6 @@
             }
         ]
     },
-    
     {
         "_type": "MessageChannel",
         "uid": 20000000012,
@@ -4228,5 +4233,305 @@
                 "_type": "sender"
             }
         ]
+    },
+    {
+        "_type": "ReceiptDemo",
+        "uid": 22001124924891,
+        "totalCost": 94,
+        "store": "Marriott",
+        "category": "Hotels",
+        "allEdges": [
+            {
+                "targetType": "Photo",
+                "uid": 398901324761,
+                "_type": "photo"
+            }
+        ]
+    },
+    {
+        "_type": "ReceiptDemo",
+        "uid": 22001124924892,
+        "totalCost": 41.92,
+        "store": "24/7 Fitness",
+        "category": "Gym",
+        "allEdges": [
+            {
+                "targetType": "Photo",
+                "uid": 398901324762,
+                "_type": "photo"
+            }
+        ]
+    },
+    {
+        "_type": "ReceiptDemo",
+        "uid": 22001124924893,
+        "totalCost": 33.60,
+        "store": "Caltex",
+        "category": "Fuel",
+        "allEdges": [
+            {
+                "targetType": "Photo",
+                "uid": 398901324763,
+                "_type": "photo"
+            }
+        ]
+    },
+    {
+        "_type": "ReceiptDemo",
+        "uid": 22001124924894,
+        "totalCost": 54.50,
+        "store": "Woolworths",
+        "category": "Groceries",
+        "allEdges": [
+            {
+                "targetType": "Photo",
+                "uid": 398901324764,
+                "_type": "photo"
+            }
+        ]
+    },
+    {
+        "_type": "ReceiptDemo",
+        "uid": 22001124924895,
+        "store": "Apple",
+        "category": "Tech",
+        "totalCost": 135,
+        "allEdges": [
+            {
+                "targetType": "File",
+                "uid": 398901324765,
+                "_type": "file"
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "uid": 398901324761,
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "receiptDemo1"
+                }
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "uid": 398901324762,
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "receiptDemo2"
+                }
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "uid": 398901324763,
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "receiptDemo3"
+                }
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "uid": 398901324764,
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "receiptDemo4"
+                }
+            }
+        ]
+    },
+    {
+        "_type": "File",
+        "uid": 398901324765,
+        "filename": "demoReceiptPDF.pdf"
+    },
+    {
+        "_type": "Photo",
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "romeTripDemo1"
+                }
+            },
+            {
+                "_type": "label",
+                "targetType": "Label",
+                "uid": 1017
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "romeTripDemo2"
+                }
+            },
+            {
+                "_type": "label",
+                "targetType": "Label",
+                "uid": 1017
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "romeTripDemo3"
+                }
+            },
+            {
+                "_type": "label",
+                "targetType": "Label",
+                "uid": 1017
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "romeTripDemo4"
+                }
+            },
+            {
+                "_type": "label",
+                "targetType": "Label",
+                "uid": 1017
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "romeTripDemo5"
+                }
+            },
+            {
+                "_type": "label",
+                "targetType": "Label",
+                "uid": 1017
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "romeTripDemo6"
+                }
+            },
+            {
+                "_type": "label",
+                "targetType": "Label",
+                "uid": 1017
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "romeTripDemo7"
+                }
+            },
+            {
+                "_type": "label",
+                "targetType": "Label",
+                "uid": 1017
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "romeTripDemo8"
+                }
+            },
+            {
+                "_type": "label",
+                "targetType": "Label",
+                "uid": 1017
+            }
+        ]
+    },
+    {
+        "_type": "Photo",
+        "allEdges": [
+            {
+                "_type": "file",
+                "_target": {
+                    "_type": "File",
+                    "filename": "romeTripDemo9"
+                }
+            },
+            {
+                "_type": "label",
+                "targetType": "Label",
+                "uid": 1017
+            }
+        ]
+    },
+    {
+        "_type": "File",
+        "uid": 12367921,
+        "filename": "receiptDemo1"
+    },
+    {
+        "_type": "File",
+        "uid": 12367921,
+        "filename": "receiptDemo2"
+    },
+    {
+        "_type": "File",
+        "uid": 12367921,
+        "filename": "receiptDemo3"
+    },
+    {
+        "_type": "File",
+        "uid": 12367921,
+        "filename": "receiptDemo"
     }
 ]

@@ -98,3 +98,35 @@ public class PhotoAnnotation: Item {
         }
     }
 }
+
+
+import RealmSwift
+/// A receipt type used for a demo screen - this will be removed with the dynamic schema implementation
+public class ReceiptDemo: Item {
+    let totalCost = RealmOptional<Double>()
+    @objc dynamic var store: String = ""
+    @objc dynamic var category: String = ""
+
+    /// Attached photos
+    var photo: Results<Photo>? {
+        edges("photos")?.items(type: Photo.self)
+    }
+    
+    /// Attached file
+    var file: Results<File>? {
+        edges("files")?.items(type: File.self)
+    }
+    
+    
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            totalCost.value = try decoder.decodeIfPresent("totalCost")
+            store = try decoder.decodeIfPresent("store") ?? ""
+            category = try decoder.decodeIfPresent("category") ?? ""
+            
+            try self.superDecode(from: decoder)
+        }
+    }
+}

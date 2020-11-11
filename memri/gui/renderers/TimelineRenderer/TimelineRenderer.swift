@@ -299,7 +299,7 @@ extension TimelineRendererView {
                 return format.string(from: group.date)
             case .day:
                 let format = DateFormatter()
-                format.dateFormat = group.isStartOf.contains(.year) ? "MMM YY" : "MMM"
+                format.dateFormat = "MMM" //group.isStartOf.contains(.year) ? "MMM YY" : "MMM"
                 return format.string(from: group.date)
             case .week:
                 return "Week"
@@ -319,6 +319,7 @@ extension TimelineRendererView {
                 Text(string)
                     .font(Font.system(size: 14))
                     .foregroundColor(matchesNow ? Color.red : Color(.secondaryLabel))
+                    .fixedSize()
             }
         }()
 
@@ -338,6 +339,7 @@ extension TimelineRendererView {
                         Circle().fill((useFillToIndicateNow && matchesNow) ? Color.red : .clear)
                             .frame(minWidth: 30, minHeight: 30)
                     )
+                    .fixedSize()
             }
             if flipOrder {
                 small

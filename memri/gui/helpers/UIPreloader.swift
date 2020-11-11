@@ -55,7 +55,7 @@ enum UIPreloader {
         let config = WKWebViewConfiguration()
         config.setURLSchemeHandler(MemriFileSchemeHandler(), forURLScheme: "memriFile")
         let wv = MemriWKWebView(frame: .zero, configuration: config)
-        wv.loadHTMLString("", baseURL: nil)
+        wv.loadHTMLString("<style>:root { color-scheme: light dark; }</style>", baseURL: nil)
         return wv
     }
 
