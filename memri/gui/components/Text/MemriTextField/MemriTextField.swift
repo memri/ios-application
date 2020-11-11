@@ -136,9 +136,10 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
             assignIfChanged(textField, \.text, newValue: parent.valueString)
             textField.resignFirstResponder()
             parent.onEditingEndedCallback?()
-            if parent.isEditing?.wrappedValue == true, !parent.isSharedEditingBinding {
+            if !parent.isSharedEditingBinding {
                 parent.isEditing?.wrappedValue = false
             }
+            (textField as? MemriTextField_UIKit)?.didJustDismiss = true
         }
 
         @objc
@@ -345,6 +346,8 @@ public class MemriTextField_UIKit: UITextField {
 
     /// If this is set to true, the textfield won't respond to isEditing being set to true (but will resign responder if isEditing is set to false - useful for shared binding with other fields)
     var isSharedEditingBinding: Bool = false
+    
+    var didJustDismiss: Bool = false
 
     var isEditingBinding: Binding<Bool>? {
         didSet {
@@ -355,12 +358,15 @@ public class MemriTextField_UIKit: UITextField {
                    !bindingIsEditing) // If shared, only use for resigning first responder
             {
                 if bindingIsEditing {
-                    becomeFirstResponder()
+                    if !didJustDismiss {
+                        becomeFirstResponder()
+                    }
                 }
                 else {
                     resignFirstResponder()
                 }
             }
+            didJustDismiss = false
         }
     }
 
@@ -376,17 +382,19 @@ public class MemriTextField_UIKit: UITextField {
         fatalError("init(coder:) has not been implemented")
     }
 
-    var toolbarHost: UIHostingControllerNoSafeArea<KeyboardToolbarView>?
+    private var toolbarHost: UIHostingControllerNoSafeArea<KeyboardToolbarView>?
+    private var toolbarWrapperView: ToolbarWrapperView?
 
     func updateToolbar() {
         let view = KeyboardToolbarView(owner: self, showArrows: showPrevNextButtons)
-        if let hc = toolbarHost {
+        if let hc = toolbarHost, toolbarWrapperView != nil {
             hc.rootView = view
         }
         else {
             toolbarHost = UIHostingControllerNoSafeArea(rootView: view)
-            toolbarHost?.view.sizeToFit()
-            inputAccessoryView = toolbarHost?.view
+            toolbarHost.map { toolbarWrapperView = ToolbarWrapperView(toolbarView: $0.view) }
+            toolbarWrapperView?.sizeToFit()
+            inputAccessoryView = toolbarWrapperView
         }
     }
 
