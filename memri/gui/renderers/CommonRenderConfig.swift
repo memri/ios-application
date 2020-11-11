@@ -16,12 +16,12 @@ protocol ConfigurableRenderConfig {
 
 extension CascadingRendererConfig {
     var primaryColor: CVUColor {
-        get { cascadeProperty("color") ?? CVUColor.system(.systemBlue) }
+        get { cascadePropertyAsColor("color") ?? CVUColor.system(.systemBlue) }
         set(value) { setState("color", value) }
     }
 
     var backgroundColor: CVUColor? {
-        get { cascadeProperty("background") }
+        get { cascadePropertyAsColor("background") }
         set(value) { setState("background", value) }
     }
 

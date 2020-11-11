@@ -90,7 +90,11 @@ public class Cascadable: CustomStringConvertible {
     { // Renamed to avoid mistaken calls when comparing to nil
         (cascadeProperty(name) as Double?).map { CGFloat($0) }
     }
-
+    
+    func cascadePropertyAsColor(_ name: String) -> CVUColor? {
+        cascadeProperty(name, type: CVUColor.self) ?? cascadeProperty(name, type: String.self).map { CVUColor.named($0) }
+    }
+    
     func cascadeProperty<T>(_ name: String, type _: T.Type = T.self) -> T? {
         #if DEBUG
             // These are temporary checks put in place to catch programmer errors. We should find a safer way that won't lose CVU properties. It is wrapped in DEBUG flag so will not crash in testflight.

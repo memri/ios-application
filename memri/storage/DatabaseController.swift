@@ -70,11 +70,8 @@ class EdgeReference {
 class DatabaseController {
     private init() {}
 
-    #if targetEnvironment(simulator)
-        static var realmTesting = false
-        static var reportedKey = false
-    #else
-        static let realmTesting = false
+    #if DEBUG
+        static var isRunningXcodeTests = false
     #endif
 
     private static var realmConfig: Realm.Configuration {
@@ -110,7 +107,7 @@ class DatabaseController {
             if let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {
                 var realmDir = homeDir + "/memriDevData/realm.memri"
 
-                if realmTesting {
+                if isRunningXcodeTests {
                     realmDir += ".testing"
                 }
 
@@ -157,16 +154,10 @@ class DatabaseController {
 
             var config = realmConfig
 
-            if !realmTesting {
-                #if targetEnvironment(simulator)
-                    if !reportedKey {
-                        reportedKey = true
-                        print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
-                    }
-                #endif
-
-                config.encryptionKey = data
-            }
+            
+            #if !targetEnvironment(simulator) //Don't encrypt simulator realm
+            config.encryptionKey = data
+            #endif
 
             do {
                 let realm = try Realm(configuration: config)
@@ -185,25 +176,9 @@ class DatabaseController {
     static func getRealmSync() throws -> Realm {
         let data = try Authentication.getPublicRootKeySync()
         var config = realmConfig
-        if !realmTesting {
-            #if targetEnvironment(simulator)
-                if !reportedKey {
-                    reportedKey = true
-                    print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
-                    Authentication.getOwnerAndDBKey { err, owner, db in
-                        if let err = err {
-                            print("AUTH ERROR: \(err)")
-                            return
-                        }
-
-                        print("OWNER KEY: \(owner ?? "")")
-                        print("DB KEY: \(db ?? "")")
-                    }
-                }
-            #endif
-
-            config.encryptionKey = data
-        }
+        #if !targetEnvironment(simulator) //Don't encrypt simulator realm
+        config.encryptionKey = data
+        #endif
         return try Realm(configuration: config)
     }
 

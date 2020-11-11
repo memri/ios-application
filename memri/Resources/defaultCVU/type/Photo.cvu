@@ -96,4 +96,13 @@ Photo[] {
 			}
 		}*/
 	}
+ 
+ [renderer = timeline] {
+            Image {
+                image: {{.}}
+                sizingMode: fit
+                background: secondaryBackground
+                height: 100
+            }
+ }
 }

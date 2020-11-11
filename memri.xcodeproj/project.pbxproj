@@ -280,6 +280,8 @@
 		C892B3E824A5455D006707EC /* SensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C892B3E724A5455D006707EC /* SensorManager.swift */; };
 		C8A6F739241993AD00FF8183 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8A6F73B241993AD00FF8183 /* Localizable.strings */; };
 		D71F888325563E7900DADDD1 /* UIPreloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D71F888225563E7900DADDD1 /* UIPreloader.swift */; };
+		D7BF47B1255BB30D00081969 /* MemriFileThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF47B0255BB30D00081969 /* MemriFileThumbnailView.swift */; };
+		D7BF47BD255BB68900081969 /* CVU_FileThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BF47B5255BB5D400081969 /* CVU_FileThumbnail.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -551,6 +553,8 @@
 		C8A6F73A241993AD00FF8183 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C8A6F73C241993CA00FF8183 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D71F888225563E7900DADDD1 /* UIPreloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIPreloader.swift; sourceTree = "<group>"; };
+		D7BF47B0255BB30D00081969 /* MemriFileThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriFileThumbnailView.swift; sourceTree = "<group>"; };
+		D7BF47B5255BB5D400081969 /* CVU_FileThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_FileThumbnail.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1099,6 +1103,7 @@
 				B8FD53AF24D5066E00CA0709 /* Email */,
 				86865D37244996AA0010271A /* FlowStack.swift */,
 				B8AAB43D250E2B65007CF0E3 /* MemriImageView.swift */,
+				D7BF47B0255BB30D00081969 /* MemriFileThumbnailView.swift */,
 				B8984750254A754800B8F50A /* ImagePickerView.swift */,
 			);
 			path = components;
@@ -1281,6 +1286,7 @@
 			isa = PBXGroup;
 			children = (
 				B8CECC0D250309CA006EE229 /* CVU_Image.swift */,
+				D7BF47B5255BB5D400081969 /* CVU_FileThumbnail.swift */,
 				B8AAB434250DAC0A007CF0E3 /* CVU_Stack.swift */,
 				B8AAB43A250DD2AE007CF0E3 /* CVU_Text.swift */,
 				B88B8D5625247AC6001295D7 /* CVU_Shape.swift */,
@@ -1703,6 +1709,7 @@
 				5D599BBB23F2B77500F218A0 /* AppDelegate.swift in Sources */,
 				B88AAB3124A1AEBB0007C9EB /* ChartHelper.swift in Sources */,
 				B81B792F24D04A9E00C25CDF /* ConfigPanel.swift in Sources */,
+				D7BF47B1255BB30D00081969 /* MemriFileThumbnailView.swift in Sources */,
 				B88AAB3024A1AEBB0007C9EB /* BarChartView.swift in Sources */,
 				B826586124D2F4C50051CCFE /* EmailView.swift in Sources */,
 				869CA736243F9AA3009C56FF /* SessionSwitcher.swift in Sources */,
@@ -1822,6 +1829,7 @@
 				B881BED024BD4AA00016DBF5 /* TimelineRenderer.swift in Sources */,
 				868EF697247784C600C0375F /* ResultSet.swift in Sources */,
 				B88B8D5C25247F36001295D7 /* CVU_HTMLView.swift in Sources */,
+				D7BF47BD255BB68900081969 /* CVU_FileThumbnail.swift in Sources */,
 				B88B8D5225247906001295D7 /* CVU_MemriButton.swift in Sources */,
 				B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */,
 				B88AAB2F24A1AEBB0007C9EB /* LineChartModel.swift in Sources */,

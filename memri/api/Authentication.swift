@@ -127,7 +127,7 @@ class Authentication {
 
     static func authenticateOwnerByPasscode(_ callback: @escaping (Error?) -> Void) {
         #if targetEnvironment(simulator) || (targetEnvironment(macCatalyst) && DEBUG)
-            if DatabaseController.realmTesting || autologin {
+            if DatabaseController.isRunningXcodeTests || autologin {
                 isOwnerAuthenticated = true
                 callback(nil)
                 return
@@ -159,7 +159,7 @@ class Authentication {
 
     static func authenticateOwner(_ callback: @escaping (Error?) -> Void) {
         #if targetEnvironment(simulator) || (targetEnvironment(macCatalyst) && DEBUG)
-            if DatabaseController.realmTesting || autologin {
+            if DatabaseController.isRunningXcodeTests || autologin {
                 isOwnerAuthenticated = true
                 callback(nil)
                 return
